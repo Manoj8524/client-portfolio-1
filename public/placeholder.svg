@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no" />
+  <title>Yellowtooths</title>
+  <meta name="description" content="Yellowtooths" />
+  <link rel="icon" href="/favicon-02.svg" sizes="48x48" />
+  <link rel="icon" href="/favicon-02.svg" sizes="any" type="image/svg+xml" />
+  <link
+    rel="apple-touch-icon"
+    href="/favicon-02.svg"
+    sizes="180x180" />
+  <link rel="mask-icon" href="/favicon-02.svg" color="#000000" />
+  <meta id="theme-color" name="theme-color" content="#000000" />
+
+  <!-- iOS Splash Screens -->
+  <link
+    rel="apple-touch-startup-image"
+    href="/favicon-02.svg"
+    media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" />
+  <link
+    rel="apple-touch-startup-image"
+    href="/favicon-02.svg"
+    media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" />
+  <!-- Add more splash screen sizes as necessary -->
+
+  <!-- iOS meta tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Testing Area" />
+
+  <!-- Windows meta tags -->
+  <meta name="msapplication-TileColor" content="#ffffff" />
+  <meta name="msapplication-TileImage" content="/public/ms-icon-144x144.png" />
+
+  <!-- Service Worker -->
+
+  <!-- Dynamic Theme Color Script -->
+  <script>
+    function updateThemeColor() {
+      const darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const themeColor = darkMode ? '#000000' : '#F5F5F5';
+
+      // Update theme color meta tag
+      document
+        .getElementById('theme-color')
+        .setAttribute('content', themeColor);
+
+      // Update the manifest theme color dynamically if necessary
+      const manifestLink = document.querySelector('link[rel="manifest"]');
+      if (manifestLink) {
+        fetch(manifestLink.href)
+          .then((response) => response.json())
+          .then((manifest) => {
+            manifest.theme_color = themeColor;
+            const blob = new Blob([JSON.stringify(manifest)], {
+              type: 'application/json',
+            });
+            manifestLink.href = URL.createObjectURL(blob);
+          });
+      }
+    }
+
+    // Update theme color on initial load
+    updateThemeColor();
+
+    // MediaQueryList to check for dark mode changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    // Use addEventListener if available, otherwise fall back to addListener
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', updateThemeColor);
+    } else {
+      mediaQuery.addListener(updateThemeColor);
+    }
+
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4H871XXMY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-S4H871XXMY');
+  </script>
+  <script type="module" crossorigin src="/assets/index-CEMWbKAC.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-zvQ1GD59.css">
+<link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+<body>
+<div id="root"></div>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" data-cf-beacon='{"version":"2024.11.0","token":"6189390e1f614da2bb2b222da5a8df50","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
