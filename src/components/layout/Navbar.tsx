@@ -15,16 +15,7 @@ const serviceLinks = [
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -32,16 +23,9 @@ export default function Navbar() {
   }, [pathname]);
 
   return (
-    <header
-      className={`padding-primary fixed top-0 left-0 w-full z-50 flex h-20 shrink-0 items-center justify-between will-change-transform transition-all duration-300 ${
-        scrolled ? 'backdrop-blur-md bg-black/40 border-b border-white/5' : 'bg-transparent'
-      }`}
-    >
-      {/* Permanent top dark scrim protection to guarantee legibility on any background */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/85 via-black/35 to-transparent -z-10" />
-
+    <header className="padding-primary fixed top-0 left-0 w-full z-50 flex h-20 shrink-0 items-center justify-between will-change-transform bg-transparent">
       {/* Brand / Project Name */}
-      <Link href="/" aria-current="page" className="flex items-center gap-2 group relative z-10">
+      <Link href="/" aria-current="page" className="flex items-center gap-2 group">
         <div className="py-2">
           <span className="font-horas text-2xl sm:text-3xl font-bold tracking-widest text-white uppercase group-hover:text-[#fec52d] transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
             MUTHU
@@ -50,10 +34,10 @@ export default function Navbar() {
       </Link>
 
       {/* Mobile Toggle Button */}
-      <div className="flex items-center justify-center gap-4 pr-1 md:hidden relative z-10">
+      <div className="flex items-center justify-center gap-4 pr-1 md:hidden">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors border border-neutral-800 bg-neutral-950/80 backdrop-blur-md hover:bg-neutral-800 text-white h-9 w-9 p-2 shadow-lg"
+          className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors border border-neutral-800 bg-neutral-950 hover:bg-neutral-800 text-white h-9 w-9 p-2 shadow-lg"
           type="button"
           aria-label="Toggle navigation menu"
         >
@@ -62,7 +46,7 @@ export default function Navbar() {
       </div>
 
       {/* Desktop Navigation */}
-      <div className="hidden items-center justify-center md:flex relative z-10">
+      <div className="hidden items-center justify-center md:flex">
         <nav className="hidden items-center gap-2 md:flex bg-transparent p-0.5 rounded-full">
           {/* Home */}
           <Link
@@ -96,7 +80,7 @@ export default function Navbar() {
               <ChevronDown className="ml-1 h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
             </Link>
 
-            <div className="invisible absolute left-0 mt-2 w-max rounded-md border border-white/10 bg-neutral-950 opacity-0 ring-0 ring-black ring-opacity-5 backdrop-blur-md transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 z-50 shadow-2xl">
+            <div className="invisible absolute left-0 mt-2 w-max rounded-md border border-white/10 bg-neutral-950 opacity-0 ring-0 ring-black ring-opacity-5 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 z-50 shadow-2xl">
               <div className="p-1" role="menu" aria-orientation="vertical">
                 {serviceLinks.map((item) => (
                   <Link
@@ -130,7 +114,7 @@ export default function Navbar() {
 
       {/* Fullscreen Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 top-20 bg-black/95 backdrop-blur-2xl z-40 flex flex-col padding-primary py-8 overflow-y-auto">
+        <div className="fixed inset-0 top-20 bg-neutral-950 z-40 flex flex-col padding-primary py-8 overflow-y-auto">
           <div className="flex flex-col space-y-4 font-horas text-3xl uppercase tracking-wider">
             <Link
               href="/"
