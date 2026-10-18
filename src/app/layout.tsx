@@ -6,8 +6,8 @@ import Footer from '@/components/layout/Footer';
 import SmoothScroll from '@/components/providers/SmoothScroll';
 
 export const metadata: Metadata = {
-  title: 'Muthu — Film Poster & Graphic Designer Portfolio',
-  description: 'Graphic & Web Designer specializing in film poster design, key visuals, branding, and digital experiences.',
+  title: 'Muthu — Creative Design Studio & Film Poster Portfolio',
+  description: 'Bespoke key visuals, branding, graphic design, and cinematic storytelling.',
   icons: {
     icon: '/favicon-02.svg',
     apple: '/favicon-02.svg',

@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Privacy Policy — Yellowtooths',
-  description: 'Privacy Policy and data protection terms for Yellowtooths creative agency.'
+  title: 'Privacy Policy — Muthu',
+  description: 'Privacy Policy and data protection terms for Muthu creative agency.'
 };
 
 export default function PrivacyPolicyPage() {
@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
           <section className="space-y-3">
             <h2 className="font-horas text-xl uppercase tracking-wider text-white">1. Introduction</h2>
             <p>
-              Welcome to Yellowtooths (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website, use our services, or interact with us.
+              Welcome to Muthu (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website, use our services, or interact with us.
             </p>
             <p>
               By using our services, you agree to the collection and use of information in accordance with this policy. If you do not agree with our policies and practices, please do not use our services.
@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
               <li><strong className="text-white">Service Providers:</strong> With third-party vendors, consultants, and other service providers who perform services on our behalf.</li>
               <li><strong className="text-white">Legal Requirements:</strong> When required by law, court order, or government request.</li>
               <li><strong className="text-white">Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets.</li>
-              <li><strong className="text-white">Protection of Rights:</strong> To protect the rights, property, or safety of Yellowtooths, our customers, or others.</li>
+              <li><strong className="text-white">Protection of Rights:</strong> To protect the rights, property, or safety of Muthu, our customers, or others.</li>
             </ul>
             <p>We do not sell, trade, or otherwise transfer your personal information to third parties for marketing purposes without your consent.</p>
           </section>
@@ -148,7 +148,7 @@ export default function PrivacyPolicyPage() {
             <h2 className="font-horas text-xl uppercase tracking-wider text-white">13. Contact Us</h2>
             <p>If you have any questions about this Privacy Policy, please contact us:</p>
             <ul className="list-disc pl-5 space-y-1 text-neutral-400">
-              <li>Email: <a href="mailto:info@yellowtooths.in" className="text-yellow-400 hover:underline">info@yellowtooths.in</a></li>
+              <li>Email: <a href="mailto:info@muthu.design" className="text-yellow-400 hover:underline">info@muthu.design</a></li>
               <li>Phone: <a href="tel:+919048326777" className="text-yellow-400 hover:underline">+91 9048 326 777</a></li>
               <li>Address: Ln-1, Kutty Sahib Layout Rd, near Model Engineering College, Thrikkakara, Edappally, Kochi, 682021</li>
             </ul>

@@ -8,8 +8,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: 'Email Us',
-    content: 'info@yellowtooths.in',
-    link: 'mailto:info@yellowtooths.in'
+    content: 'info@muthu.design',
+    link: 'mailto:info@muthu.design'
   },
   {
     icon: Phone,
@@ -95,7 +95,7 @@ export default function ContactPage() {
     !nameError;
 
   return (
-    <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-black text-white padding-primary pt-12 pb-24">
+    <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-black text-white padding-primary pt-28 pb-24">
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
         <section className="mb-16">

@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, useAnimationFrame, useMotionValue } from 'framer-motion';
 
-// Real Film Poster Artworks from Yellowtooths Cinema Portfolio
+// Real Film Poster Artworks from Muthu Cinema Portfolio
 const tickerPosters = [
   { id: '218', src: '/film_posters_cache/poster_218.webp', alt: "Don't Trouble the Trouble - Film Poster" },
   { id: '217', src: '/film_posters_cache/poster_217.webp', alt: 'Picnic - Film Poster' },

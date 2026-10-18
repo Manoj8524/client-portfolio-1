@@ -78,27 +78,6 @@ export async function getEmployeePhotos() {
   }
 }
 
-export async function getCareers() {
-  try {
-    const res = await fetch(`${API_BASE}/careers/all`, { next: { revalidate: 3600 } });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json?.data || json || [];
-  } catch {
-    return [];
-  }
-}
-
-export async function getGallery() {
-  try {
-    const res = await fetch(`${API_BASE}/gallery`, { next: { revalidate: 3600 } });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json?.data || json || [];
-  } catch {
-    return [];
-  }
-}
 
 export async function getClients() {
   try {
@@ -139,15 +118,3 @@ export async function sendContactEnquiry(payload: Record<string, any>) {
   }
 }
 
-export async function submitJobApplication(formData: FormData) {
-  try {
-    const res = await fetch(`${API_BASE}/job-applications`, {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json().catch(() => ({}));
-    return { ok: res.ok, status: res.status, data };
-  } catch (err: any) {
-    return { ok: false, error: err.message };
-  }
-}

@@ -4,40 +4,28 @@ import filmPostersData from '@/data/filmPostersData.json';
 
 const defaultServices = [
   {
-    name: 'Film Poster Design',
-    path: '/works/film-poster-design',
-    desc: 'Bespoke key visuals, first-look teasers, character artworks and international festival posters.',
-    slug: 'film-poster-design'
-  },
-  {
-    name: 'Film Promotion',
-    path: '/works/film-promotion',
-    desc: '360° promotional campaigns, digital launch rollouts, publicity design and viral activations.',
-    slug: 'film-promotion'
-  },
-  {
     name: 'Branding',
-    path: '/works/branding',
-    desc: 'Distinctive visual identities, logos, brand guides and strategic positioning for enterprises.',
+    path: '/works?category=BRANDING',
+    desc: 'Distinctive visual identities, logos, brand guides and strategic positioning.',
     slug: 'branding'
   },
   {
-    name: 'Digital Marketing',
-    path: '/works/digital-marketing',
-    desc: 'Performance advertising, social media curation, influencer partnerships and analytics.',
-    slug: 'digital-marketing'
+    name: 'Social Media Creatives',
+    path: '/works?category=SOCIAL+MEDIA+CREATIVES',
+    desc: 'Performance advertising, social media curation and viral creative visual campaigns.',
+    slug: 'social-media-creatives'
   },
   {
-    name: 'Technology & Experience',
-    path: '/works/technology-&-experience-design',
-    desc: '3D interactive websites, immersive brand experiences, web apps and creative digital installations.',
-    slug: 'technology-&-experience-design'
+    name: 'Film Posters',
+    path: '/works?category=FILM+POSTERS',
+    desc: 'Bespoke key visuals, first-look teasers, character artworks and international festival posters.',
+    slug: 'film-posters'
   },
   {
-    name: 'Video Production',
-    path: '/works/video-production',
-    desc: 'Cinematic showreels, teasers, music videos, commercial TVCs and broadcast motion design.',
-    slug: 'video-production'
+    name: 'Print & Ads',
+    path: '/works?category=PRINT+%26+ADS',
+    desc: 'High-impact print advertising, packaging mockups, outdoor billboards and brand collateral.',
+    slug: 'print-and-ads'
   }
 ];
 

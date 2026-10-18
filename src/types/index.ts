@@ -61,29 +61,6 @@ export interface VisionImageItem {
   image: string;
 }
 
-export interface CareerItem {
-  id: number;
-  career_title?: string;
-  title?: string;
-  job_type?: string;
-  job_description?: string;
-  department?: string;
-  location?: string;
-  type?: string;
-  experience?: string;
-  description?: string;
-}
-
-export interface GalleryItem {
-  id: number;
-  title?: string;
-  file_path?: string;
-  image?: string;
-  type?: string;
-  filter?: string;
-  category?: string;
-  aspect_ratio?: string;
-}
 
 export interface ClientItem {
   id: number;

@@ -6,15 +6,10 @@ import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown } from 'lucide-react';
 
 const serviceLinks = [
-  { name: 'Film Poster Design', path: '/works/film-poster-design' },
-  { name: 'Film Promotion', path: '/works/film-promotion' },
-  { name: 'Branding', path: '/works/branding' },
-  { name: 'Digital Marketing', path: '/works/digital-marketing' },
-  { name: 'Technology & Experience Design', path: '/works/technology-&-experience-design' },
-  { name: 'Video Production', path: '/works/video-production' },
-  { name: 'Merchandising', path: '/works/merchandising' },
-  { name: 'Thinkery', path: '/works/thinkery' },
-  { name: 'Global Academy of Artistry', path: '/works/global-academy-of-artistry' }
+  { name: 'BRANDING', path: '/works?category=BRANDING' },
+  { name: 'SOCIAL MEDIA CREATIVES', path: '/works?category=SOCIAL+MEDIA+CREATIVES' },
+  { name: 'FILM POSTERS', path: '/works?category=FILM+POSTERS' },
+  { name: 'PRINT & ADS', path: '/works?category=PRINT+%26+ADS' }
 ];
 
 export default function Navbar() {
@@ -38,103 +33,100 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 h-20 transition-all duration-300 flex items-center justify-between padding-primary ${
-        scrolled ? 'bg-black/80 backdrop-blur-md border-b border-white/10' : 'bg-transparent'
+      className={`padding-primary fixed top-0 left-0 w-full z-50 flex h-20 shrink-0 items-center justify-between will-change-transform transition-all duration-300 ${
+        scrolled ? 'backdrop-blur-md bg-black/40 border-b border-white/5' : 'bg-transparent'
       }`}
     >
-      <Link href="/" className="flex items-center gap-2 group">
-        <span className="font-horas text-2xl font-bold tracking-widest text-white uppercase group-hover:text-yellow-400 transition-colors">
-          MUTHU
-        </span>
-        <span className="hidden sm:inline-block text-[11px] font-mono tracking-widest text-neutral-500 uppercase">
-          / PORTFOLIO
-        </span>
+      {/* Permanent top dark scrim protection to guarantee legibility on any background */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/85 via-black/35 to-transparent -z-10" />
+
+      {/* Brand / Project Name */}
+      <Link href="/" aria-current="page" className="flex items-center gap-2 group relative z-10">
+        <div className="py-2">
+          <span className="font-horas text-2xl sm:text-3xl font-bold tracking-widest text-white uppercase group-hover:text-[#fec52d] transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
+            MUTHU
+          </span>
+        </div>
       </Link>
 
-      {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center gap-1 bg-white/5 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10">
-        <Link
-          href="/"
-          className={`px-4 py-2 text-sm font-medium transition-colors rounded-full ${
-            pathname === '/' ? 'text-white bg-white/10' : 'text-neutral-300 hover:text-white'
-          }`}
+      {/* Mobile Toggle Button */}
+      <div className="flex items-center justify-center gap-4 pr-1 md:hidden relative z-10">
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors border border-neutral-800 bg-neutral-950/80 backdrop-blur-md hover:bg-neutral-800 text-white h-9 w-9 p-2 shadow-lg"
+          type="button"
+          aria-label="Toggle navigation menu"
         >
-          Home
-        </Link>
-        <Link
-          href="/about"
-          className={`px-4 py-2 text-sm font-medium transition-colors rounded-full ${
-            pathname === '/about' ? 'text-white bg-white/10' : 'text-neutral-300 hover:text-white'
-          }`}
-        >
-          About
-        </Link>
-
-        {/* Services Dropdown */}
-        <div className="relative group">
-          <Link
-            href="/works"
-            className={`px-4 py-2 text-sm font-medium inline-flex items-center gap-1 transition-colors rounded-full ${
-              pathname.startsWith('/works') ? 'text-white bg-white/10' : 'text-neutral-300 hover:text-white'
-            }`}
-          >
-            Services
-            <ChevronDown className="w-3.5 h-3.5 opacity-60 group-hover:rotate-180 transition-transform duration-200" />
-          </Link>
-
-          <div className="absolute top-full left-0 mt-2 w-64 p-2 bg-neutral-950/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-200">
-            {serviceLinks.map((item) => (
-              <Link
-                key={item.path}
-                href={item.path}
-                className={`block px-3 py-2 text-xs rounded-xl transition-colors ${
-                  pathname === item.path
-                    ? 'bg-white/15 text-white font-medium'
-                    : 'text-neutral-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        <Link
-          href="/gallery"
-          className={`px-4 py-2 text-sm font-medium transition-colors rounded-full ${
-            pathname === '/gallery' ? 'text-white bg-white/10' : 'text-neutral-300 hover:text-white'
-          }`}
-        >
-          Gallery
-        </Link>
-        <Link
-          href="/careers"
-          className={`px-4 py-2 text-sm font-medium transition-colors rounded-full ${
-            pathname === '/careers' ? 'text-white bg-white/10' : 'text-neutral-300 hover:text-white'
-          }`}
-        >
-          Careers
-        </Link>
-      </nav>
-
-      {/* Contact CTA */}
-      <div className="hidden md:flex items-center">
-        <Link
-          href="/contact"
-          className="px-5 py-2 text-sm font-medium text-black bg-white hover:bg-neutral-200 rounded-full transition-all duration-200 shadow-md hover:scale-105"
-        >
-          Let's Talk
-        </Link>
+          {mobileMenuOpen ? <X className="h-5 w-5 text-white" /> : <Menu className="h-5 w-5 text-white" />}
+        </button>
       </div>
 
-      {/* Mobile Menu Button */}
-      <button
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="md:hidden p-2 rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors"
-        aria-label="Toggle menu"
-      >
-        {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-      </button>
+      {/* Desktop Navigation */}
+      <div className="hidden items-center justify-center md:flex relative z-10">
+        <nav className="hidden items-center gap-2 md:flex bg-transparent p-0.5 rounded-full">
+          {/* Home */}
+          <Link
+            href="/"
+            className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
+              pathname === '/' ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
+            }`}
+          >
+            Home
+          </Link>
+
+          {/* Works */}
+          <Link
+            href="/works"
+            className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
+              pathname === '/works' ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
+            }`}
+          >
+            Works
+          </Link>
+
+          {/* Services Dropdown */}
+          <div className="group relative">
+            <Link
+              href="/works"
+              className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
+                pathname.startsWith('/works') && pathname !== '/works' ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
+              }`}
+            >
+              Services
+              <ChevronDown className="ml-1 h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
+            </Link>
+
+            <div className="invisible absolute left-0 mt-2 w-max rounded-md border border-white/10 bg-neutral-950 opacity-0 ring-0 ring-black ring-opacity-5 backdrop-blur-md transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 z-50 shadow-2xl">
+              <div className="p-1" role="menu" aria-orientation="vertical">
+                {serviceLinks.map((item) => (
+                  <Link
+                    key={item.path}
+                    href={item.path}
+                    role="menuitem"
+                    className={`block rounded px-4 py-2 text-sm transition-colors duration-100 ${
+                      pathname === item.path
+                        ? 'bg-[#262626] text-[#fec52d] font-medium'
+                        : 'text-neutral-300 hover:bg-[#262626] hover:text-[#fec52d]'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Contact */}
+          <Link
+            href="/contact"
+            className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
+              pathname === '/contact' ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
+            }`}
+          >
+            Contact
+          </Link>
+        </nav>
+      </div>
 
       {/* Fullscreen Mobile Drawer */}
       {mobileMenuOpen && (
@@ -148,11 +140,11 @@ export default function Navbar() {
               Home
             </Link>
             <Link
-              href="/about"
+              href="/works"
               onClick={() => setMobileMenuOpen(false)}
-              className={`py-2 border-b border-white/10 ${pathname === '/about' ? 'text-yellow-400' : 'text-neutral-300'}`}
+              className={`py-2 border-b border-white/10 ${pathname === '/works' ? 'text-yellow-400' : 'text-neutral-300'}`}
             >
-              About
+              Works
             </Link>
             <div>
               <div
@@ -185,35 +177,11 @@ export default function Navbar() {
               )}
             </div>
             <Link
-              href="/gallery"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`py-2 border-b border-white/10 ${pathname === '/gallery' ? 'text-yellow-400' : 'text-neutral-300'}`}
-            >
-              Gallery
-            </Link>
-            <Link
-              href="/careers"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`py-2 border-b border-white/10 ${pathname === '/careers' ? 'text-yellow-400' : 'text-neutral-300'}`}
-            >
-              Careers
-            </Link>
-            <Link
               href="/contact"
               onClick={() => setMobileMenuOpen(false)}
               className={`py-2 border-b border-white/10 ${pathname === '/contact' ? 'text-yellow-400' : 'text-neutral-300'}`}
             >
               Contact
-            </Link>
-          </div>
-
-          <div className="mt-auto pt-8">
-            <Link
-              href="/contact"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block w-full text-center py-3 text-base font-semibold text-black bg-white rounded-full hover:bg-neutral-200"
-            >
-              Let's Talk
             </Link>
           </div>
         </div>
