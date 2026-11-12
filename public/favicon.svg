@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3C4" />
+      <stop offset="50%" stop-color="#FEC52D" />
+      <stop offset="100%" stop-color="#E5A710" />
+    </linearGradient>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#121212" />
+      <stop offset="100%" stop-color="#040404" />
+    </linearGradient>
+    <filter id="subtleGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#FEC52D" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Modern dark luxury container -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGradient)" />
+  <rect x="6" y="6" width="500" height="500" rx="106" fill="none" stroke="#FEC52D" stroke-opacity="0.35" stroke-width="8" />
+
+  <!-- Architectural 'M' Monogram for Muthu -->
+  <path
+    d="M96 384 V128 H156 L256 280 L356 128 H416 V384 H364 V204 L272 344 H240 L148 204 V384 Z"
+    fill="url(#goldGradient)"
+    filter="url(#subtleGlow)"
+  />
+
+  <!-- Subtle bottom accent point -->
+  <circle cx="256" cy="384" r="10" fill="#FFF3C4" opacity="0.9" />
+</svg>

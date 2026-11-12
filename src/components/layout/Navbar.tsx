@@ -58,6 +58,16 @@ export default function Navbar() {
             Home
           </Link>
 
+          {/* About */}
+          <Link
+            href="/about"
+            className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
+              pathname === '/about' ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
+            }`}
+          >
+            About
+          </Link>
+
           {/* Works */}
           <Link
             href="/works"
@@ -122,6 +132,13 @@ export default function Navbar() {
               className={`py-2 border-b border-white/10 ${pathname === '/' ? 'text-yellow-400' : 'text-neutral-300'}`}
             >
               Home
+            </Link>
+            <Link
+              href="/about"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`py-2 border-b border-white/10 ${pathname === '/about' ? 'text-yellow-400' : 'text-neutral-300'}`}
+            >
+              About
             </Link>
             <Link
               href="/works"

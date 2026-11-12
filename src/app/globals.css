@@ -185,3 +185,38 @@ body {
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+/* Vertical Poster Column Infinite Scroll Up */
+@keyframes verticalScrollUp {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-scroll-lane-1 {
+  animation: verticalScrollUp 18s linear infinite;
+  will-change: transform;
+}
+
+.animate-scroll-lane-2 {
+  animation: verticalScrollUp 25s linear infinite;
+  will-change: transform;
+}
+
+.animate-scroll-lane-3 {
+  animation: verticalScrollUp 34s linear infinite;
+  will-change: transform;
+}
+
+.animate-scroll-lane-4 {
+  animation: verticalScrollUp 45s linear infinite;
+  will-change: transform;
+}
+
+.animate-scroll-lane-5 {
+  animation: verticalScrollUp 58s linear infinite;
+  will-change: transform;
+}

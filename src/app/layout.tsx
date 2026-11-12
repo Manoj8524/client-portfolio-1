@@ -9,8 +9,13 @@ export const metadata: Metadata = {
   title: 'Muthu — Creative Design Studio & Film Poster Portfolio',
   description: 'Bespoke key visuals, branding, graphic design, and cinematic storytelling.',
   icons: {
-    icon: '/favicon-02.svg',
-    apple: '/favicon-02.svg',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
 };
 
@@ -22,8 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark scroll-smooth">
       <head>
-        <link rel="icon" href="/favicon-02.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/favicon-02.svg" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="bg-black text-white antialiased min-h-screen flex flex-col selection:bg-yellow-400 selection:text-black">
         <SmoothScroll>
