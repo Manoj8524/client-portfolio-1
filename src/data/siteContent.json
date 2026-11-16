@@ -171,12 +171,44 @@
       "My creative philosophy fuses classical typographical discipline with contemporary cinematic lighting, deep atmospheric textures, and emotional character narratives. Every key visual is crafted to command attention on massive theatrical hoardings, international film festival circuits, and high-density digital streams.",
       "From gritty indie triumphs to massive commercial blockbusters, I treat every poster as an enduring piece of art that crystallizes the film's soul before the projector ever turns on."
     ],
+    "ctaPrimary": {
+      "label": "Initiate Project",
+      "href": "/contact"
+    },
+    "ctaSecondary": {
+      "label": "View Archive",
+      "href": "/works"
+    },
+    "monolith": {
+      "tag": "// MONOLITH ARCHIVE",
+      "title": "MUTHU",
+      "location": "KOCHI / INDIA",
+      "estYear": "EST. 2018",
+      "pillars": [
+        {
+          "title": "Theatrical Key Art",
+          "desc": "Iconic first looks, character posters & festival releases"
+        },
+        {
+          "title": "Cinematic Visual Identity",
+          "desc": "Bespoke typography, lighting aesthetics & atmospheric depth"
+        },
+        {
+          "title": "Publicity Architecture",
+          "desc": "180+ master campaigns launched across Indian cinema"
+        }
+      ]
+    },
     "stats": [
       { "value": "180+", "label": "Official Key Visuals", "sub": "Pan-Indian & Global Titles" },
       { "value": "12+", "label": "Film Industry Awards", "sub": "Poster & Key Art Accolades" },
       { "value": "45+", "label": "Premier Studios", "sub": "Production Houses & Brands" },
       { "value": "8+", "label": "Years of Craft", "sub": "Cinema & Editorial Design" }
     ],
+    "journeyMilestonesHeading": {
+      "tag": "// EVOLUTION & TIMELINE",
+      "title": "The Creative Journey."
+    },
     "journeyMilestones": [
       {
         "year": "2024 – PRESENT",

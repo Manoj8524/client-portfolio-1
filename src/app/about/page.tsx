@@ -65,17 +65,17 @@ export default function AboutPage() {
 
             <div className="pt-4 flex items-center gap-4">
               <Link
-                href="/contact"
+                href={about?.ctaPrimary?.href || '/contact'}
                 className="px-8 py-3.5 rounded-full bg-[#fec52d] text-black font-semibold text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-[#ffe066] transition-all duration-300 shadow-xl flex items-center gap-2 group"
               >
-                <span>Initiate Project</span>
+                <span>{about?.ctaPrimary?.label || 'Initiate Project'}</span>
                 <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
               </Link>
               <Link
-                href="/works"
+                href={about?.ctaSecondary?.href || '/works'}
                 className="px-8 py-3.5 rounded-full bg-neutral-900 border border-neutral-800 text-white text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors"
               >
-                View Archive
+                {about?.ctaSecondary?.label || 'View Archive'}
               </Link>
             </div>
           </div>
@@ -98,10 +98,10 @@ export default function AboutPage() {
               <div className="relative z-10 flex items-start justify-between border-b border-neutral-800/80 pb-6">
                 <div>
                   <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#fec52d]">
-                    // MONOLITH ARCHIVE
+                    {about?.monolith?.tag || '// MONOLITH ARCHIVE'}
                   </span>
                   <h3 className="font-horas text-3xl sm:text-4xl uppercase tracking-tight text-white mt-1">
-                    {siteSettings?.brandName || 'MUTHU'}
+                    {about?.monolith?.title || siteSettings?.brandName || 'MUTHU'}
                   </h3>
                 </div>
                 <div className="w-10 h-10 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#fec52d]">
@@ -111,57 +111,50 @@ export default function AboutPage() {
 
               {/* Middle Section: Disciplines & Pillars */}
               <div className="relative z-10 py-6 space-y-4">
-                <div className="flex items-center gap-3 text-neutral-300">
-                  <div className="w-8 h-8 rounded-xl bg-neutral-900/90 border border-neutral-800 flex items-center justify-center text-[#fec52d] flex-shrink-0">
-                    <Palette className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-horas text-base sm:text-lg uppercase text-white tracking-wide">
-                      Theatrical Key Art
-                    </h4>
-                    <p className="text-xs font-ppmori text-neutral-400">
-                      Iconic first looks, character posters & festival releases
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 text-neutral-300">
-                  <div className="w-8 h-8 rounded-xl bg-neutral-900/90 border border-neutral-800 flex items-center justify-center text-[#fec52d] flex-shrink-0">
-                    <Flame className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-horas text-base sm:text-lg uppercase text-white tracking-wide">
-                      Cinematic Visual Identity
-                    </h4>
-                    <p className="text-xs font-ppmori text-neutral-400">
-                      Bespoke typography, lighting aesthetics & atmospheric depth
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 text-neutral-300">
-                  <div className="w-8 h-8 rounded-xl bg-neutral-900/90 border border-neutral-800 flex items-center justify-center text-[#fec52d] flex-shrink-0">
-                    <Award className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-horas text-base sm:text-lg uppercase text-white tracking-wide">
-                      Publicity Architecture
-                    </h4>
-                    <p className="text-xs font-ppmori text-neutral-400">
-                      180+ master campaigns launched across Indian cinema
-                    </p>
-                  </div>
-                </div>
+                {(about?.monolith?.pillars || [
+                  {
+                    title: 'Theatrical Key Art',
+                    desc: 'Iconic first looks, character posters & festival releases',
+                  },
+                  {
+                    title: 'Cinematic Visual Identity',
+                    desc: 'Bespoke typography, lighting aesthetics & atmospheric depth',
+                  },
+                  {
+                    title: 'Publicity Architecture',
+                    desc: '180+ master campaigns launched across Indian cinema',
+                  },
+                ]).map((pillar, pIdx) => {
+                  const icons = [Palette, Flame, Award];
+                  const IconComponent = icons[pIdx % icons.length];
+                  return (
+                    <div key={pIdx} className="flex items-center gap-3 text-neutral-300">
+                      <div className="w-8 h-8 rounded-xl bg-neutral-900/90 border border-neutral-800 flex items-center justify-center text-[#fec52d] flex-shrink-0">
+                        <IconComponent className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="font-horas text-base sm:text-lg uppercase text-white tracking-wide">
+                          {pillar.title}
+                        </h4>
+                        <p className="text-xs font-ppmori text-neutral-400">
+                          {pillar.desc}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Bottom Row: Studio Status & Location Stamp */}
               <div className="relative z-10 pt-6 border-t border-neutral-800/80 flex items-center justify-between text-[11px] font-mono text-neutral-400">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#fec52d] animate-pulse" />
-                  <span className="uppercase tracking-widest text-neutral-300">KOCHI / INDIA</span>
+                  <span className="uppercase tracking-widest text-neutral-300">
+                    {about?.monolith?.location || 'KOCHI / INDIA'}
+                  </span>
                 </div>
                 <span className="text-[#fec52d] uppercase tracking-wider">
-                  EST. 2018
+                  {about?.monolith?.estYear || 'EST. 2018'}
                 </span>
               </div>
             </div>
@@ -199,10 +192,10 @@ export default function AboutPage() {
         <div className="max-w-5xl mx-auto px-6 sm:px-10 md:px-16">
           <div className="text-center mb-16 sm:mb-20">
             <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">
-              // EVOLUTION & TIMELINE
+              {about?.journeyMilestonesHeading?.tag || '// EVOLUTION & TIMELINE'}
             </p>
             <h2 className="font-horas text-4xl sm:text-6xl uppercase tracking-tighter text-white">
-              The Creative Journey.
+              {about?.journeyMilestonesHeading?.title || 'The Creative Journey.'}
             </h2>
           </div>
 

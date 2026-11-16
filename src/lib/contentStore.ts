@@ -111,7 +111,23 @@ export interface SiteContent {
     headline: string;
     profileImage: string;
     storyParagraphs: string[];
+    ctaPrimary?: { label: string; href: string };
+    ctaSecondary?: { label: string; href: string };
+    monolith?: {
+      tag: string;
+      title: string;
+      location: string;
+      estYear: string;
+      pillars: Array<{
+        title: string;
+        desc: string;
+      }>;
+    };
     stats: Array<{ value: string; label: string; sub: string }>;
+    journeyMilestonesHeading?: {
+      tag: string;
+      title: string;
+    };
     journeyMilestones: Array<{
       year: string;
       title: string;

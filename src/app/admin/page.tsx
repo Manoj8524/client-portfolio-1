@@ -2364,46 +2364,347 @@ export default function AdminPage() {
             <div className="flex flex-col gap-8">
               <div>
                 <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d] mb-1">
-                  // BIOGRAPHY &amp; CAREER MILESTONES
+                  // BIOGRAPHY, MONOLITH &amp; CAREER MILESTONES
                 </p>
                 <h2 className="font-horas text-3xl sm:text-4xl uppercase tracking-tight text-white">
-                  About Story &amp; Numerical Metrics
+                  About Story, Monolith Card &amp; Timeline
                 </h2>
               </div>
 
-              {/* Story Paragraphs */}
+              {/* Header & Main Story Paragraphs */}
               <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
-                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
-                  Biography Narrative Paragraphs
-                </h3>
-                {content.about.storyParagraphs.map((para, idx) => (
-                  <div key={idx}>
-                    <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
-                      Paragraph {idx + 1}
+                <div className="flex items-center justify-between">
+                  <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                    Editorial Biography &amp; CTAs
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = [...(content.about.storyParagraphs || [])];
+                      updated.push('New biography paragraph narrative detailing creative methodology...');
+                      setContent({
+                        ...content,
+                        about: { ...content.about, storyParagraphs: updated },
+                      });
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#fec52d]/10 border border-[#fec52d]/40 text-[#fec52d] text-xs font-mono hover:bg-[#fec52d] hover:text-black transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Paragraph</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Header Tag
                     </label>
-                    <textarea
-                      rows={3}
-                      value={para}
-                      onChange={(e) => {
-                        const updated = [...content.about.storyParagraphs];
-                        updated[idx] = e.target.value;
+                    <input
+                      type="text"
+                      value={content.about.tag}
+                      onChange={(e) =>
                         setContent({
                           ...content,
-                          about: { ...content.about, storyParagraphs: updated },
-                        });
-                      }}
-                      className="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none font-ppmori leading-relaxed"
+                          about: { ...content.about, tag: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
                     />
                   </div>
-                ))}
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Main Headline
+                    </label>
+                    <input
+                      type="text"
+                      value={content.about.headline}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          about: { ...content.about, headline: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm font-horas uppercase"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Primary CTA Button (Label / Destination)
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={content.about.ctaPrimary?.label || 'Initiate Project'}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            about: {
+                              ...content.about,
+                              ctaPrimary: {
+                                label: e.target.value,
+                                href: content.about.ctaPrimary?.href || '/contact',
+                              },
+                            },
+                          })
+                        }
+                        className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs"
+                        placeholder="Initiate Project"
+                      />
+                      <input
+                        type="text"
+                        value={content.about.ctaPrimary?.href || '/contact'}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            about: {
+                              ...content.about,
+                              ctaPrimary: {
+                                label: content.about.ctaPrimary?.label || 'Initiate Project',
+                                href: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                        placeholder="/contact"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Secondary CTA Button (Label / Destination)
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={content.about.ctaSecondary?.label || 'View Archive'}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            about: {
+                              ...content.about,
+                              ctaSecondary: {
+                                label: e.target.value,
+                                href: content.about.ctaSecondary?.href || '/works',
+                              },
+                            },
+                          })
+                        }
+                        className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs"
+                        placeholder="View Archive"
+                      />
+                      <input
+                        type="text"
+                        value={content.about.ctaSecondary?.href || '/works'}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            about: {
+                              ...content.about,
+                              ctaSecondary: {
+                                label: content.about.ctaSecondary?.label || 'View Archive',
+                                href: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                        placeholder="/works"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-2">
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400">
+                    Story Paragraphs
+                  </label>
+                  {(content.about.storyParagraphs || []).map((para, idx) => (
+                    <div key={idx} className="flex gap-3 items-start">
+                      <span className="text-xs font-mono text-[#fec52d] mt-2">0{idx + 1}</span>
+                      <textarea
+                        rows={3}
+                        value={para}
+                        onChange={(e) => {
+                          const updated = [...content.about.storyParagraphs];
+                          updated[idx] = e.target.value;
+                          setContent({
+                            ...content,
+                            about: { ...content.about, storyParagraphs: updated },
+                          });
+                        }}
+                        className="flex-1 px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none font-ppmori leading-relaxed"
+                      />
+                      {(content.about.storyParagraphs || []).length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = content.about.storyParagraphs.filter((_, i) => i !== idx);
+                            setContent({
+                              ...content,
+                              about: { ...content.about, storyParagraphs: updated },
+                            });
+                          }}
+                          className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-colors mt-1"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Kinetic Studio Monolith Card */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                  Architectural Kinetic Monolith Card (Right Box)
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                      Monolith Tag
+                    </label>
+                    <input
+                      type="text"
+                      value={content.about.monolith?.tag || '// MONOLITH ARCHIVE'}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          about: {
+                            ...content.about,
+                            monolith: {
+                              ...content.about.monolith!,
+                              tag: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                      Monolith Title
+                    </label>
+                    <input
+                      type="text"
+                      value={content.about.monolith?.title || content.siteSettings.brandName || 'MUTHU'}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          about: {
+                            ...content.about,
+                            monolith: {
+                              ...content.about.monolith!,
+                              title: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-horas uppercase"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                      Location Tag
+                    </label>
+                    <input
+                      type="text"
+                      value={content.about.monolith?.location || 'KOCHI / INDIA'}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          about: {
+                            ...content.about,
+                            monolith: {
+                              ...content.about.monolith!,
+                              location: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                      Establishment Stamp
+                    </label>
+                    <input
+                      type="text"
+                      value={content.about.monolith?.estYear || 'EST. 2018'}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          about: {
+                            ...content.about,
+                            monolith: {
+                              ...content.about.monolith!,
+                              estYear: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
+                    Monolith Disciplines &amp; Pillars
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {(content.about.monolith?.pillars || []).map((pillar, pIdx) => (
+                      <div key={pIdx} className="p-3 rounded-xl bg-neutral-900 border border-neutral-800 flex flex-col gap-2">
+                        <span className="text-[10px] font-mono uppercase text-[#fec52d]">Pillar 0{pIdx + 1}</span>
+                        <input
+                          type="text"
+                          value={pillar.title}
+                          onChange={(e) => {
+                            const updated = [...(content.about.monolith?.pillars || [])];
+                            updated[pIdx] = { ...updated[pIdx], title: e.target.value };
+                            setContent({
+                              ...content,
+                              about: {
+                                ...content.about,
+                                monolith: { ...content.about.monolith!, pillars: updated },
+                              },
+                            });
+                          }}
+                          placeholder="Pillar Title"
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-black border border-neutral-700 text-white text-xs font-horas uppercase"
+                        />
+                        <textarea
+                          rows={2}
+                          value={pillar.desc}
+                          onChange={(e) => {
+                            const updated = [...(content.about.monolith?.pillars || [])];
+                            updated[pIdx] = { ...updated[pIdx], desc: e.target.value };
+                            setContent({
+                              ...content,
+                              about: {
+                                ...content.about,
+                                monolith: { ...content.about.monolith!, pillars: updated },
+                              },
+                            });
+                          }}
+                          placeholder="Pillar description..."
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-black border border-neutral-700 text-neutral-300 text-[11px]"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Stats Numbers */}
               <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
                 <h3 className="font-horas text-xl uppercase tracking-wider text-white">
-                  Key Metrics &amp; Achievements
+                  Key Metrics &amp; Achievements (Numerical Bar)
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {content.about.stats.map((st, idx) => (
                     <div
                       key={idx}
@@ -2453,6 +2754,192 @@ export default function AdminPage() {
                         placeholder="Subtext..."
                         className="w-full px-3 py-1 rounded bg-neutral-800 text-neutral-400 text-[11px] font-mono"
                       />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Career Milestones & Timeline */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                      Career Milestones &amp; Timeline
+                    </h3>
+                    <p className="text-xs text-neutral-400 font-mono mt-0.5">
+                      Chronological journey entries displayed on the About page
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = [...(content.about.journeyMilestones || [])];
+                      updated.push({
+                        year: '2026',
+                        title: 'New Milestone Achievement',
+                        role: 'Key Art Lead',
+                        desc: 'Launched landmark film campaign and international publicity artworks...',
+                      });
+                      setContent({
+                        ...content,
+                        about: { ...content.about, journeyMilestones: updated },
+                      });
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#fec52d]/10 border border-[#fec52d]/40 text-[#fec52d] text-xs font-mono hover:bg-[#fec52d] hover:text-black transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Milestone</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-2 border-b border-neutral-800">
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                      Timeline Tag
+                    </label>
+                    <input
+                      type="text"
+                      value={content.about.journeyMilestonesHeading?.tag || '// EVOLUTION & TIMELINE'}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          about: {
+                            ...content.about,
+                            journeyMilestonesHeading: {
+                              tag: e.target.value,
+                              title: content.about.journeyMilestonesHeading?.title || 'The Creative Journey.',
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                      Timeline Heading Title
+                    </label>
+                    <input
+                      type="text"
+                      value={content.about.journeyMilestonesHeading?.title || 'The Creative Journey.'}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          about: {
+                            ...content.about,
+                            journeyMilestonesHeading: {
+                              tag: content.about.journeyMilestonesHeading?.tag || '// EVOLUTION & TIMELINE',
+                              title: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-horas uppercase"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {(content.about.journeyMilestones || []).map((ms, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-xl bg-neutral-900 border border-neutral-800 flex flex-col gap-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono text-[#fec52d]">
+                          Milestone 0{idx + 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = content.about.journeyMilestones.filter((_, i) => i !== idx);
+                            setContent({
+                              ...content,
+                              about: { ...content.about, journeyMilestones: updated },
+                            });
+                          }}
+                          className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-colors"
+                          title="Delete Milestone"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-neutral-500 mb-1">
+                            Year / Era
+                          </label>
+                          <input
+                            type="text"
+                            value={ms.year}
+                            onChange={(e) => {
+                              const updated = [...content.about.journeyMilestones];
+                              updated[idx] = { ...updated[idx], year: e.target.value };
+                              setContent({
+                                ...content,
+                                about: { ...content.about, journeyMilestones: updated },
+                              });
+                            }}
+                            className="w-full px-3 py-1.5 rounded-lg bg-black border border-neutral-700 text-white text-xs font-mono"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-neutral-500 mb-1">
+                            Milestone Title
+                          </label>
+                          <input
+                            type="text"
+                            value={ms.title}
+                            onChange={(e) => {
+                              const updated = [...content.about.journeyMilestones];
+                              updated[idx] = { ...updated[idx], title: e.target.value };
+                              setContent({
+                                ...content,
+                                about: { ...content.about, journeyMilestones: updated },
+                              });
+                            }}
+                            className="w-full px-3 py-1.5 rounded-lg bg-black border border-neutral-700 text-white text-xs font-semibold"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-neutral-500 mb-1">
+                            Studio Role / Organisation
+                          </label>
+                          <input
+                            type="text"
+                            value={ms.role}
+                            onChange={(e) => {
+                              const updated = [...content.about.journeyMilestones];
+                              updated[idx] = { ...updated[idx], role: e.target.value };
+                              setContent({
+                                ...content,
+                                about: { ...content.about, journeyMilestones: updated },
+                              });
+                            }}
+                            className="w-full px-3 py-1.5 rounded-lg bg-black border border-neutral-700 text-white text-xs font-mono"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-mono uppercase text-neutral-500 mb-1">
+                          Narrative Description
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={ms.desc}
+                          onChange={(e) => {
+                            const updated = [...content.about.journeyMilestones];
+                            updated[idx] = { ...updated[idx], desc: e.target.value };
+                            setContent({
+                              ...content,
+                              about: { ...content.about, journeyMilestones: updated },
+                            });
+                          }}
+                          className="w-full px-3 py-1.5 rounded-lg bg-black border border-neutral-700 text-neutral-300 text-xs font-ppmori"
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
