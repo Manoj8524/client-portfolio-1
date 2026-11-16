@@ -3,18 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown } from 'lucide-react';
-
-const serviceLinks = [
-  { name: 'BRANDING', path: '/works?category=BRANDING' },
-  { name: 'SOCIAL MEDIA CREATIVES', path: '/works?category=SOCIAL+MEDIA+CREATIVES' },
-  { name: 'FILM POSTERS', path: '/works?category=FILM+POSTERS' },
-  { name: 'PRINT & ADS', path: '/works?category=PRINT+%26+ADS' }
-];
+import { Menu, X, ChevronDown, Sparkles } from 'lucide-react';
+import initialContent from '@/data/siteContent.json';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
+  const [content, setContent] = useState(initialContent);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -22,13 +17,33 @@ export default function Navbar() {
     setServicesDropdownOpen(false);
   }, [pathname]);
 
+  // Fetch updated content on mount
+  useEffect(() => {
+    fetch('/api/content')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.siteSettings) {
+          setContent(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Hide on admin routes
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
+  const { siteSettings, navigation, home } = content;
+  const disciplines = home?.disciplines || [];
+
   return (
     <header className="padding-primary fixed top-0 left-0 w-full z-50 flex h-20 shrink-0 items-center justify-between will-change-transform bg-transparent">
       {/* Brand / Project Name */}
       <Link href="/" aria-current="page" className="flex items-center gap-2 group">
         <div className="py-2">
           <span className="font-horas text-2xl sm:text-3xl font-bold tracking-widest text-white uppercase group-hover:text-[#fec52d] transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
-            MUTHU
+            {siteSettings?.brandName || 'MUTHU'}
           </span>
         </div>
       </Link>
@@ -48,141 +63,97 @@ export default function Navbar() {
       {/* Desktop Navigation */}
       <div className="hidden items-center justify-center md:flex">
         <nav className="hidden items-center gap-2 md:flex bg-transparent p-0.5 rounded-full">
-          {/* Home */}
-          <Link
-            href="/"
-            className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
-              pathname === '/' ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
-            }`}
-          >
-            Home
-          </Link>
-
-          {/* About */}
-          <Link
-            href="/about"
-            className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
-              pathname === '/about' ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
-            }`}
-          >
-            About
-          </Link>
-
-          {/* Works */}
-          <Link
-            href="/works"
-            className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
-              pathname === '/works' ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
-            }`}
-          >
-            Works
-          </Link>
-
-          {/* Services Dropdown */}
-          <div className="group relative">
-            <Link
-              href="/works"
-              className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
-                pathname.startsWith('/works') && pathname !== '/works' ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
-              }`}
-            >
-              Services
-              <ChevronDown className="ml-1 h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
-            </Link>
-
-            <div className="invisible absolute left-0 mt-2 w-max rounded-md border border-white/10 bg-neutral-950 opacity-0 ring-0 ring-black ring-opacity-5 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 z-50 shadow-2xl">
-              <div className="p-1" role="menu" aria-orientation="vertical">
-                {serviceLinks.map((item) => (
-                  <Link
-                    key={item.path}
-                    href={item.path}
-                    role="menuitem"
-                    className={`block rounded px-4 py-2 text-sm transition-colors duration-100 ${
-                      pathname === item.path
-                        ? 'bg-[#262626] text-[#fec52d] font-medium'
-                        : 'text-neutral-300 hover:bg-[#262626] hover:text-[#fec52d]'
+          {navigation?.links?.map((link) => {
+            if (link.label.toLowerCase() === 'services') {
+              return (
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={() => setServicesDropdownOpen(true)}
+                  onMouseLeave={() => setServicesDropdownOpen(false)}
+                >
+                  <button
+                    className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] cursor-pointer drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
+                      pathname?.startsWith('/works?category=') ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
                     }`}
                   >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
+                    <span>{link.label}</span>
+                    <ChevronDown className={`ml-1 h-3.5 w-3.5 transition-transform duration-200 ${servicesDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
 
-          {/* Contact */}
-          <Link
-            href="/contact"
-            className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
-              pathname === '/contact' ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
-            }`}
-          >
-            Contact
-          </Link>
+                  {servicesDropdownOpen && (
+                    <div className="absolute top-full left-0 w-64 pt-2 z-50">
+                      <div className="rounded-2xl border border-neutral-800/80 bg-neutral-950/95 p-2 shadow-2xl backdrop-blur-xl">
+                        {disciplines.map((svc) => (
+                          <Link
+                            key={svc.slug || svc.name}
+                            href={svc.path}
+                            className="block rounded-xl px-4 py-2.5 text-xs font-mono uppercase tracking-wider text-neutral-300 hover:bg-neutral-900 hover:text-[#fec52d] transition-colors"
+                          >
+                            {svc.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
+                  isActive ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
       </div>
 
-      {/* Fullscreen Mobile Drawer */}
+      {/* Right Header Status / Contact Action */}
+      <div className="hidden lg:flex items-center gap-4">
+        <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-950/70 border border-neutral-800/80 text-[11px] font-mono tracking-wider text-neutral-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#fec52d] animate-pulse" />
+          <span>{siteSettings?.statusPill || '// AVAILABLE FOR WORK'}</span>
+        </div>
+
+        <Link
+          href={navigation?.cta?.href || '/contact'}
+          className="px-5 py-2 rounded-full bg-white text-black hover:bg-[#fec52d] text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-200 hover:scale-105"
+        >
+          {navigation?.cta?.label || 'GET IN TOUCH'}
+        </Link>
+      </div>
+
+      {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 top-20 bg-neutral-950 z-40 flex flex-col padding-primary py-8 overflow-y-auto">
-          <div className="flex flex-col space-y-4 font-horas text-3xl uppercase tracking-wider">
+        <div className="absolute top-20 left-0 w-full bg-neutral-950/98 border-b border-neutral-800 px-6 py-6 md:hidden flex flex-col gap-4 shadow-2xl backdrop-blur-2xl">
+          {navigation?.links?.map((link) => (
             <Link
-              href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`py-2 border-b border-white/10 ${pathname === '/' ? 'text-yellow-400' : 'text-neutral-300'}`}
+              key={link.label}
+              href={link.href}
+              className={`text-base font-medium transition-colors ${
+                pathname === link.href ? 'text-[#fec52d] font-bold' : 'text-neutral-300'
+              }`}
             >
-              Home
+              {link.label}
             </Link>
+          ))}
+          <div className="pt-4 border-t border-neutral-900 flex flex-col gap-3">
+            <span className="text-xs font-mono text-neutral-500">
+              {siteSettings?.statusPill || '// AVAILABLE FOR WORK'}
+            </span>
             <Link
-              href="/about"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`py-2 border-b border-white/10 ${pathname === '/about' ? 'text-yellow-400' : 'text-neutral-300'}`}
+              href={navigation?.cta?.href || '/contact'}
+              className="w-full py-3 text-center rounded-xl bg-[#fec52d] text-black font-semibold text-xs uppercase tracking-wider"
             >
-              About
-            </Link>
-            <Link
-              href="/works"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`py-2 border-b border-white/10 ${pathname === '/works' ? 'text-yellow-400' : 'text-neutral-300'}`}
-            >
-              Works
-            </Link>
-            <div>
-              <div
-                onClick={() => setServicesDropdownOpen(!servicesDropdownOpen)}
-                className="py-2 border-b border-white/10 flex items-center justify-between cursor-pointer text-neutral-300"
-              >
-                <span>Services</span>
-                <ChevronDown className={`w-5 h-5 transition-transform ${servicesDropdownOpen ? 'rotate-180' : ''}`} />
-              </div>
-              {servicesDropdownOpen && (
-                <div className="pl-4 py-2 flex flex-col space-y-2 font-ppmori text-sm normal-case">
-                  <Link
-                    href="/works"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-yellow-400 py-1"
-                  >
-                    View All Works →
-                  </Link>
-                  {serviceLinks.map((s) => (
-                    <Link
-                      key={s.path}
-                      href={s.path}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-neutral-400 hover:text-white py-1"
-                    >
-                      {s.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-            <Link
-              href="/contact"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`py-2 border-b border-white/10 ${pathname === '/contact' ? 'text-yellow-400' : 'text-neutral-300'}`}
-            >
-              Contact
+              {navigation?.cta?.label || 'GET IN TOUCH'}
             </Link>
           </div>
         </div>

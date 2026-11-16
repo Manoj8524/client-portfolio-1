@@ -1,28 +1,33 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
-import {
-  heroColumn1,
-  heroColumn2,
-  heroColumn3,
-  heroColumn4,
-  heroColumn5,
-  HeroPosterItem,
-} from '@/data/heroPosters';
+import { SiteContent, HeroPosterItem } from '@/lib/contentStore';
+import defaultContent from '@/data/siteContent.json';
 
 interface StarterHomeProps {
-  services?: any[];
-  featuredPosters?: any[];
-  clients?: any[];
+  initialData?: SiteContent;
 }
 
-export default function StarterHome({}: StarterHomeProps) {
+export default function StarterHome({ initialData }: StarterHomeProps) {
+  const [content, setContent] = useState<SiteContent>(initialData || (defaultContent as SiteContent));
   const watchRef = useRef<HTMLDivElement>(null);
   const galaxyContainerRef = useRef<HTMLDivElement>(null);
+
+  // Sync latest updates from content store on mount
+  useEffect(() => {
+    fetch('/api/content')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.home) {
+          setContent(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Featured watch scroll parallax
   const { scrollYProgress: watchProgress } = useScroll({
@@ -52,7 +57,6 @@ export default function StarterHome({}: StarterHomeProps) {
   };
 
   const renderColumn = (posters: HeroPosterItem[], animationClass: string) => {
-    // Duplicate posters array for seamless infinite vertical marquee
     const loopPosters = [...posters, ...posters];
     return (
       <div className="relative flex-1 h-full overflow-hidden select-none">
@@ -64,7 +68,7 @@ export default function StarterHome({}: StarterHomeProps) {
             >
               <Image
                 src={poster.image}
-                alt={poster.title}
+                alt={poster.title || 'Film Poster'}
                 fill
                 sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 20vw"
                 className="object-cover object-center group-hover/poster:scale-105 transition-transform duration-700 ease-out select-none"
@@ -72,7 +76,6 @@ export default function StarterHome({}: StarterHomeProps) {
                 loading={idx < 4 ? undefined : 'lazy'}
                 quality={85}
               />
-              {/* Subtle dark film sheen with hover brighten */}
               <div className="absolute inset-0 bg-black/15 group-hover/poster:bg-black/0 transition-colors duration-300" />
             </div>
           ))}
@@ -81,239 +84,262 @@ export default function StarterHome({}: StarterHomeProps) {
     );
   };
 
+  const { home } = content;
+  const { hero, featuredWatch, showcaseCards, disciplines, brandsTicker, zoomSection } = home;
+
   return (
     <div className="w-full bg-black text-white font-ppmori overflow-x-hidden p-0 m-0 selection:bg-[#fec52d] selection:text-black">
       {/* =========================================================================
           SECTION 1: HERO - DYNAMIC 5-COLUMN CONTINUOUS VERTICAL POSTER MATRIX
-          All 5 columns continuously scroll upward with differential speeds.
-          Column 5 (right) at base speed -> Column 1 (left) at fastest speed.
           ========================================================================= */}
-      <section
-        className="relative w-full h-screen flex flex-col justify-between items-center overflow-hidden pt-20 p-0 m-0 bg-black"
-      >
-        {/* Dynamic 5-Column Vertical Scrolling Film Poster Matrix */}
-        <div className="absolute inset-0 z-0 flex gap-2.5 sm:gap-3.5 md:gap-5 px-2 sm:px-4 md:px-6 overflow-hidden">
-          {renderColumn(heroColumn1, 'animate-scroll-lane-1')}
-          {renderColumn(heroColumn2, 'animate-scroll-lane-2')}
-          {renderColumn(heroColumn3, 'animate-scroll-lane-3')}
-          {renderColumn(heroColumn4, 'animate-scroll-lane-4')}
-          {renderColumn(heroColumn5, 'animate-scroll-lane-5')}
+      <section className="relative w-full h-screen min-h-[700px] flex flex-col justify-between items-center overflow-hidden pt-20 p-0 m-0">
+        {/* Background 5-Column Continuous Upward Scrolling Poster Lanes */}
+        <div className="absolute inset-0 z-0 flex gap-3 sm:gap-4 md:gap-5 px-3 sm:px-6 md:px-8 py-0 overflow-hidden pointer-events-none select-none">
+          {renderColumn(hero.posterColumns?.lane1 || [], 'animate-scroll-lane-1')}
+          {renderColumn(hero.posterColumns?.lane2 || [], 'animate-scroll-lane-2')}
+          {renderColumn(hero.posterColumns?.lane3 || [], 'animate-scroll-lane-3')}
+          <div className="hidden sm:block flex-1 h-full">
+            {renderColumn(hero.posterColumns?.lane4 || [], 'animate-scroll-lane-4')}
+          </div>
+          <div className="hidden md:block flex-1 h-full">
+            {renderColumn(hero.posterColumns?.lane5 || [], 'animate-scroll-lane-5')}
+          </div>
         </div>
 
-        {/* Ambient Top & Bottom Vignettes for Contrast and Depth */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-black via-black/60 to-transparent z-1" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black via-black/60 to-transparent z-1" />
-        <div className="pointer-events-none absolute inset-0 bg-radial from-transparent via-black/20 to-black/70 z-1" />
+        {/* Cinematic Vignette Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/35 to-black/95 z-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-radial from-transparent via-black/40 to-black/90 z-10 pointer-events-none" />
 
-        {/* Top spacer */}
-        <div className="h-10" />
+        {/* Top Header & Intro Bio Overlay */}
+        <div className="relative z-20 w-full px-6 sm:px-10 md:px-16 flex flex-row items-start justify-between pointer-events-auto pt-6">
+          <div className="flex flex-row items-start gap-4 sm:gap-5">
+            {/* Avatar Thumbnail */}
+            <div className="w-[44px] h-[44px] rounded-lg overflow-hidden flex-none bg-[#111] border border-white/15 shadow-2xl mt-0.5">
+              <Image
+                src={hero.avatar || '/starter_assets/ZaApBaIfuKVadeqET6B3KEc3ZGI.png'}
+                alt="Muthu"
+                width={44}
+                height={44}
+                priority
+                className="w-full h-full object-cover select-none"
+              />
+            </div>
 
-        {/* Flexible center space */}
-        <div className="flex-1" />
+            {/* Heading text */}
+            <div className="w-full max-w-[560px] flex flex-col items-start gap-2.5">
+              <h1 className="text-[17px] sm:text-[19px] font-bold uppercase text-white leading-[1.3] tracking-wide font-ppmori">
+                {hero.bioHeading}
+              </h1>
 
-        {/* Center Bottom: Scroll Down Indicator */}
-        <div className="relative z-10 pb-8 flex flex-col items-center">
+              <div className="flex items-center gap-4 pt-1 text-[12px] font-medium uppercase tracking-wide">
+                <Link
+                  href={hero.ctaPrimary?.href || '/contact'}
+                  className="text-white underline hover:text-[#fec52d] transition-colors"
+                >
+                  {hero.ctaPrimary?.label || 'GET IN TOUCH'}
+                </Link>
+                <span className="text-neutral-600">/</span>
+                <Link
+                  href={hero.ctaSecondary?.href || '/works'}
+                  className="text-neutral-400 hover:text-white transition-colors inline-flex items-center gap-1"
+                >
+                  <span>{hero.ctaSecondary?.label || 'EXPLORE WORKS'}</span>
+                  <ArrowDown className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Badges */}
+          <div className="hidden lg:flex flex-col items-end text-right font-mono text-xs text-neutral-400 space-y-1 select-none">
+            {hero.badges?.map((badge, idx) => (
+              <span key={idx} className={idx === 0 ? 'text-white font-semibold' : ''}>
+                {badge}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Hero Footer Bar */}
+        <div className="relative z-20 w-full px-6 sm:px-10 md:px-16 pb-8 flex flex-row items-center justify-between text-[12px] font-medium text-[rgb(130,130,130)] pointer-events-auto">
           <button
             onClick={scrollToNext}
-            className="group flex flex-col items-center gap-2 text-neutral-300 hover:text-[#fec52d] transition-colors cursor-pointer"
-            aria-label="Scroll to featured works"
+            className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors group cursor-pointer"
           >
-            <span className="text-[11px] font-mono uppercase tracking-[0.25em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-              Scroll To Discover
+            <span className="w-6 h-6 rounded-full border border-neutral-700 flex items-center justify-center group-hover:border-[#fec52d] group-hover:text-[#fec52d] transition-colors">
+              <ArrowDown className="w-3 h-3 group-hover:translate-y-0.5 transition-transform" />
             </span>
-            <div className="w-8 h-8 rounded-full border border-white/30 bg-black/60 backdrop-blur-md flex items-center justify-center group-hover:border-[#fec52d] transition-colors animate-bounce shadow-xl">
-              <ArrowDown className="w-3.5 h-3.5 text-white group-hover:text-[#fec52d]" />
-            </div>
+            <span className="uppercase tracking-widest text-[11px] font-mono">SCROLL TO DISCOVER</span>
           </button>
+
+          <div className="flex items-center gap-2 text-[11px] font-mono text-neutral-500 uppercase tracking-widest">
+            <span className="w-2 h-2 rounded-full bg-[#fec52d] animate-pulse" />
+            <span>CONTINUOUS CINEMATIC FEED</span>
+          </div>
         </div>
       </section>
 
       {/* =========================================================================
-          SECTION 2: 3-COLUMN SHOWCASE CARDS (Cloned from 01.psb)
-          ZERO GAP, ZERO PADDING, FULL BLEED EDGE-TO-EDGE
+          SECTION 2: FEATURED CASE SHOWCASE
           ========================================================================= */}
       <section
         id="featured-showcase"
-        className="w-full p-0 m-0 bg-black border-t border-neutral-900/80"
-      >
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-0 p-0 m-0">
-          {/* Card 1: Orange Mechanical Device */}
-          <Link
-            href="/works?category=BRANDING"
-            className="group relative aspect-[1600/2012] w-full block overflow-hidden rounded-none border-b border-neutral-900/80 md:border-b-0 md:border-r border-neutral-900/80 bg-neutral-950"
-          >
-            <Image
-              src="/extracted_assets/home/home_showcase_1.webp"
-              alt="Brand, website design, Development"
-              fill
-              sizes="(max-width: 768px) 100vw, 33.33vw"
-              className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
-              quality={90}
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-            <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="w-10 h-10 rounded-full bg-[#fec52d] text-black flex items-center justify-center shadow-lg">
-                <ArrowUpRight className="w-5 h-5" />
-              </div>
-            </div>
-          </Link>
-
-          {/* Card 2: Outdoor Boxes Packaging */}
-          <Link
-            href="/works?category=PRINT+%26+ADS"
-            className="group relative aspect-[1600/2012] w-full block overflow-hidden rounded-none border-b border-neutral-900/80 md:border-b-0 md:border-r border-neutral-900/80 bg-neutral-950"
-          >
-            <Image
-              src="/extracted_assets/home/home_showcase_2.webp"
-              alt="Held by Hands Outdoor Boxes Packaging"
-              fill
-              sizes="(max-width: 768px) 100vw, 33.33vw"
-              className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
-              quality={90}
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-            <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="w-10 h-10 rounded-full bg-[#fec52d] text-black flex items-center justify-center shadow-lg">
-                <ArrowUpRight className="w-5 h-5" />
-              </div>
-            </div>
-          </Link>
-
-          {/* Card 3: Modern Architectural Model */}
-          <Link
-            href="/works?category=SOCIAL+MEDIA+CREATIVES"
-            className="group relative aspect-[1600/2012] w-full block overflow-hidden rounded-none bg-neutral-950"
-          >
-            <Image
-              src="/extracted_assets/home/home_showcase_3.webp"
-              alt="A&G Studio Art Direction"
-              fill
-              sizes="(max-width: 768px) 100vw, 33.33vw"
-              className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
-              quality={90}
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-            <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="w-10 h-10 rounded-full bg-[#fec52d] text-black flex items-center justify-center shadow-lg">
-                <ArrowUpRight className="w-5 h-5" />
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 3: SOTTO ZERO SMARTWATCH PRODUCT BANNER (Cloned from 01.psb)
-          ZERO GAP, FULL BLEED, MATTE BLACK PRODUCT SHOWCASE
-          ========================================================================= */}
-      <section
         ref={watchRef}
-        className="relative w-full aspect-[4800/1476] min-h-[380px] sm:min-h-[460px] md:min-h-[560px] lg:min-h-[640px] flex items-center justify-center overflow-hidden border-t border-neutral-900/80 p-0 m-0 bg-neutral-950"
+        className="relative w-full min-h-[90vh] lg:min-h-screen flex items-center justify-center overflow-hidden border-t border-neutral-900/80 p-0 m-0"
       >
-        <motion.div
-          style={{ scale: watchScale }}
-          className="absolute inset-0 z-0 will-change-transform"
-        >
+        <motion.div style={{ scale: watchScale }} className="absolute inset-0 z-0 will-change-transform">
           <Image
-            src="/extracted_assets/home/home_featured_watch.webp"
-            alt="Sotto Zero Smartwatch Product Direction"
+            src={featuredWatch.image || '/extracted_assets/home/home_featured_watch.webp'}
+            alt={featuredWatch.title}
             fill
             sizes="100vw"
             className="object-cover object-center select-none"
             quality={92}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60 z-1" />
+          <div className="absolute inset-0 bg-radial from-transparent via-black/20 to-black/80 z-1" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/80 z-1" />
         </motion.div>
 
-        {/* Interactive Corner Hotspot */}
-        <div className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12 z-10 max-w-md">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[11px] font-mono uppercase tracking-[0.2em] text-[#fec52d] mb-3">
-            <span>Featured Product</span>
+        <div className="relative z-10 text-center px-6 max-w-3xl flex flex-col items-center gap-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 border border-white/20 text-[#fec52d] text-xs font-mono uppercase tracking-[0.25em] backdrop-blur-md">
+            <span>{featuredWatch.badge}</span>
           </div>
-          <h3 className="font-horas text-2xl sm:text-4xl uppercase tracking-tight text-white mb-2">
-            Sotto Zero
-          </h3>
-          <p className="text-xs sm:text-sm text-neutral-400 font-light max-w-xs">
-            Industrial hardware identity and digital experience interface.
+          <h2 className="font-horas text-4xl sm:text-6xl md:text-7xl uppercase tracking-tighter text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+            {featuredWatch.title}
+          </h2>
+          <p className="font-ppmori text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
+            {featuredWatch.description}
           </p>
+          <Link
+            href={featuredWatch.cta?.href || '/works'}
+            className="mt-4 px-8 py-3.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/25 text-white hover:bg-[#fec52d] hover:text-black hover:scale-105 font-medium text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-300 shadow-2xl flex items-center gap-2 group"
+          >
+            <span>{featuredWatch.cta?.label || 'Explore Case Study'}</span>
+            <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
+          </Link>
         </div>
       </section>
 
       {/* =========================================================================
-          SECTION 4: 50/50 SPLIT VIEW (LAPTOP & MOBILE MOCKUPS) (Cloned from 01.psb)
-          ZERO GAP, FULL BLEED EDGE-TO-EDGE
+          SECTION 3: 3-TIER SHOWCASE CARDS
           ========================================================================= */}
-      <section className="w-full p-0 m-0 bg-black border-t border-neutral-900/80">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-0 p-0 m-0">
-          {/* Left 50%: Responsive Laptop Showcase */}
-          <div className="relative aspect-[2788/1437] min-h-[340px] sm:min-h-[420px] w-full overflow-hidden border-b lg:border-b-0 lg:border-r border-neutral-900/80 bg-neutral-950">
-            <Image
-              src="/extracted_assets/home/home_split_laptop.webp"
-              alt="Desktop Digital Experience Showcase"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover object-center"
-              quality={90}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-            <div className="absolute bottom-6 left-6 z-10">
-              <span className="text-[11px] font-mono tracking-widest uppercase text-neutral-400">
-                01 // Desktop Architecture
-              </span>
+      <section className="relative w-full border-t border-neutral-900/80 bg-black p-0 m-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-neutral-900/80">
+          {showcaseCards?.map((card, idx) => (
+            <div
+              key={idx}
+              className="relative aspect-[3/4] sm:aspect-[4/5] md:aspect-[9/16] lg:aspect-[3/4] w-full overflow-hidden group"
+            >
+              <Image
+                src={card.image}
+                alt={card.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover object-center select-none group-hover:scale-105 transition-transform duration-700 ease-out"
+                quality={90}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-1" />
+              <div className="absolute inset-0 p-8 sm:p-10 flex flex-col justify-between z-10 pointer-events-none">
+                <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d]">
+                  {card.tag}
+                </span>
+                <div>
+                  <h3 className="font-horas text-2xl sm:text-3xl uppercase tracking-tight text-white mb-2">
+                    {card.title}
+                  </h3>
+                  <p className="font-ppmori text-xs sm:text-sm text-neutral-300 leading-relaxed mb-4">
+                    {card.description}
+                  </p>
+                  <Link
+                    href={card.link || '/works'}
+                    className="pointer-events-auto inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#fec52d] hover:underline"
+                  >
+                    <span>View Projects</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 4: DISCIPLINES & SERVICES
+          ========================================================================= */}
+      <section className="relative w-full py-24 sm:py-32 bg-black border-t border-neutral-900/80">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 md:px-16">
+          <div className="max-w-3xl mb-16 sm:mb-20">
+            <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">
+              // COMPLETE AGENCY SUITE
+            </p>
+            <h2 className="font-horas text-4xl sm:text-6xl md:text-7xl uppercase tracking-tighter leading-none text-white mb-6">
+              Our Disciplines.
+            </h2>
+            <p className="font-ppmori text-neutral-400 text-sm md:text-base leading-relaxed">
+              We operate across every discipline required to craft, launch, and amplify creative projects on the global stage.
+            </p>
           </div>
 
-          {/* Right 50%: Responsive Mobile Showcase */}
-          <div className="relative aspect-[2788/1437] min-h-[340px] sm:min-h-[420px] w-full overflow-hidden bg-neutral-950">
-            <Image
-              src="/extracted_assets/home/home_split_mobile.webp"
-              alt="Mobile Interface & Social Campaign"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover object-center"
-              quality={90}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-            <div className="absolute bottom-6 left-6 z-10">
-              <span className="text-[11px] font-mono tracking-widest uppercase text-neutral-400">
-                02 // Mobile Touch Experience
-              </span>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {disciplines?.map((svc, idx) => (
+              <Link
+                key={svc.slug || idx}
+                href={svc.path}
+                className="group p-8 rounded-3xl bg-neutral-950/80 border border-neutral-900 hover:border-neutral-700 transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-8">
+                    <span className="text-xs font-mono uppercase tracking-widest text-[#fec52d]">
+                      0{idx + 1} //
+                    </span>
+                    <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-[#fec52d] group-hover:rotate-45 transition-all" />
+                  </div>
+                  <h3 className="font-horas text-2xl uppercase tracking-wide text-white mb-3 group-hover:text-[#fec52d] transition-colors">
+                    {svc.name}
+                  </h3>
+                  <p className="font-ppmori text-sm text-neutral-400 leading-relaxed">
+                    {svc.desc}
+                  </p>
+                </div>
+
+                <div className="mt-8 pt-4 border-t border-neutral-900 flex items-center justify-between text-xs font-mono uppercase tracking-wider text-neutral-500 group-hover:text-neutral-300">
+                  <span>View Projects</span>
+                  <span>→</span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
       {/* =========================================================================
-          SECTION 5: BRANDS I'VE WORKED WITH (CONTINUOUS MARQUEE TICKER)
+          SECTION 5: CLIENTS MARQUEE TICKER (Restored from 01.psb)
           ========================================================================= */}
       <section className="w-full py-12 sm:py-16 bg-black border-t border-neutral-900/80 overflow-hidden">
         <div className="text-center mb-8">
           <p className="text-xs uppercase tracking-[0.3em] font-mono text-neutral-500">
-            // Trusted By Premier Studios &amp; Visionary Brands
+            {brandsTicker?.tag || '// Trusted By Premier Studios & Visionary Brands'}
           </p>
         </div>
 
-        {/* Seamless Double-Strip Infinite Marquee (Restored from 01.psb) */}
         <div className="relative w-full overflow-hidden select-none py-2">
-          {/* Edge gradient fades for luxury editorial feel */}
           <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-black to-transparent z-10" />
           <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-black to-transparent z-10" />
 
           <div className="animate-marquee flex items-center">
-            {/* Strip 1 */}
             <div className="flex-shrink-0 h-20 sm:h-28 md:h-36 w-auto flex items-center pr-12">
               <img
-                src="/extracted_assets/home/home_brands_ticker.webp"
-                alt="Partner Brands and Production Houses"
+                src={brandsTicker?.image || '/extracted_assets/home/home_brands_ticker.webp'}
+                alt="Partner Brands"
                 className="h-full w-auto object-contain max-w-none opacity-85 hover:opacity-100 transition-opacity"
                 draggable={false}
               />
             </div>
-            {/* Strip 2 */}
             <div className="flex-shrink-0 h-20 sm:h-28 md:h-36 w-auto flex items-center pr-12" aria-hidden="true">
               <img
-                src="/extracted_assets/home/home_brands_ticker.webp"
-                alt="Partner Brands and Production Houses"
+                src={brandsTicker?.image || '/extracted_assets/home/home_brands_ticker.webp'}
+                alt="Partner Brands"
                 className="h-full w-auto object-contain max-w-none opacity-85 hover:opacity-100 transition-opacity"
                 draggable={false}
               />
@@ -324,30 +350,25 @@ export default function StarterHome({}: StarterHomeProps) {
 
       {/* =========================================================================
           SECTION 6: ZOOM INTO THE "O" CINEMATIC DIVE SECTION
-          Scroll-driven zoom directly into the letter "O", diving cleanly
-          straight into the Footer with zero black screen lingering.
           ========================================================================= */}
       <section
         ref={galaxyContainerRef}
         className="relative w-full h-[175vh] bg-black p-0 m-0 border-t border-neutral-900/80"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black">
-          {/* Plain Luxury Cinematic Dark Background (No baked-in text or clutter) */}
           <div className="absolute inset-0 z-0 select-none pointer-events-none">
             <Image
-              src="/extracted_assets/home/plain_portal_bg.webp"
+              src={zoomSection?.backdropImage || '/extracted_assets/home/plain_portal_bg.webp'}
               alt="Cinematic Portal Backdrop"
               fill
               sizes="100vw"
               className="object-cover object-center select-none opacity-90"
               quality={90}
             />
-            {/* Subtle atmospheric vignette */}
             <div className="absolute inset-0 bg-radial from-transparent via-black/40 to-black z-1" />
             <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black z-1" />
           </div>
 
-          {/* Zooming Typography centered precisely on the golden "O" */}
           <motion.div
             style={{
               scale: galaxyZoom,
@@ -359,7 +380,6 @@ export default function StarterHome({}: StarterHomeProps) {
               {/* Line 1: ZOOM */}
               <div className="font-horas text-6xl sm:text-8xl md:text-9xl lg:text-[140px] uppercase font-bold tracking-tight text-white leading-[0.88] drop-shadow-[0_10px_35px_rgba(0,0,0,0.95)] flex items-center justify-center">
                 <span>Z</span>
-                {/* The Portal O with distinct circular center */}
                 <span className="relative inline-flex items-center justify-center text-[#fec52d]">
                   O
                   <span className="absolute w-3 h-3 sm:w-5 sm:h-5 rounded-full bg-black shadow-inner" />
@@ -370,16 +390,15 @@ export default function StarterHome({}: StarterHomeProps) {
 
               {/* Line 2: INTO THE */}
               <div className="font-horas text-2xl sm:text-4xl md:text-5xl lg:text-6xl uppercase tracking-[0.25em] text-neutral-300 font-semibold mt-2 sm:mt-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
-                INTO THE
+                {zoomSection?.word2 || 'INTO THE'}
               </div>
 
               {/* Line 3: EXTRAORDINARY */}
               <div className="font-horas text-4xl sm:text-6xl md:text-7xl lg:text-8xl uppercase tracking-wider text-white font-bold mt-1 sm:mt-2 drop-shadow-[0_8px_24px_rgba(0,0,0,0.9)]">
-                EXTRAORDINARY
+                {zoomSection?.word3 || 'EXTRAORDINARY'}
               </div>
             </div>
 
-            {/* Elegant Callout CTA Button - Fades out smoothly as user scrolls into the dive */}
             <motion.div
               style={{
                 opacity: galaxyCtaOpacity,
@@ -388,10 +407,10 @@ export default function StarterHome({}: StarterHomeProps) {
               className="mt-8 sm:mt-10 pointer-events-auto"
             >
               <Link
-                href="/contact"
+                href={zoomSection?.cta?.href || '/contact'}
                 className="px-9 py-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/25 text-white hover:bg-[#fec52d] hover:text-black hover:scale-105 font-medium text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-300 shadow-2xl flex items-center gap-3 group"
               >
-                <span>Initiate Collaboration</span>
+                <span>{zoomSection?.cta?.label || 'Initiate Collaboration'}</span>
                 <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
               </Link>
             </motion.div>

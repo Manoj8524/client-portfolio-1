@@ -1,0 +1,1644 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  LayoutDashboard,
+  Home as HomeIcon,
+  Briefcase,
+  User,
+  PhoneCall,
+  Inbox,
+  LogOut,
+  Save,
+  Plus,
+  Trash2,
+  Upload,
+  CheckCircle2,
+  AlertCircle,
+  ExternalLink,
+  RefreshCw,
+  Mail,
+  Eye,
+  Sliders,
+  Sparkles,
+  Layers,
+  ArrowUpRight,
+} from 'lucide-react';
+import { SiteContent, ContactMessage, WorkProjectItem } from '@/lib/contentStore';
+
+type AdminTab = 'overview' | 'global' | 'home' | 'works' | 'about' | 'contact' | 'messages';
+
+export default function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
+
+  const [content, setContent] = useState<SiteContent | null>(null);
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState('');
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
+
+  // Check auth & fetch initial data
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const res = await fetch('/api/auth');
+      const data = await res.json();
+      if (data.authenticated) {
+        setIsAuthenticated(true);
+        fetchContent();
+        fetchMessages();
+      } else {
+        setIsAuthenticated(false);
+        setLoading(false);
+      }
+    } catch {
+      setIsAuthenticated(false);
+      setLoading(false);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: passwordInput }),
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        setIsAuthenticated(true);
+        fetchContent();
+        fetchMessages();
+      } else {
+        setLoginError(data.error || 'Invalid password');
+      }
+    } catch {
+      setLoginError('Authentication failed');
+    }
+  };
+
+  const handleLogout = async () => {
+    await fetch('/api/auth', { method: 'DELETE' });
+    setIsAuthenticated(false);
+  };
+
+  const fetchContent = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/content');
+      const data = await res.json();
+      setContent(data);
+    } catch (err) {
+      console.error('Error fetching content:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMessages = async () => {
+    try {
+      const res = await fetch('/api/messages');
+      const json = await res.json();
+      if (json.ok && Array.isArray(json.data)) {
+        setMessages(json.data);
+      }
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+    }
+  };
+
+  const handleSaveContent = async () => {
+    if (!content) return;
+    setSaving(true);
+    setSaveSuccess(false);
+    setSaveError('');
+    try {
+      const res = await fetch('/api/content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(content),
+      });
+      const json = await res.json();
+      if (res.ok && json.ok) {
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3500);
+      } else {
+        setSaveError(json.error || 'Failed to save');
+      }
+    } catch {
+      setSaveError('Network error while saving');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Image Uploader Handler
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onUploaded: (url: string) => void,
+    fieldKey: string
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingField(fieldKey);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok && data.ok && data.url) {
+        onUploaded(data.url);
+      } else {
+        alert(data.error || 'Upload failed');
+      }
+    } catch (err) {
+      alert('Error uploading image');
+    } finally {
+      setUploadingField(null);
+    }
+  };
+
+  // Message Actions
+  const handleToggleMessageStatus = async (id: string, currentStatus: string) => {
+    const newStatus = currentStatus === 'unread' ? 'read' : 'unread';
+    try {
+      const res = await fetch('/api/messages', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      if (res.ok) {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === id ? { ...m, status: newStatus } : m))
+        );
+      }
+    } catch (err) {
+      console.error('Error updating status:', err);
+    }
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this message?')) return;
+    try {
+      const res = await fetch(`/api/messages?id=${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setMessages((prev) => prev.filter((m) => m.id !== id));
+      }
+    } catch (err) {
+      console.error('Error deleting message:', err);
+    }
+  };
+
+  // ---------------------------------------------------------------------------
+  // LOGIN SCREEN
+  // ---------------------------------------------------------------------------
+  if (isAuthenticated === false) {
+    return (
+      <div className="min-h-screen w-full bg-black flex items-center justify-center p-6 text-white font-ppmori">
+        <div className="w-full max-w-md p-8 sm:p-10 rounded-3xl bg-neutral-950 border border-neutral-800 shadow-2xl flex flex-col items-center text-center">
+          <div className="w-14 h-14 rounded-2xl bg-[#fec52d]/10 border border-[#fec52d]/30 flex items-center justify-center text-[#fec52d] mb-6">
+            <Sparkles className="w-7 h-7" />
+          </div>
+          <h1 className="font-horas text-3xl sm:text-4xl uppercase tracking-tight text-white mb-2">
+            MUTHU STUDIO
+          </h1>
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-neutral-400 mb-8">
+            ENTERPRISE CONTENT &amp; LEADS PORTAL
+          </p>
+
+          <form onSubmit={handleLogin} className="w-full flex flex-col gap-4 text-left">
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
+                Master Security Key
+              </label>
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                placeholder="Enter password..."
+                className="w-full px-5 py-3.5 rounded-xl bg-neutral-900 border border-neutral-800 focus:border-[#fec52d] focus:outline-none text-white text-sm tracking-wide transition-colors"
+                autoFocus
+                required
+              />
+            </div>
+
+            {loginError && (
+              <p className="text-xs text-red-400 flex items-center gap-1.5 pt-1">
+                <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                {loginError}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className="mt-4 w-full py-3.5 rounded-xl bg-[#fec52d] text-black font-semibold text-xs uppercase tracking-[0.2em] hover:bg-[#ffe066] transition-all duration-200 shadow-lg cursor-pointer"
+            >
+              Access Dashboard
+            </button>
+          </form>
+
+          <p className="mt-8 text-[11px] font-mono text-neutral-600">
+            Default Key: <code className="text-neutral-400 font-bold">muthu2026</code>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (loading || !content) {
+    return (
+      <div className="min-h-screen w-full bg-black flex items-center justify-center text-white font-mono text-xs uppercase tracking-[0.3em]">
+        <div className="flex flex-col items-center gap-4">
+          <RefreshCw className="w-6 h-6 animate-spin text-[#fec52d]" />
+          <span>Synchronizing Studio Architecture...</span>
+        </div>
+      </div>
+    );
+  }
+
+  const unreadMessagesCount = messages.filter((m) => m.status === 'unread').length;
+
+  // ---------------------------------------------------------------------------
+  // MAIN ADMIN CONSOLE
+  // ---------------------------------------------------------------------------
+  return (
+    <div className="min-h-screen w-full bg-[#050505] text-white font-ppmori selection:bg-[#fec52d] selection:text-black flex flex-col">
+      {/* Top Admin Header Bar */}
+      <header className="sticky top-0 z-50 w-full bg-neutral-950/90 backdrop-blur-xl border-b border-neutral-900 px-6 sm:px-10 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link href="/" target="_blank" className="flex items-center gap-2 group">
+            <span className="font-horas text-2xl uppercase tracking-tighter text-white group-hover:text-[#fec52d] transition-colors">
+              MUTHU
+            </span>
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-400">
+              CMS V2
+            </span>
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-3 sm:gap-4">
+          <button
+            onClick={handleSaveContent}
+            disabled={saving}
+            className={`px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-[0.15em] flex items-center gap-2 shadow-xl transition-all duration-300 cursor-pointer ${
+              saving
+                ? 'bg-neutral-800 text-neutral-400 cursor-not-allowed'
+                : 'bg-[#fec52d] text-black hover:bg-[#ffe066] hover:scale-105'
+            }`}
+          >
+            {saving ? (
+              <>
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                <span>Saving...</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-3.5 h-3.5" />
+                <span>Save All Edits</span>
+              </>
+            )}
+          </button>
+
+          <Link
+            href="/"
+            target="_blank"
+            className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 text-xs font-mono uppercase tracking-wider transition-colors"
+          >
+            <span>Live Site</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
+
+          <button
+            onClick={handleLogout}
+            title="Log Out"
+            className="p-2.5 rounded-full bg-neutral-900 hover:bg-red-950/50 hover:text-red-400 border border-neutral-800 text-neutral-400 transition-colors cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
+      </header>
+
+      {/* Toast Alert Feedback */}
+      <AnimatePresence>
+        {saveSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-20 right-6 z-50 px-5 py-3 rounded-2xl bg-neutral-900 border border-emerald-500/50 text-emerald-400 shadow-2xl flex items-center gap-3 text-xs font-mono uppercase tracking-wider"
+          >
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span>All Site Content &amp; Imagery Successfully Deployed!</span>
+          </motion.div>
+        )}
+        {saveError && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-20 right-6 z-50 px-5 py-3 rounded-2xl bg-neutral-900 border border-red-500/50 text-red-400 shadow-2xl flex items-center gap-3 text-xs font-mono uppercase tracking-wider"
+          >
+            <AlertCircle className="w-4 h-4 text-red-400" />
+            <span>{saveError}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main Admin Content Layout */}
+      <div className="flex-1 flex flex-col md:flex-row">
+        {/* Navigation Sidebar Tabs */}
+        <aside className="w-full md:w-64 bg-neutral-950/60 border-b md:border-b-0 md:border-r border-neutral-900 p-4 sm:p-6 flex-shrink-0 flex md:flex-col gap-1.5 overflow-x-auto select-none">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`px-4 py-3 rounded-xl text-left text-xs font-mono uppercase tracking-wider flex items-center gap-3 transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'overview'
+                ? 'bg-[#fec52d] text-black font-bold shadow-lg'
+                : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4 flex-shrink-0" />
+            <span>Overview</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('global')}
+            className={`px-4 py-3 rounded-xl text-left text-xs font-mono uppercase tracking-wider flex items-center gap-3 transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'global'
+                ? 'bg-[#fec52d] text-black font-bold shadow-lg'
+                : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+            }`}
+          >
+            <Sliders className="w-4 h-4 flex-shrink-0" />
+            <span>Nav &amp; Footer</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('home')}
+            className={`px-4 py-3 rounded-xl text-left text-xs font-mono uppercase tracking-wider flex items-center gap-3 transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'home'
+                ? 'bg-[#fec52d] text-black font-bold shadow-lg'
+                : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+            }`}
+          >
+            <HomeIcon className="w-4 h-4 flex-shrink-0" />
+            <span>Home Page</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('works')}
+            className={`px-4 py-3 rounded-xl text-left text-xs font-mono uppercase tracking-wider flex items-center gap-3 transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'works'
+                ? 'bg-[#fec52d] text-black font-bold shadow-lg'
+                : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+            }`}
+          >
+            <Briefcase className="w-4 h-4 flex-shrink-0" />
+            <span>Works Portfolio</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('about')}
+            className={`px-4 py-3 rounded-xl text-left text-xs font-mono uppercase tracking-wider flex items-center gap-3 transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'about'
+                ? 'bg-[#fec52d] text-black font-bold shadow-lg'
+                : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+            }`}
+          >
+            <User className="w-4 h-4 flex-shrink-0" />
+            <span>About Page</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('contact')}
+            className={`px-4 py-3 rounded-xl text-left text-xs font-mono uppercase tracking-wider flex items-center gap-3 transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'contact'
+                ? 'bg-[#fec52d] text-black font-bold shadow-lg'
+                : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+            }`}
+          >
+            <PhoneCall className="w-4 h-4 flex-shrink-0" />
+            <span>Contact Info</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('messages')}
+            className={`px-4 py-3 rounded-xl text-left text-xs font-mono uppercase tracking-wider flex items-center justify-between transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'messages'
+                ? 'bg-[#fec52d] text-black font-bold shadow-lg'
+                : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Inbox className="w-4 h-4 flex-shrink-0" />
+              <span>Leads Inbox</span>
+            </div>
+            {unreadMessagesCount > 0 && (
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  activeTab === 'messages'
+                    ? 'bg-black text-[#fec52d]'
+                    : 'bg-[#fec52d] text-black'
+                }`}
+              >
+                {unreadMessagesCount}
+              </span>
+            )}
+          </button>
+        </aside>
+
+        {/* Tab Panel Viewports */}
+        <main className="flex-1 p-6 sm:p-10 max-w-6xl">
+          {/* TAB 1: OVERVIEW */}
+          {activeTab === 'overview' && (
+            <div className="flex flex-col gap-8">
+              <div>
+                <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d] mb-1">
+                  // CMS CONTROL ROOM
+                </p>
+                <h2 className="font-horas text-3xl sm:text-5xl uppercase tracking-tight text-white">
+                  Studio Overview &amp; Health
+                </h2>
+              </div>
+
+              {/* Metric Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div className="p-6 rounded-2xl bg-neutral-900/60 border border-neutral-800 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-neutral-400 mb-4">
+                    <span className="text-xs font-mono uppercase tracking-wider">Catalog Works</span>
+                    <Briefcase className="w-4 h-4 text-[#fec52d]" />
+                  </div>
+                  <span className="font-horas text-4xl text-white">
+                    {content.works.projects.length}
+                  </span>
+                  <p className="text-[11px] font-mono text-neutral-500 mt-2">Active live projects</p>
+                </div>
+
+                <div className="p-6 rounded-2xl bg-neutral-900/60 border border-neutral-800 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-neutral-400 mb-4">
+                    <span className="text-xs font-mono uppercase tracking-wider">Hero Posters</span>
+                    <Layers className="w-4 h-4 text-[#fec52d]" />
+                  </div>
+                  <span className="font-horas text-4xl text-white">
+                    {Object.values(content.home.hero.posterColumns).reduce(
+                      (acc, arr) => acc + arr.length,
+                      0
+                    )}
+                  </span>
+                  <p className="text-[11px] font-mono text-neutral-500 mt-2">5 matrix scroll lanes</p>
+                </div>
+
+                <div className="p-6 rounded-2xl bg-neutral-900/60 border border-neutral-800 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-neutral-400 mb-4">
+                    <span className="text-xs font-mono uppercase tracking-wider">Client Inquiries</span>
+                    <Mail className="w-4 h-4 text-[#fec52d]" />
+                  </div>
+                  <span className="font-horas text-4xl text-white">{messages.length}</span>
+                  <p className="text-[11px] font-mono text-neutral-500 mt-2">Total leads recorded</p>
+                </div>
+
+                <div className="p-6 rounded-2xl bg-neutral-900/60 border border-neutral-800 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-neutral-400 mb-4">
+                    <span className="text-xs font-mono uppercase tracking-wider">Unread Leads</span>
+                    <Inbox className="w-4 h-4 text-[#fec52d]" />
+                  </div>
+                  <span className="font-horas text-4xl text-[#fec52d]">
+                    {unreadMessagesCount}
+                  </span>
+                  <p className="text-[11px] font-mono text-neutral-500 mt-2">Awaiting reply</p>
+                </div>
+              </div>
+
+              {/* Quick Actions Guide */}
+              <div className="p-8 rounded-3xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-2xl uppercase tracking-tight text-white">
+                  Editable Architecture Features
+                </h3>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-neutral-400 font-ppmori">
+                  <li className="flex items-start gap-3">
+                    <span className="w-2 h-2 rounded-full bg-[#fec52d] mt-2 flex-shrink-0" />
+                    <span>
+                      <strong>Instant Save &amp; Deploy:</strong> Click &quot;Save All Edits&quot; at any
+                      time to push your copy and image changes directly to live pages.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-2 h-2 rounded-full bg-[#fec52d] mt-2 flex-shrink-0" />
+                    <span>
+                      <strong>Free CDN Image Uploader:</strong> Every image field has an upload button
+                      supporting local storage or Cloudinary CDN.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-2 h-2 rounded-full bg-[#fec52d] mt-2 flex-shrink-0" />
+                    <span>
+                      <strong>Contact Inquiries Leads:</strong> Submissions from the contact form are
+                      safely archived in &quot;Leads Inbox&quot; with contact details.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-2 h-2 rounded-full bg-[#fec52d] mt-2 flex-shrink-0" />
+                    <span>
+                      <strong>Zero Code Required:</strong> Update studio telephone numbers, Google Maps
+                      coordinates, about bio, and poster artworks visually.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: GLOBAL, NAV & FOOTER */}
+          {activeTab === 'global' && (
+            <div className="flex flex-col gap-8">
+              <div>
+                <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d] mb-1">
+                  // GLOBAL IDENTITY &amp; CONTACT
+                </p>
+                <h2 className="font-horas text-3xl sm:text-4xl uppercase tracking-tight text-white">
+                  Navbar, Footer &amp; Coordinates
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
+                    Studio Brand Name
+                  </label>
+                  <input
+                    type="text"
+                    value={content.siteSettings.brandName}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        siteSettings: { ...content.siteSettings, brandName: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
+                    Studio Status Pill (Header Bar)
+                  </label>
+                  <input
+                    type="text"
+                    value={content.siteSettings.statusPill}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        siteSettings: { ...content.siteSettings, statusPill: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
+                    Official Studio Email
+                  </label>
+                  <input
+                    type="email"
+                    value={content.siteSettings.studioEmail}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        siteSettings: { ...content.siteSettings, studioEmail: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
+                    Studio Direct Phone
+                  </label>
+                  <input
+                    type="text"
+                    value={content.siteSettings.studioPhone}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        siteSettings: { ...content.siteSettings, studioPhone: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
+                    Studio Coordinates / Address
+                  </label>
+                  <input
+                    type="text"
+                    value={content.siteSettings.studioCoordinates}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        siteSettings: { ...content.siteSettings, studioCoordinates: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
+                    Google Maps Link URL
+                  </label>
+                  <input
+                    type="text"
+                    value={content.siteSettings.mapsUrl}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        siteSettings: { ...content.siteSettings, mapsUrl: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Social Media Links */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                  Social Media Links
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {Object.entries(content.siteSettings.socials).map(([platform, url]) => (
+                    <div key={platform}>
+                      <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1 capitalize">
+                        {platform} URL
+                      </label>
+                      <input
+                        type="text"
+                        value={url}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            siteSettings: {
+                              ...content.siteSettings,
+                              socials: {
+                                ...content.siteSettings.socials,
+                                [platform]: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs focus:border-[#fec52d] focus:outline-none font-mono"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Footer Newsletter & Copyright */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                  Footer Typography &amp; Copyright
+                </h3>
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                    Newsletter Title
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer.newsletterHeading}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        footer: { ...content.footer, newsletterHeading: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                    Newsletter Description
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer.newsletterDesc}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        footer: { ...content.footer, newsletterDesc: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                    Copyright Notice
+                  </label>
+                  <input
+                    type="text"
+                    value={content.siteSettings.copyright}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        siteSettings: { ...content.siteSettings, copyright: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs font-mono focus:border-[#fec52d] focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: HOME PAGE */}
+          {activeTab === 'home' && (
+            <div className="flex flex-col gap-8">
+              <div>
+                <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d] mb-1">
+                  // HOMEPAGE ARCHITECTURE
+                </p>
+                <h2 className="font-horas text-3xl sm:text-4xl uppercase tracking-tight text-white">
+                  Hero Wall, Showcases &amp; Zoom Dive
+                </h2>
+              </div>
+
+              {/* Hero Bio & Avatar */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                  Hero Intro Statement &amp; Badges
+                </h3>
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
+                    Hero Bio Heading
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={content.home.hero.bioHeading}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        home: {
+                          ...content.home,
+                          hero: { ...content.home.hero, bioHeading: e.target.value },
+                        },
+                      })
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none font-horas tracking-wide leading-relaxed"
+                  />
+                </div>
+
+                {/* Badges */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {content.home.hero.badges.map((badge, idx) => (
+                    <div key={idx}>
+                      <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                        Badge {idx + 1}
+                      </label>
+                      <input
+                        type="text"
+                        value={badge}
+                        onChange={(e) => {
+                          const newBadges = [...content.home.hero.badges];
+                          newBadges[idx] = e.target.value;
+                          setContent({
+                            ...content,
+                            home: {
+                              ...content.home,
+                              hero: { ...content.home.hero, badges: newBadges },
+                            },
+                          });
+                        }}
+                        className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono focus:border-[#fec52d] focus:outline-none"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Featured Watch Showcase */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                  Featured Watch Showcase
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Badge Tag
+                    </label>
+                    <input
+                      type="text"
+                      value={content.home.featuredWatch.badge}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          home: {
+                            ...content.home,
+                            featuredWatch: { ...content.home.featuredWatch, badge: e.target.value },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Showcase Title
+                    </label>
+                    <input
+                      type="text"
+                      value={content.home.featuredWatch.title}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          home: {
+                            ...content.home,
+                            featuredWatch: { ...content.home.featuredWatch, title: e.target.value },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm font-horas"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Description
+                    </label>
+                    <input
+                      type="text"
+                      value={content.home.featuredWatch.description}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          home: {
+                            ...content.home,
+                            featuredWatch: {
+                              ...content.home.featuredWatch,
+                              description: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Watch Visual Image URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={content.home.featuredWatch.image}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            home: {
+                              ...content.home,
+                              featuredWatch: {
+                                ...content.home.featuredWatch,
+                                image: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                      />
+                      <label className="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-mono flex items-center gap-1.5 cursor-pointer">
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Upload</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) =>
+                            handleFileUpload(
+                              e,
+                              (url) =>
+                                setContent({
+                                  ...content,
+                                  home: {
+                                    ...content.home,
+                                    featuredWatch: {
+                                      ...content.home.featuredWatch,
+                                      image: url,
+                                    },
+                                  },
+                                }),
+                              'featuredWatch'
+                            )
+                          }
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Zoom Into The "O" Portal Section */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                  Zoom Into The &quot;O&quot; Dive Section
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Word 1 (Contains &quot;O&quot;)
+                    </label>
+                    <input
+                      type="text"
+                      value={content.home.zoomSection.word1}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          home: {
+                            ...content.home,
+                            zoomSection: { ...content.home.zoomSection, word1: e.target.value },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white font-horas uppercase text-lg"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Word 2
+                    </label>
+                    <input
+                      type="text"
+                      value={content.home.zoomSection.word2}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          home: {
+                            ...content.home,
+                            zoomSection: { ...content.home.zoomSection, word2: e.target.value },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white font-horas uppercase text-lg"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Word 3
+                    </label>
+                    <input
+                      type="text"
+                      value={content.home.zoomSection.word3}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          home: {
+                            ...content.home,
+                            zoomSection: { ...content.home.zoomSection, word3: e.target.value },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white font-horas uppercase text-lg"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Plain Background Image
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={content.home.zoomSection.backdropImage}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            home: {
+                              ...content.home,
+                              zoomSection: {
+                                ...content.home.zoomSection,
+                                backdropImage: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                      />
+                      <label className="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-mono flex items-center gap-1.5 cursor-pointer">
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Upload</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) =>
+                            handleFileUpload(
+                              e,
+                              (url) =>
+                                setContent({
+                                  ...content,
+                                  home: {
+                                    ...content.home,
+                                    zoomSection: {
+                                      ...content.home.zoomSection,
+                                      backdropImage: url,
+                                    },
+                                  },
+                                }),
+                              'zoomBackdrop'
+                            )
+                          }
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Button Text
+                    </label>
+                    <input
+                      type="text"
+                      value={content.home.zoomSection.cta.label}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          home: {
+                            ...content.home,
+                            zoomSection: {
+                              ...content.home.zoomSection,
+                              cta: { ...content.home.zoomSection.cta, label: e.target.value },
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: WORKS PORTFOLIO */}
+          {activeTab === 'works' && (
+            <div className="flex flex-col gap-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d] mb-1">
+                    // PORTFOLIO CATALOG
+                  </p>
+                  <h2 className="font-horas text-3xl sm:text-4xl uppercase tracking-tight text-white">
+                    Film Posters &amp; Works Manager
+                  </h2>
+                </div>
+                <button
+                  onClick={() => {
+                    const newProj: WorkProjectItem = {
+                      id: `proj_${Date.now()}`,
+                      title: 'New Key Visual Project',
+                      category: 'FILM POSTERS',
+                      year: '2026',
+                      image: '/extracted_assets/work/work_card_1.webp',
+                      director: 'Visionary Director',
+                      client: 'Premier Studio',
+                      awards: 'Official Selection',
+                      featured: false,
+                    };
+                    setContent({
+                      ...content,
+                      works: {
+                        ...content.works,
+                        projects: [newProj, ...content.works.projects],
+                      },
+                    });
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-[#fec52d] text-black font-semibold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-[#ffe066] transition-colors cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Project</span>
+                </button>
+              </div>
+
+              {/* Projects List */}
+              <div className="grid grid-cols-1 gap-6">
+                {content.works.projects.map((proj, idx) => (
+                  <div
+                    key={proj.id || idx}
+                    className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col md:flex-row gap-6 items-start"
+                  >
+                    {/* Thumbnail Preview */}
+                    <div className="relative w-32 h-44 rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 flex-shrink-0">
+                      <Image
+                        src={proj.image}
+                        alt={proj.title}
+                        fill
+                        className="object-cover object-center"
+                      />
+                    </div>
+
+                    {/* Project Fields */}
+                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
+                      <div>
+                        <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                          Film / Project Title
+                        </label>
+                        <input
+                          type="text"
+                          value={proj.title}
+                          onChange={(e) => {
+                            const updated = [...content.works.projects];
+                            updated[idx].title = e.target.value;
+                            setContent({
+                              ...content,
+                              works: { ...content.works, projects: updated },
+                            });
+                          }}
+                          className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm font-semibold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                          Category
+                        </label>
+                        <select
+                          value={proj.category}
+                          onChange={(e) => {
+                            const updated = [...content.works.projects];
+                            updated[idx].category = e.target.value;
+                            setContent({
+                              ...content,
+                              works: { ...content.works, projects: updated },
+                            });
+                          }}
+                          className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono uppercase"
+                        >
+                          {content.works.categories
+                            .filter((c) => c !== 'ALL')
+                            .map((cat) => (
+                              <option key={cat} value={cat}>
+                                {cat}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                          Release Year
+                        </label>
+                        <input
+                          type="text"
+                          value={proj.year}
+                          onChange={(e) => {
+                            const updated = [...content.works.projects];
+                            updated[idx].year = e.target.value;
+                            setContent({
+                              ...content,
+                              works: { ...content.works, projects: updated },
+                            });
+                          }}
+                          className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2 md:col-span-3">
+                        <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                          Poster / Artwork URL
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={proj.image}
+                            onChange={(e) => {
+                              const updated = [...content.works.projects];
+                              updated[idx].image = e.target.value;
+                              setContent({
+                                ...content,
+                                works: { ...content.works, projects: updated },
+                              });
+                            }}
+                            className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                          />
+                          <label className="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-mono flex items-center gap-1.5 cursor-pointer">
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Upload</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) =>
+                                handleFileUpload(
+                                  e,
+                                  (url) => {
+                                    const updated = [...content.works.projects];
+                                    updated[idx].image = url;
+                                    setContent({
+                                      ...content,
+                                      works: { ...content.works, projects: updated },
+                                    });
+                                  },
+                                  `work_${idx}`
+                                )
+                              }
+                            />
+                          </label>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                          Director
+                        </label>
+                        <input
+                          type="text"
+                          value={proj.director || ''}
+                          onChange={(e) => {
+                            const updated = [...content.works.projects];
+                            updated[idx].director = e.target.value;
+                            setContent({
+                              ...content,
+                              works: { ...content.works, projects: updated },
+                            });
+                          }}
+                          className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                          Client / Studio
+                        </label>
+                        <input
+                          type="text"
+                          value={proj.client || ''}
+                          onChange={(e) => {
+                            const updated = [...content.works.projects];
+                            updated[idx].client = e.target.value;
+                            setContent({
+                              ...content,
+                              works: { ...content.works, projects: updated },
+                            });
+                          }}
+                          className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs"
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between pt-6">
+                        <label className="flex items-center gap-2 cursor-pointer text-xs font-mono uppercase text-neutral-300">
+                          <input
+                            type="checkbox"
+                            checked={!!proj.featured}
+                            onChange={(e) => {
+                              const updated = [...content.works.projects];
+                              updated[idx].featured = e.target.checked;
+                              setContent({
+                                ...content,
+                                works: { ...content.works, projects: updated },
+                              });
+                            }}
+                            className="rounded bg-neutral-900 border-neutral-700 text-[#fec52d] focus:ring-0"
+                          />
+                          <span>Featured</span>
+                        </label>
+
+                        <button
+                          onClick={() => {
+                            if (confirm(`Delete project "${proj.title}"?`)) {
+                              const updated = content.works.projects.filter((_, i) => i !== idx);
+                              setContent({
+                                ...content,
+                                works: { ...content.works, projects: updated },
+                              });
+                            }
+                          }}
+                          className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-950/30 transition-colors cursor-pointer"
+                          title="Delete Project"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: ABOUT PAGE */}
+          {activeTab === 'about' && (
+            <div className="flex flex-col gap-8">
+              <div>
+                <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d] mb-1">
+                  // BIOGRAPHY &amp; CAREER MILESTONES
+                </p>
+                <h2 className="font-horas text-3xl sm:text-4xl uppercase tracking-tight text-white">
+                  About Story &amp; Numerical Metrics
+                </h2>
+              </div>
+
+              {/* Story Paragraphs */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                  Biography Narrative Paragraphs
+                </h3>
+                {content.about.storyParagraphs.map((para, idx) => (
+                  <div key={idx}>
+                    <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Paragraph {idx + 1}
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={para}
+                      onChange={(e) => {
+                        const updated = [...content.about.storyParagraphs];
+                        updated[idx] = e.target.value;
+                        setContent({
+                          ...content,
+                          about: { ...content.about, storyParagraphs: updated },
+                        });
+                      }}
+                      className="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none font-ppmori leading-relaxed"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Stats Numbers */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                  Key Metrics &amp; Achievements
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {content.about.stats.map((st, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-xl bg-neutral-900 border border-neutral-800 flex flex-col gap-2"
+                    >
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={st.value}
+                          onChange={(e) => {
+                            const updated = [...content.about.stats];
+                            updated[idx].value = e.target.value;
+                            setContent({
+                              ...content,
+                              about: { ...content.about, stats: updated },
+                            });
+                          }}
+                          placeholder="e.g. 180+"
+                          className="w-24 px-3 py-1.5 rounded-lg bg-neutral-800 border border-neutral-700 text-white font-horas text-xl"
+                        />
+                        <input
+                          type="text"
+                          value={st.label}
+                          onChange={(e) => {
+                            const updated = [...content.about.stats];
+                            updated[idx].label = e.target.value;
+                            setContent({
+                              ...content,
+                              about: { ...content.about, stats: updated },
+                            });
+                          }}
+                          placeholder="Label..."
+                          className="flex-1 px-3 py-1.5 rounded-lg bg-neutral-800 border border-neutral-700 text-white text-xs font-semibold"
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        value={st.sub}
+                        onChange={(e) => {
+                          const updated = [...content.about.stats];
+                          updated[idx].sub = e.target.value;
+                          setContent({
+                            ...content,
+                            about: { ...content.about, stats: updated },
+                          });
+                        }}
+                        placeholder="Subtext..."
+                        className="w-full px-3 py-1 rounded bg-neutral-800 text-neutral-400 text-[11px] font-mono"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: CONTACT PAGE */}
+          {activeTab === 'contact' && (
+            <div className="flex flex-col gap-8">
+              <div>
+                <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d] mb-1">
+                  // CONTACT PAGE COPY
+                </p>
+                <h2 className="font-horas text-3xl sm:text-4xl uppercase tracking-tight text-white">
+                  Headings &amp; Working Hours
+                </h2>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                    Header Tag
+                  </label>
+                  <input
+                    type="text"
+                    value={content.contact.tag}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        contact: { ...content.contact, tag: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                    Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={content.contact.headline}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        contact: { ...content.contact, headline: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm font-horas uppercase"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                    Subtitle Description
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={content.contact.subtitle}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        contact: { ...content.contact, subtitle: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                    Studio Working Hours
+                  </label>
+                  <input
+                    type="text"
+                    value={content.contact.officeHours}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        contact: { ...content.contact, officeHours: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 7: CONTACT LEADS INBOX */}
+          {activeTab === 'messages' && (
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d] mb-1">
+                    // CLIENT INQUIRIES &amp; LEADS
+                  </p>
+                  <h2 className="font-horas text-3xl sm:text-4xl uppercase tracking-tight text-white">
+                    Direct Contact Submissions ({messages.length})
+                  </h2>
+                </div>
+                <button
+                  onClick={fetchMessages}
+                  className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 text-xs font-mono uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Refresh</span>
+                </button>
+              </div>
+
+              {messages.length === 0 ? (
+                <div className="p-12 rounded-3xl bg-neutral-950 border border-neutral-900 text-center flex flex-col items-center gap-3">
+                  <Inbox className="w-10 h-10 text-neutral-600" />
+                  <p className="font-horas text-xl uppercase tracking-wider text-neutral-400">
+                    No Inquiries Received Yet
+                  </p>
+                  <p className="text-xs font-mono text-neutral-500">
+                    Submissions from the /contact page will appear here instantly.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {messages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`p-6 rounded-2xl border transition-colors flex flex-col gap-4 ${
+                        msg.status === 'unread'
+                          ? 'bg-neutral-950 border-[#fec52d]/40 shadow-[0_0_20px_rgba(254,197,45,0.08)]'
+                          : 'bg-neutral-950/60 border-neutral-900 opacity-80'
+                      }`}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-900 pb-3">
+                        <div className="flex items-center gap-3">
+                          <span
+                            className={`w-2 h-2 rounded-full ${
+                              msg.status === 'unread' ? 'bg-[#fec52d]' : 'bg-neutral-600'
+                            }`}
+                          />
+                          <h4 className="font-horas text-xl uppercase tracking-wide text-white">
+                            {msg.full_name}
+                          </h4>
+                          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-neutral-900 text-neutral-400">
+                            {msg.status}
+                          </span>
+                        </div>
+
+                        <span className="text-xs font-mono text-neutral-500">
+                          {new Date(msg.created_at).toLocaleString('en-US', {
+                            dateStyle: 'medium',
+                            timeStyle: 'short',
+                          })}
+                        </span>
+                      </div>
+
+                      {/* Contact metadata */}
+                      <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-neutral-400">
+                        <a
+                          href={`mailto:${msg.email_address}`}
+                          className="hover:text-[#fec52d] flex items-center gap-1.5 transition-colors"
+                        >
+                          <Mail className="w-3.5 h-3.5" />
+                          <span>{msg.email_address}</span>
+                        </a>
+                        {msg.phone_number && (
+                          <a
+                            href={`tel:${msg.phone_number}`}
+                            className="hover:text-[#fec52d] flex items-center gap-1.5 transition-colors"
+                          >
+                            <PhoneCall className="w-3.5 h-3.5" />
+                            <span>{msg.phone_number}</span>
+                          </a>
+                        )}
+                      </div>
+
+                      {/* Message Body */}
+                      <div className="p-4 rounded-xl bg-neutral-900/60 border border-neutral-800 text-sm text-neutral-300 leading-relaxed font-ppmori">
+                        {msg.message}
+                      </div>
+
+                      {/* Action buttons */}
+                      <div className="flex items-center justify-between pt-1">
+                        <button
+                          onClick={() => handleToggleMessageStatus(msg.id, msg.status)}
+                          className="text-xs font-mono uppercase tracking-wider text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                        >
+                          Mark as {msg.status === 'unread' ? 'Read' : 'Unread'}
+                        </button>
+
+                        <button
+                          onClick={() => handleDeleteMessage(msg.id)}
+                          className="text-xs font-mono uppercase tracking-wider text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </main>
+      </div>
+    </div>
+  );
+}

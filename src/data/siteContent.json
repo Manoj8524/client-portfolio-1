@@ -1,0 +1,362 @@
+{
+  "siteSettings": {
+    "brandName": "MUTHU",
+    "statusPill": "// AVAILABLE FOR COMMISSIONS & KEY VISUALS",
+    "studioCoordinates": "Ln-1, Kutty Sahib Layout Rd, near Model Engineering College, Thrikkakara, Edappally, Kochi, 682021",
+    "mapsUrl": "https://maps.app.goo.gl/MdPt4Z7JEARE5a34A",
+    "studioEmail": "info@muthu.design",
+    "studioPhone": "+91 9048 326 777",
+    "copyright": "© 2026 MUTHU KEY ART & DESIGN ARCHITECTURE. ALL RIGHTS RESERVED.",
+    "socials": {
+      "instagram": "https://instagram.com/muthu.design",
+      "behance": "https://behance.net/muthudesign",
+      "youtube": "https://youtube.com/@muthudesign",
+      "facebook": "https://facebook.com/muthu.keyart",
+      "linkedin": "https://linkedin.com/in/muthudesign"
+    }
+  },
+  "navigation": {
+    "links": [
+      { "label": "Home", "href": "/" },
+      { "label": "About", "href": "/about" },
+      { "label": "Works", "href": "/works" },
+      { "label": "Services", "href": "/works" },
+      { "label": "Contact", "href": "/contact" }
+    ],
+    "cta": {
+      "label": "GET IN TOUCH",
+      "href": "/contact"
+    }
+  },
+  "home": {
+    "hero": {
+      "avatar": "/starter_assets/ZaApBaIfuKVadeqET6B3KEc3ZGI.png",
+      "bioHeading": "HI, I'M MUTHU — A GRAPHIC & FILM POSTER DESIGNER BASED IN INDIA, SPECIALIZING IN KEY ART & CINEMATIC VISUALS.",
+      "badges": [
+        "FILM POSTER & VISUAL DESIGNER",
+        "180+ OFFICIAL KEY VISUALS",
+        "AVAILABLE FOR FREELANCE & COMMISSIONS"
+      ],
+      "ctaPrimary": { "label": "GET IN TOUCH", "href": "/contact" },
+      "ctaSecondary": { "label": "EXPLORE WORKS", "href": "/works" },
+      "posterColumns": {
+        "lane1": [
+          { "image": "/extracted_assets/hero_wall_crops/crop_c0_p0.webp", "title": "Joji" },
+          { "image": "/extracted_assets/hero_wall_crops/crop_c0_p1.webp", "title": "Vijay Superum Pournamiyum" },
+          { "image": "/film_posters_cache/poster_187.webp", "title": "Turbo" },
+          { "image": "/extracted_assets/hero_wall_crops/crop_c0_p2.webp", "title": "Film Poster Archive" },
+          { "image": "/film_posters_cache/poster_202.webp", "title": "Aasha" },
+          { "image": "/film_posters_cache/poster_203.webp", "title": "Picnic" }
+        ],
+        "lane2": [
+          { "image": "/extracted_assets/hero_wall_crops/crop_c1_p0.webp", "title": "Victoria" },
+          { "image": "/extracted_assets/hero_wall_crops/crop_c1_p1.webp", "title": "Action Hero Biju" },
+          { "image": "/film_posters_cache/poster_204.webp", "title": "Dhoomakethu" },
+          { "image": "/extracted_assets/hero_wall_crops/crop_c1_p2.webp", "title": "Cinema Key Art" },
+          { "image": "/film_posters_cache/poster_205.webp", "title": "Mela" },
+          { "image": "/film_posters_cache/poster_206.webp", "title": "Bethlehem Kudumba Unit" }
+        ],
+        "lane3": [
+          { "image": "/extracted_assets/hero_wall_crops/crop_c2_p0.webp", "title": "Thudarum" },
+          { "image": "/extracted_assets/hero_wall_crops/crop_c2_p1.webp", "title": "Sookshmadarshini" },
+          { "image": "/film_posters_cache/poster_207.webp", "title": "Operation Ganga" },
+          { "image": "/film_posters_cache/poster_208.webp", "title": "Rao Bahadur" },
+          { "image": "/film_posters_cache/poster_209.webp", "title": "Gold Key Visual" },
+          { "image": "/film_posters_cache/poster_210.webp", "title": "Vazha" }
+        ],
+        "lane4": [
+          { "image": "/extracted_assets/hero_wall_crops/crop_c3_p0.webp", "title": "Shesham Mikeil Fathima" },
+          { "image": "/extracted_assets/hero_wall_crops/crop_c3_p1.webp", "title": "Premalu" },
+          { "image": "/film_posters_cache/poster_211.webp", "title": "Petta Rap" },
+          { "image": "/film_posters_cache/poster_212.webp", "title": "Aavesham" },
+          { "image": "/film_posters_cache/poster_213.webp", "title": "Malayalam Cinema Art" },
+          { "image": "/film_posters_cache/poster_214.webp", "title": "Bramayugam" }
+        ],
+        "lane5": [
+          { "image": "/extracted_assets/hero_wall_crops/crop_c4_p0.webp", "title": "Second Show" },
+          { "image": "/extracted_assets/hero_wall_crops/crop_c4_p1.webp", "title": "Rao Bahadur" },
+          { "image": "/film_posters_cache/poster_215.webp", "title": "The Goat Life" },
+          { "image": "/extracted_assets/hero_wall_crops/crop_c4_p2.webp", "title": "Petta Rap Special" },
+          { "image": "/film_posters_cache/poster_216.webp", "title": "Manjummel Boys" },
+          { "image": "/film_posters_cache/poster_217.webp", "title": "King of Kotha" }
+        ]
+      }
+    },
+    "featuredWatch": {
+      "badge": "EXECUTIVE PORTFOLIO // SIGNATURE CASE",
+      "title": "THE ART OF HIGH HOROLOGY",
+      "description": "Cinematic advertising and bespoke key visuals crafted for world-class luxury timepieces. Precision rendered for timeless visual impact.",
+      "image": "/extracted_assets/home/home_featured_watch.webp",
+      "cta": { "label": "Explore Case Study", "href": "/works" }
+    },
+    "showcaseCards": [
+      {
+        "tag": "01 // DESKTOP ARCHITECTURE",
+        "title": "ENTERPRISE DIGITAL CANVAS",
+        "description": "Tailored for ultra-wide cinematic displays and studio creative reviews.",
+        "image": "/extracted_assets/home/home_showcase_1.webp",
+        "link": "/works"
+      },
+      {
+        "tag": "02 // MOBILE TOUCH EXPERIENCE",
+        "title": "TACTILE VISUAL NARRATIVE",
+        "description": "Fluid 120Hz gesture navigation, instant key visual teasers, and responsive key art.",
+        "image": "/extracted_assets/home/home_showcase_2.webp",
+        "link": "/works"
+      },
+      {
+        "tag": "03 // STUDIO WORKSTATION",
+        "title": "PRECISION KEY ART WORKFLOW",
+        "description": "High bit-depth retouching, typographical architecture, and print color matching.",
+        "image": "/extracted_assets/home/home_showcase_3.webp",
+        "link": "/works"
+      }
+    ],
+    "disciplines": [
+      {
+        "name": "Film Poster Design",
+        "path": "/works?category=FILM+POSTERS",
+        "desc": "Bespoke key visuals, first-look teasers, character artworks and international festival posters.",
+        "slug": "film-posters"
+      },
+      {
+        "name": "Branding",
+        "path": "/works?category=BRANDING",
+        "desc": "Distinctive visual identities, logos, brand guides and strategic positioning.",
+        "slug": "branding"
+      },
+      {
+        "name": "Social Media Creatives",
+        "path": "/works?category=SOCIAL+MEDIA+CREATIVES",
+        "desc": "Performance advertising, social media curation and viral creative visual campaigns.",
+        "slug": "social-media-creatives"
+      },
+      {
+        "name": "Print & Ads",
+        "path": "/works?category=PRINT+%26+ADS",
+        "desc": "High-impact print advertising, packaging mockups, outdoor billboards and brand collateral.",
+        "slug": "print-and-ads"
+      }
+    ],
+    "brandsTicker": {
+      "tag": "// Trusted By Premier Studios & Visionary Brands",
+      "image": "/extracted_assets/home/home_brands_ticker.webp"
+    },
+    "zoomSection": {
+      "word1": "ZOOM",
+      "word2": "INTO THE",
+      "word3": "EXTRAORDINARY",
+      "backdropImage": "/extracted_assets/home/plain_portal_bg.webp",
+      "cta": {
+        "label": "Initiate Collaboration",
+        "href": "/contact"
+      }
+    }
+  },
+  "about": {
+    "tag": "// CREATIVE BIOGRAPHY & ETHOS",
+    "headline": "CRAFTING VISUAL LEGACIES FOR CINEMA & CULTURE.",
+    "profileImage": "/starter_assets/ZaApBaIfuKVadeqET6B3KEc3ZGI.png",
+    "storyParagraphs": [
+      "I am Muthu — a specialized Film Poster Designer and Key Art Specialist based in India. For over 8 years, I have collaborated with premier film production houses, visionary directors, and major entertainment brands to conceive, design, and execute unforgettable visual identities for cinema.",
+      "My creative philosophy fuses classical typographical discipline with contemporary cinematic lighting, deep atmospheric textures, and emotional character narratives. Every key visual is crafted to command attention on massive theatrical hoardings, international film festival circuits, and high-density digital streams.",
+      "From gritty indie triumphs to massive commercial blockbusters, I treat every poster as an enduring piece of art that crystallizes the film's soul before the projector ever turns on."
+    ],
+    "stats": [
+      { "value": "180+", "label": "Official Key Visuals", "sub": "Pan-Indian & Global Titles" },
+      { "value": "12+", "label": "Film Industry Awards", "sub": "Poster & Key Art Accolades" },
+      { "value": "45+", "label": "Premier Studios", "sub": "Production Houses & Brands" },
+      { "value": "8+", "label": "Years of Craft", "sub": "Cinema & Editorial Design" }
+    ],
+    "journeyMilestones": [
+      {
+        "year": "2024 – PRESENT",
+        "title": "Lead Key Art Director",
+        "role": "Muthu Key Art Studio",
+        "desc": "Directing master publicity campaigns, international festival posters, and theatrical key art for tier-one South Indian and national cinema."
+      },
+      {
+        "year": "2021 – 2024",
+        "title": "Senior Film Publicity Designer",
+        "role": "Premier Entertainment Studios",
+        "desc": "Authored iconic first-look posters, character series, and teaser banners for critically acclaimed Malayalam & Tamil feature films."
+      },
+      {
+        "year": "2018 – 2021",
+        "title": "Visual Concept Artist & Typographer",
+        "role": "Independent Creative Consultant",
+        "desc": "Specialized in customized title typography, film identity systems, and key art storyboards for upcoming directors."
+      }
+    ]
+  },
+  "works": {
+    "title": "SELECTED ARCHIVE",
+    "subtitle": "Bespoke film poster key art, character visuals, and cinematic advertising campaigns.",
+    "categories": [
+      "ALL",
+      "FILM POSTERS",
+      "BRANDING",
+      "SOCIAL MEDIA CREATIVES",
+      "PRINT & ADS"
+    ],
+    "projects": [
+      {
+        "id": "poster_218",
+        "title": "Don't Trouble the Trouble",
+        "category": "FILM POSTERS",
+        "year": "2026",
+        "image": "/film_posters_cache/poster_218.webp",
+        "director": "Shashank",
+        "client": "Baweja Studios",
+        "awards": "Official Key Art",
+        "featured": true
+      },
+      {
+        "id": "poster_217",
+        "title": "Picnic",
+        "category": "FILM POSTERS",
+        "year": "2026",
+        "image": "/film_posters_cache/poster_217.webp",
+        "director": "Anil",
+        "client": "Wayfarer Films",
+        "awards": "Festival Selection",
+        "featured": true
+      },
+      {
+        "id": "poster_216",
+        "title": "Aasha",
+        "category": "FILM POSTERS",
+        "year": "2026",
+        "image": "/film_posters_cache/poster_216.webp",
+        "director": "Mathew",
+        "client": "Aashirvad Cinemas",
+        "awards": "Critics Award",
+        "featured": true
+      },
+      {
+        "id": "poster_214",
+        "title": "Mela",
+        "category": "FILM POSTERS",
+        "year": "2027",
+        "image": "/film_posters_cache/poster_214.webp",
+        "director": "Rajeev",
+        "client": "E4 Entertainment",
+        "awards": "Theatrical Visual",
+        "featured": false
+      },
+      {
+        "id": "poster_215",
+        "title": "Operation Ganga",
+        "category": "FILM POSTERS",
+        "year": "2027",
+        "image": "/film_posters_cache/poster_215.webp",
+        "director": "Gokul",
+        "client": "Sony Pictures India",
+        "awards": "First Look Teaser",
+        "featured": false
+      },
+      {
+        "id": "poster_211",
+        "title": "Bethlehem Kudumba Unit",
+        "category": "FILM POSTERS",
+        "year": "2026",
+        "image": "/film_posters_cache/poster_211.webp",
+        "director": "Sujith",
+        "client": "Friday Film House",
+        "awards": "Official Theatrical",
+        "featured": true
+      },
+      {
+        "id": "poster_210",
+        "title": "Dhoomakethu",
+        "category": "FILM POSTERS",
+        "year": "2026",
+        "image": "/film_posters_cache/poster_210.webp",
+        "director": "Arun",
+        "client": "Central Pictures",
+        "awards": "Teaser Poster",
+        "featured": false
+      },
+      {
+        "id": "poster_209",
+        "title": "Rao Bahadur",
+        "category": "FILM POSTERS",
+        "year": "2026",
+        "image": "/film_posters_cache/poster_209.webp",
+        "director": "Vasanth",
+        "client": "Hombale Films",
+        "awards": "Best Key Art Nominee",
+        "featured": true
+      },
+      {
+        "id": "poster_187",
+        "title": "Turbo",
+        "category": "FILM POSTERS",
+        "year": "2024",
+        "image": "/film_posters_cache/poster_187.webp",
+        "director": "Vysakh",
+        "client": "Mammootty Kampany",
+        "awards": "Blockbuster Campaign",
+        "featured": true
+      },
+      {
+        "id": "work_card_1",
+        "title": "Matte Obsidian Brand System",
+        "category": "BRANDING",
+        "year": "2025",
+        "image": "/extracted_assets/work/work_card_1.webp",
+        "director": "Muthu Studio",
+        "client": "Obsidian Luxe",
+        "awards": "Identity Design",
+        "featured": false
+      },
+      {
+        "id": "work_card_2",
+        "title": "Cinema Festival Social Suite",
+        "category": "SOCIAL MEDIA CREATIVES",
+        "year": "2025",
+        "image": "/extracted_assets/work/work_card_2.webp",
+        "director": "Muthu Studio",
+        "client": "CineCulture",
+        "awards": "Viral Reach",
+        "featured": false
+      },
+      {
+        "id": "work_card_3",
+        "title": "Editorial Print Exhibition",
+        "category": "PRINT & ADS",
+        "year": "2025",
+        "image": "/extracted_assets/work/work_card_3.webp",
+        "director": "Muthu Studio",
+        "client": "Galleria Art",
+        "awards": "Print Gold",
+        "featured": false
+      }
+    ]
+  },
+  "contact": {
+    "tag": "// GET IN TOUCH",
+    "headline": "LET'S CREATE SOMETHING EXTRAORDINARY.",
+    "subtitle": "Available for feature film key art commissions, international festival campaigns, visual identity consulting, and executive brand design.",
+    "officeHours": "Monday – Saturday // 09:30 AM – 07:00 PM IST",
+    "cards": {
+      "emailTitle": "Email Us",
+      "emailSubtitle": "Typically responds within 24 hours",
+      "phoneTitle": "Call Us",
+      "phoneSubtitle": "Direct studio line",
+      "locationTitle": "Studio Coordinates",
+      "locationSubtitle": "By appointment only"
+    }
+  },
+  "footer": {
+    "newsletterHeading": "Subscribe to Our Newsletter",
+    "newsletterDesc": "Stay updated with our latest offers, key art releases, and studio projects. Sign up for our newsletter.",
+    "quickLinks": [
+      { "label": "Home", "href": "/" },
+      { "label": "Works", "href": "/works" },
+      { "label": "About Us", "href": "/about" },
+      { "label": "Contact Us", "href": "/contact" },
+      { "label": "Privacy Policy", "href": "/privacy-policy" }
+    ]
+  }
+}
