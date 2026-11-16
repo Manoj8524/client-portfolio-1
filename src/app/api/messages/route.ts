@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  getContactMessages,
+  getContactMessagesAsync,
   updateContactMessageStatus,
   deleteContactMessage,
 } from '@/lib/contentStore';
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   }
 
-  const messages = getContactMessages();
+  const messages = await getContactMessagesAsync();
   return NextResponse.json({ ok: true, data: messages });
 }
 
@@ -33,7 +33,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Invalid parameters' }, { status: 400 });
     }
 
-    const success = updateContactMessageStatus(id, status);
+    const success = await updateContactMessageStatus(id, status);
     return NextResponse.json({ ok: success });
   } catch (err: any) {
     return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
@@ -52,7 +52,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Message ID is required' }, { status: 400 });
     }
 
-    const success = deleteContactMessage(id);
+    const success = await deleteContactMessage(id);
     return NextResponse.json({ ok: success });
   } catch (err: any) {
     return NextResponse.json({ ok: false, error: err.message }, { status: 500 });

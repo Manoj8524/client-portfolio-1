@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { supabaseAdmin } from '@/lib/supabase';
 
 const AUTH_COOKIE_NAME = 'muthu_admin_session';
 const SESSION_TOKEN = 'muthu_secure_admin_token_2026';
@@ -9,7 +10,7 @@ export async function POST(req: NextRequest) {
   // Verify admin authentication
   const cookie = req.cookies.get(AUTH_COOKIE_NAME);
   if (cookie?.value !== SESSION_TOKEN) {
-    return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ ok: false, error: 'Unauthorized: Admin authentication required' }, { status: 401 });
   }
 
   try {
@@ -23,7 +24,43 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // 1. If Cloudinary credentials exist, upload to Cloudinary CDN
+    const safeName = file.name
+      .toLowerCase()
+      .replace(/[^a-z0-9.]/g, '_')
+      .replace(/_+/g, '_');
+    const filename = `${Date.now()}_${safeName}`;
+
+    // 1. Primary: Upload to Supabase Storage bucket 'portfolio-media'
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        const { error: uploadError } = await supabaseAdmin.storage
+          .from('portfolio-media')
+          .upload(filename, buffer, {
+            contentType: file.type || 'image/webp',
+            upsert: true,
+          });
+
+        if (!uploadError) {
+          const { data: publicUrlData } = supabaseAdmin.storage
+            .from('portfolio-media')
+            .getPublicUrl(filename);
+
+          if (publicUrlData?.publicUrl) {
+            return NextResponse.json({
+              ok: true,
+              url: publicUrlData.publicUrl,
+              cdn: 'supabase',
+            });
+          }
+        } else {
+          console.warn('Supabase upload warning:', uploadError.message);
+        }
+      } catch (sbErr) {
+        console.warn('Supabase upload attempt failed, trying fallback:', sbErr);
+      }
+    }
+
+    // 2. Fallback: Cloudinary (if configured)
     if (
       process.env.CLOUDINARY_CLOUD_NAME &&
       process.env.CLOUDINARY_API_KEY &&
@@ -52,19 +89,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. Local Fallback storage in public/uploads/
+    // 3. Local fallback storage in public/uploads/
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    const safeName = file.name
-      .toLowerCase()
-      .replace(/[^a-z0-9.]/g, '_')
-      .replace(/_+/g, '_');
-    const filename = `${Date.now()}_${safeName}`;
     const filePath = path.join(uploadsDir, filename);
-
     fs.writeFileSync(filePath, buffer);
 
     return NextResponse.json({

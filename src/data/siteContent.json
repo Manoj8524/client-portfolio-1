@@ -1,7 +1,7 @@
 {
   "siteSettings": {
     "brandName": "MUTHU",
-    "statusPill": "// AVAILABLE FOR COMMISSIONS & KEY VISUALS",
+    "statusPill": "",
     "studioCoordinates": "Ln-1, Kutty Sahib Layout Rd, near Model Engineering College, Thrikkakara, Edappally, Kochi, 682021",
     "mapsUrl": "https://maps.app.goo.gl/MdPt4Z7JEARE5a34A",
     "studioEmail": "info@muthu.design",
@@ -190,8 +190,10 @@
     ]
   },
   "works": {
+    "heroTag": "// PORTFOLIO ARCHIVE",
     "title": "SELECTED ARCHIVE",
     "subtitle": "Bespoke film poster key art, character visuals, and cinematic advertising campaigns.",
+    "backgroundImage": "/extracted_assets/work/work_hero_bg_clean.webp",
     "categories": [
       "ALL",
       "FILM POSTERS",
@@ -338,7 +340,11 @@
     "tag": "// GET IN TOUCH",
     "headline": "LET'S CREATE SOMETHING EXTRAORDINARY.",
     "subtitle": "Available for feature film key art commissions, international festival campaigns, visual identity consulting, and executive brand design.",
+    "coordinatesTitle": "Studio Coordinates",
     "officeHours": "Monday – Saturday // 09:30 AM – 07:00 PM IST",
+    "formTitle": "Initiate Project Enquiry",
+    "formSubtitle": "Fill out the brief coordinates below. Submissions land directly with our senior key art team.",
+    "formButtonText": "Submit Project Brief",
     "cards": {
       "emailTitle": "Email Us",
       "emailSubtitle": "Typically responds within 24 hours",

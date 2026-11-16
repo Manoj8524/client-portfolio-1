@@ -116,12 +116,14 @@ export default function Navbar() {
         </nav>
       </div>
 
-      {/* Right Header Status / Contact Action */}
+      {/* Right Header Contact Action */}
       <div className="hidden lg:flex items-center gap-4">
-        <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-950/70 border border-neutral-800/80 text-[11px] font-mono tracking-wider text-neutral-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#fec52d] animate-pulse" />
-          <span>{siteSettings?.statusPill || '// AVAILABLE FOR WORK'}</span>
-        </div>
+        {siteSettings?.statusPill ? (
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-950/70 border border-neutral-800/80 text-[11px] font-mono tracking-wider text-neutral-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#fec52d] animate-pulse" />
+            <span>{siteSettings.statusPill}</span>
+          </div>
+        ) : null}
 
         <Link
           href={navigation?.cta?.href || '/contact'}
@@ -146,9 +148,11 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="pt-4 border-t border-neutral-900 flex flex-col gap-3">
-            <span className="text-xs font-mono text-neutral-500">
-              {siteSettings?.statusPill || '// AVAILABLE FOR WORK'}
-            </span>
+            {siteSettings?.statusPill ? (
+              <span className="text-xs font-mono text-neutral-500">
+                {siteSettings.statusPill}
+              </span>
+            ) : null}
             <Link
               href={navigation?.cta?.href || '/contact'}
               className="w-full py-3 text-center rounded-xl bg-[#fec52d] text-black font-semibold text-xs uppercase tracking-wider"

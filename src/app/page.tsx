@@ -1,7 +1,7 @@
 import StarterHome from '@/components/home/StarterHome';
 import { getSiteContent } from '@/lib/contentStore';
 
-export default async function HomePage() {
+export default function HomePage() {
   const siteContent = getSiteContent();
 
   return (

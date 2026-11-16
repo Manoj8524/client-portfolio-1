@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { getSiteContent, updateSiteContent } from '@/lib/contentStore';
+import { getSiteContentAsync, updateSiteContent } from '@/lib/contentStore';
 
 const AUTH_COOKIE_NAME = 'muthu_admin_session';
 const SESSION_TOKEN = 'muthu_secure_admin_token_2026';
 
 export async function GET() {
-  const content = getSiteContent();
-  return NextResponse.json(content);
+  const content = await getSiteContentAsync();
+  return NextResponse.json(content, {
+    headers: {
+      'Cache-Control': 'no-store, max-age=0',
+    },
+  });
 }
 
 export async function POST(req: NextRequest) {

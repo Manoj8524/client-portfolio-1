@@ -65,7 +65,7 @@ function WorksContent() {
       <section className="relative w-full h-[60vh] sm:h-[70vh] flex items-center justify-center overflow-hidden p-0 m-0">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/extracted_assets/work/work_hero_bg_clean.webp"
+            src={works?.backgroundImage || '/extracted_assets/work/work_hero_bg_clean.webp'}
             alt="Works Background"
             fill
             priority
@@ -79,7 +79,7 @@ function WorksContent() {
 
         <div className="relative z-10 text-center px-6 max-w-4xl flex flex-col items-center">
           <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">
-            // PORTFOLIO ARCHIVE
+            {works?.heroTag || '// PORTFOLIO ARCHIVE'}
           </p>
           <h1 className="font-horas text-5xl sm:text-7xl md:text-8xl uppercase tracking-tighter text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
             {works?.title || 'SELECTED ARCHIVE'}

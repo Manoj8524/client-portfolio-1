@@ -36,18 +36,19 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
   });
   const watchScale = useTransform(watchProgress, [0, 0.5, 1], [0.98, 1.02, 0.99]);
 
-  // Galaxy Zoom pinned portal dive into the "O"
+  // Galaxy Zoom pinned portal dive into the "O" straight into the footer
   const { scrollYProgress: galaxyProgress } = useScroll({
     target: galaxyContainerRef,
     offset: ['start start', 'end end'],
   });
 
-  // Scale smoothly zooms from 1 to 35, plunging deep into the circular hollow of the "O"
-  const galaxyZoom = useTransform(galaxyProgress, [0.1, 0.98], [1, 35]);
+  // Scale smoothly zooms from 1 to 45, diving deep into the center of the "O"
+  const galaxyZoom = useTransform(galaxyProgress, [0.05, 0.95], [1, 45]);
+  const galaxyBackdropScale = useTransform(galaxyProgress, [0, 1], [1, 1.3]);
 
-  // Center CTA button fades out quickly as dive begins
-  const galaxyCtaOpacity = useTransform(galaxyProgress, [0, 0.25], [1, 0]);
-  const galaxyCtaY = useTransform(galaxyProgress, [0, 0.25], [0, 30]);
+  // Center CTA button and text details fade out smoothly as dive accelerates
+  const galaxyCtaOpacity = useTransform(galaxyProgress, [0, 0.22], [1, 0]);
+  const galaxyCtaY = useTransform(galaxyProgress, [0, 0.22], [0, 30]);
 
   const scrollToNext = () => {
     const el = document.getElementById('featured-showcase');
@@ -85,12 +86,13 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
   };
 
   const { home } = content;
-  const { hero, featuredWatch, showcaseCards, disciplines, brandsTicker, zoomSection } = home;
+  const { hero, brandsTicker, zoomSection } = home;
 
   return (
     <div className="w-full bg-black text-white font-ppmori overflow-x-hidden p-0 m-0 selection:bg-[#fec52d] selection:text-black">
       {/* =========================================================================
           SECTION 1: HERO - DYNAMIC 5-COLUMN CONTINUOUS VERTICAL POSTER MATRIX
+          (Exact approved hero section retained intact)
           ========================================================================= */}
       <section className="relative w-full h-screen min-h-[700px] flex flex-col justify-between items-center overflow-hidden pt-20 p-0 m-0">
         {/* Background 5-Column Continuous Upward Scrolling Poster Lanes */}
@@ -110,55 +112,11 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/35 to-black/95 z-10 pointer-events-none" />
         <div className="absolute inset-0 bg-radial from-transparent via-black/40 to-black/90 z-10 pointer-events-none" />
 
-        {/* Top Header & Intro Bio Overlay */}
-        <div className="relative z-20 w-full px-6 sm:px-10 md:px-16 flex flex-row items-start justify-between pointer-events-auto pt-6">
-          <div className="flex flex-row items-start gap-4 sm:gap-5">
-            {/* Avatar Thumbnail */}
-            <div className="w-[44px] h-[44px] rounded-lg overflow-hidden flex-none bg-[#111] border border-white/15 shadow-2xl mt-0.5">
-              <Image
-                src={hero.avatar || '/starter_assets/ZaApBaIfuKVadeqET6B3KEc3ZGI.png'}
-                alt="Muthu"
-                width={44}
-                height={44}
-                priority
-                className="w-full h-full object-cover select-none"
-              />
-            </div>
+        {/* Top spacer */}
+        <div className="h-10" />
 
-            {/* Heading text */}
-            <div className="w-full max-w-[560px] flex flex-col items-start gap-2.5">
-              <h1 className="text-[17px] sm:text-[19px] font-bold uppercase text-white leading-[1.3] tracking-wide font-ppmori">
-                {hero.bioHeading}
-              </h1>
-
-              <div className="flex items-center gap-4 pt-1 text-[12px] font-medium uppercase tracking-wide">
-                <Link
-                  href={hero.ctaPrimary?.href || '/contact'}
-                  className="text-white underline hover:text-[#fec52d] transition-colors"
-                >
-                  {hero.ctaPrimary?.label || 'GET IN TOUCH'}
-                </Link>
-                <span className="text-neutral-600">/</span>
-                <Link
-                  href={hero.ctaSecondary?.href || '/works'}
-                  className="text-neutral-400 hover:text-white transition-colors inline-flex items-center gap-1"
-                >
-                  <span>{hero.ctaSecondary?.label || 'EXPLORE WORKS'}</span>
-                  <ArrowDown className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Badges */}
-          <div className="hidden lg:flex flex-col items-end text-right font-mono text-xs text-neutral-400 space-y-1 select-none">
-            {hero.badges?.map((badge, idx) => (
-              <span key={idx} className={idx === 0 ? 'text-white font-semibold' : ''}>
-                {badge}
-              </span>
-            ))}
-          </div>
-        </div>
+        {/* Clean Hero View matching full poster wall */}
+        <div className="flex-1" />
 
         {/* Hero Footer Bar */}
         <div className="relative z-20 w-full px-6 sm:px-10 md:px-16 pb-8 flex flex-row items-center justify-between text-[12px] font-medium text-[rgb(130,130,130)] pointer-events-auto">
@@ -180,166 +138,178 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
       </section>
 
       {/* =========================================================================
-          SECTION 2: FEATURED CASE SHOWCASE
+          SECTION 2: 3-COLUMN SHOWCASE CARDS (Classic Full-Bleed 01.psb Design)
+          ZERO GAP, ZERO PADDING, EDGE-TO-EDGE
           ========================================================================= */}
       <section
         id="featured-showcase"
-        ref={watchRef}
-        className="relative w-full min-h-[90vh] lg:min-h-screen flex items-center justify-center overflow-hidden border-t border-neutral-900/80 p-0 m-0"
+        className="w-full p-0 m-0 bg-black border-t border-neutral-900/80"
       >
-        <motion.div style={{ scale: watchScale }} className="absolute inset-0 z-0 will-change-transform">
-          <Image
-            src={featuredWatch.image || '/extracted_assets/home/home_featured_watch.webp'}
-            alt={featuredWatch.title}
-            fill
-            sizes="100vw"
-            className="object-cover object-center select-none"
-            quality={92}
-          />
-          <div className="absolute inset-0 bg-radial from-transparent via-black/20 to-black/80 z-1" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/80 z-1" />
-        </motion.div>
-
-        <div className="relative z-10 text-center px-6 max-w-3xl flex flex-col items-center gap-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 border border-white/20 text-[#fec52d] text-xs font-mono uppercase tracking-[0.25em] backdrop-blur-md">
-            <span>{featuredWatch.badge}</span>
-          </div>
-          <h2 className="font-horas text-4xl sm:text-6xl md:text-7xl uppercase tracking-tighter text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
-            {featuredWatch.title}
-          </h2>
-          <p className="font-ppmori text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
-            {featuredWatch.description}
-          </p>
+        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-0 p-0 m-0">
+          {/* Card 1: Orange Mechanical Device */}
           <Link
-            href={featuredWatch.cta?.href || '/works'}
-            className="mt-4 px-8 py-3.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/25 text-white hover:bg-[#fec52d] hover:text-black hover:scale-105 font-medium text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-300 shadow-2xl flex items-center gap-2 group"
+            href="/works?category=BRANDING"
+            className="group relative aspect-[1600/2012] w-full block overflow-hidden rounded-none border-b border-neutral-900/80 md:border-b-0 md:border-r border-neutral-900/80 bg-neutral-950"
           >
-            <span>{featuredWatch.cta?.label || 'Explore Case Study'}</span>
-            <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
+            <Image
+              src="/extracted_assets/home/home_showcase_1.webp"
+              alt="Brand, website design, Development"
+              fill
+              sizes="(max-width: 768px) 100vw, 33.33vw"
+              className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+            <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="w-10 h-10 rounded-full bg-[#fec52d] text-black flex items-center justify-center shadow-lg">
+                <ArrowUpRight className="w-5 h-5" />
+              </div>
+            </div>
+          </Link>
+
+          {/* Card 2: Outdoor Boxes Packaging */}
+          <Link
+            href="/works?category=PRINT+%26+ADS"
+            className="group relative aspect-[1600/2012] w-full block overflow-hidden rounded-none border-b border-neutral-900/80 md:border-b-0 md:border-r border-neutral-900/80 bg-neutral-950"
+          >
+            <Image
+              src="/extracted_assets/home/home_showcase_2.webp"
+              alt="Held by Hands Outdoor Boxes Packaging"
+              fill
+              sizes="(max-width: 768px) 100vw, 33.33vw"
+              className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+            <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="w-10 h-10 rounded-full bg-[#fec52d] text-black flex items-center justify-center shadow-lg">
+                <ArrowUpRight className="w-5 h-5" />
+              </div>
+            </div>
+          </Link>
+
+          {/* Card 3: Dior Luxury Cosmetic Bottles Pour */}
+          <Link
+            href="/works?category=BRANDING"
+            className="group relative aspect-[1600/2012] w-full block overflow-hidden rounded-none bg-neutral-950"
+          >
+            <Image
+              src="/extracted_assets/home/home_showcase_3.webp"
+              alt="DIOR Brand, Packaging, Development"
+              fill
+              sizes="(max-width: 768px) 100vw, 33.33vw"
+              className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+            <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="w-10 h-10 rounded-full bg-[#fec52d] text-black flex items-center justify-center shadow-lg">
+                <ArrowUpRight className="w-5 h-5" />
+              </div>
+            </div>
           </Link>
         </div>
       </section>
 
       {/* =========================================================================
-          SECTION 3: 3-TIER SHOWCASE CARDS
+          SECTION 3: WIDE FEATURED PROJECT (Classic Full-Bleed 01.psb Design)
+          ZERO GAP WITH SECTION 2, FULL BLEED EDGE-TO-EDGE
           ========================================================================= */}
-      <section className="relative w-full border-t border-neutral-900/80 bg-black p-0 m-0">
-        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-neutral-900/80">
-          {showcaseCards?.map((card, idx) => (
-            <div
-              key={idx}
-              className="relative aspect-[3/4] sm:aspect-[4/5] md:aspect-[9/16] lg:aspect-[3/4] w-full overflow-hidden group"
-            >
-              <Image
-                src={card.image}
-                alt={card.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-cover object-center select-none group-hover:scale-105 transition-transform duration-700 ease-out"
-                quality={90}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-1" />
-              <div className="absolute inset-0 p-8 sm:p-10 flex flex-col justify-between z-10 pointer-events-none">
-                <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d]">
-                  {card.tag}
-                </span>
-                <div>
-                  <h3 className="font-horas text-2xl sm:text-3xl uppercase tracking-tight text-white mb-2">
-                    {card.title}
-                  </h3>
-                  <p className="font-ppmori text-xs sm:text-sm text-neutral-300 leading-relaxed mb-4">
-                    {card.description}
-                  </p>
-                  <Link
-                    href={card.link || '/works'}
-                    className="pointer-events-auto inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#fec52d] hover:underline"
-                  >
-                    <span>View Projects</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
+      <section
+        ref={watchRef}
+        className="w-full p-0 m-0 bg-black overflow-hidden border-t border-neutral-900/80"
+      >
+        <Link
+          href="/works?category=PRINT+%26+ADS"
+          className="group relative block aspect-[4800/1983] w-full overflow-hidden rounded-none bg-neutral-950 cursor-pointer"
+        >
+          <motion.div style={{ scale: watchScale }} className="relative w-full h-full will-change-transform">
+            <Image
+              src="/extracted_assets/home/home_featured_watch.webp"
+              alt="sotto zero Smartwatch - Brand, website Strategy, Development"
+              fill
+              sizes="100vw"
+              className="object-cover object-center select-none group-hover:scale-105 transition-transform duration-1000 ease-out"
+              quality={92}
+            />
+          </motion.div>
+        </Link>
+      </section>
+
+      {/* =========================================================================
+          SECTION 4: SPLIT 2-COLUMN SHOWCASE (Classic Full-Bleed 01.psb Design)
+          ZERO GAP, FULL BLEED EDGE-TO-EDGE
+          ========================================================================= */}
+      <section className="w-full p-0 m-0 bg-black border-t border-neutral-900/80">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-0 p-0 m-0">
+          {/* Left: Laptop Mockup (Width 2788 / 4800 ~ 58%) */}
+          <Link
+            href="/works?category=PRINT+%26+ADS"
+            className="lg:col-span-7 group relative block aspect-[2788/1437] w-full overflow-hidden rounded-none border-b lg:border-b-0 lg:border-r border-neutral-900/80 bg-neutral-950"
+          >
+            <Image
+              src="/extracted_assets/home/home_split_laptop.webp"
+              alt="Devices & Mockups"
+              fill
+              sizes="(max-width: 1024px) 100vw, 58.33vw"
+              className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+          </Link>
+
+          {/* Right: Smartphone Design Projects (Width 2012 / 4800 ~ 42%) */}
+          <Link
+            href="/works?category=BRANDING"
+            className="lg:col-span-5 group relative block aspect-[2012/1437] w-full overflow-hidden rounded-none bg-neutral-950"
+          >
+            <Image
+              src="/extracted_assets/home/home_split_mobile.webp"
+              alt="R Design Mobile Projects"
+              fill
+              sizes="(max-width: 1024px) 100vw, 41.67vw"
+              className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+          </Link>
         </div>
       </section>
 
       {/* =========================================================================
-          SECTION 4: DISCIPLINES & SERVICES
+          SECTION 5: BRANDS I'VE WORKED WITH (Classic Full-Bleed Infinite Ticker)
+          Full-bleed marquee ticker with zero side padding
           ========================================================================= */}
-      <section className="relative w-full py-24 sm:py-32 bg-black border-t border-neutral-900/80">
-        <div className="max-w-7xl mx-auto px-6 sm:px-10 md:px-16">
-          <div className="max-w-3xl mb-16 sm:mb-20">
-            <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">
-              // COMPLETE AGENCY SUITE
-            </p>
-            <h2 className="font-horas text-4xl sm:text-6xl md:text-7xl uppercase tracking-tighter leading-none text-white mb-6">
-              Our Disciplines.
-            </h2>
-            <p className="font-ppmori text-neutral-400 text-sm md:text-base leading-relaxed">
-              We operate across every discipline required to craft, launch, and amplify creative projects on the global stage.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {disciplines?.map((svc, idx) => (
-              <Link
-                key={svc.slug || idx}
-                href={svc.path}
-                className="group p-8 rounded-3xl bg-neutral-950/80 border border-neutral-900 hover:border-neutral-700 transition-all duration-300 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-8">
-                    <span className="text-xs font-mono uppercase tracking-widest text-[#fec52d]">
-                      0{idx + 1} //
-                    </span>
-                    <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover:text-[#fec52d] group-hover:rotate-45 transition-all" />
-                  </div>
-                  <h3 className="font-horas text-2xl uppercase tracking-wide text-white mb-3 group-hover:text-[#fec52d] transition-colors">
-                    {svc.name}
-                  </h3>
-                  <p className="font-ppmori text-sm text-neutral-400 leading-relaxed">
-                    {svc.desc}
-                  </p>
-                </div>
-
-                <div className="mt-8 pt-4 border-t border-neutral-900 flex items-center justify-between text-xs font-mono uppercase tracking-wider text-neutral-500 group-hover:text-neutral-300">
-                  <span>View Projects</span>
-                  <span>→</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 5: CLIENTS MARQUEE TICKER (Restored from 01.psb)
-          ========================================================================= */}
-      <section className="w-full py-12 sm:py-16 bg-black border-t border-neutral-900/80 overflow-hidden">
-        <div className="text-center mb-8">
-          <p className="text-xs uppercase tracking-[0.3em] font-mono text-neutral-500">
-            {brandsTicker?.tag || '// Trusted By Premier Studios & Visionary Brands'}
-          </p>
+      <section className="w-full py-16 sm:py-20 bg-black overflow-hidden border-t border-neutral-900/80">
+        <div className="w-full mb-10 text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="font-horas text-3xl sm:text-4xl md:text-5xl uppercase font-bold tracking-wider text-white"
+          >
+            BRANDS I’VE WORKED WITH
+          </motion.h2>
         </div>
 
+        {/* Seamless Double-Strip Infinite Marquee */}
         <div className="relative w-full overflow-hidden select-none py-2">
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-black to-transparent z-10" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-black to-transparent z-10" />
-
           <div className="animate-marquee flex items-center">
-            <div className="flex-shrink-0 h-20 sm:h-28 md:h-36 w-auto flex items-center pr-12">
+            {/* Strip 1 */}
+            <div className="flex-shrink-0 h-28 sm:h-36 md:h-44 w-auto flex items-center">
               <img
                 src={brandsTicker?.image || '/extracted_assets/home/home_brands_ticker.webp'}
-                alt="Partner Brands"
+                alt="Client Brands"
                 className="h-full w-auto object-contain max-w-none opacity-85 hover:opacity-100 transition-opacity"
                 draggable={false}
               />
             </div>
-            <div className="flex-shrink-0 h-20 sm:h-28 md:h-36 w-auto flex items-center pr-12" aria-hidden="true">
+            {/* Strip 2 */}
+            <div className="flex-shrink-0 h-28 sm:h-36 md:h-44 w-auto flex items-center" aria-hidden="true">
               <img
                 src={brandsTicker?.image || '/extracted_assets/home/home_brands_ticker.webp'}
-                alt="Partner Brands"
+                alt="Client Brands"
                 className="h-full w-auto object-contain max-w-none opacity-85 hover:opacity-100 transition-opacity"
                 draggable={false}
               />
@@ -350,13 +320,19 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
 
       {/* =========================================================================
           SECTION 6: ZOOM INTO THE "O" CINEMATIC DIVE SECTION
+          Scroll-driven zoom directly through the center portal of "O", diving cleanly
+          straight into the Footer.
           ========================================================================= */}
       <section
         ref={galaxyContainerRef}
         className="relative w-full h-[175vh] bg-black p-0 m-0 border-t border-neutral-900/80"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black">
-          <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          {/* Luxury Cinematic Dark Background */}
+          <motion.div
+            style={{ scale: galaxyBackdropScale }}
+            className="absolute inset-0 z-0 select-none pointer-events-none will-change-transform"
+          >
             <Image
               src={zoomSection?.backdropImage || '/extracted_assets/home/plain_portal_bg.webp'}
               alt="Cinematic Portal Backdrop"
@@ -365,10 +341,12 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
               className="object-cover object-center select-none opacity-90"
               quality={90}
             />
-            <div className="absolute inset-0 bg-radial from-transparent via-black/40 to-black z-1" />
+            {/* Atmospheric vignette overlays */}
+            <div className="absolute inset-0 bg-radial from-transparent via-black/35 to-black z-1" />
             <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black z-1" />
-          </div>
+          </motion.div>
 
+          {/* Zooming Typography centered precisely on the golden "O" */}
           <motion.div
             style={{
               scale: galaxyZoom,
@@ -377,7 +355,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
             className="relative z-10 w-full max-w-5xl px-6 flex flex-col items-center justify-center will-change-transform select-none"
           >
             <div className="flex flex-col items-center text-center">
-              {/* Line 1: ZOOM */}
+              {/* Line 1: ZOOM with the center golden "O" portal */}
               <div className="font-horas text-6xl sm:text-8xl md:text-9xl lg:text-[140px] uppercase font-bold tracking-tight text-white leading-[0.88] drop-shadow-[0_10px_35px_rgba(0,0,0,0.95)] flex items-center justify-center">
                 <span>Z</span>
                 <span className="relative inline-flex items-center justify-center text-[#fec52d]">
@@ -399,6 +377,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
               </div>
             </div>
 
+            {/* Callout Action Button */}
             <motion.div
               style={{
                 opacity: galaxyCtaOpacity,

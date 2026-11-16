@@ -364,9 +364,9 @@ export default function AdminPage() {
       </AnimatePresence>
 
       {/* Main Admin Content Layout */}
-      <div className="flex-1 flex flex-col md:flex-row">
-        {/* Navigation Sidebar Tabs */}
-        <aside className="w-full md:w-64 bg-neutral-950/60 border-b md:border-b-0 md:border-r border-neutral-900 p-4 sm:p-6 flex-shrink-0 flex md:flex-col gap-1.5 overflow-x-auto select-none">
+      <div className="flex-1 flex flex-col md:flex-row relative">
+        {/* Navigation Sidebar Tabs - Fixed / Sticky on Desktop */}
+        <aside className="w-full md:w-64 bg-neutral-950/90 backdrop-blur-xl border-b md:border-b-0 md:border-r border-neutral-900 p-4 sm:p-6 flex-shrink-0 flex md:flex-col gap-1.5 overflow-x-auto md:overflow-y-auto select-none md:sticky md:top-[69px] md:h-[calc(100vh-69px)] md:self-start z-30">
           <button
             onClick={() => setActiveTab('overview')}
             className={`px-4 py-3 rounded-xl text-left text-xs font-mono uppercase tracking-wider flex items-center gap-3 transition-colors cursor-pointer whitespace-nowrap ${
@@ -682,6 +682,103 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* Quick Links Manager */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                      Footer Column 1: Quick Links
+                    </h3>
+                    <p className="text-xs text-neutral-400 font-mono mt-0.5">
+                      Manage all navigation links shown in the footer
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = [...(content.footer?.quickLinks || [])];
+                      updated.push({ label: 'New Link', href: '/' });
+                      setContent({
+                        ...content,
+                        footer: {
+                          ...content.footer,
+                          quickLinks: updated,
+                        },
+                      });
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#fec52d]/10 border border-[#fec52d]/40 text-[#fec52d] text-xs font-mono hover:bg-[#fec52d] hover:text-black transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Link</span>
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {(content.footer?.quickLinks || []).map((link, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-neutral-900 border border-neutral-800"
+                    >
+                      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-neutral-500 mb-1">
+                            Link Label
+                          </label>
+                          <input
+                            type="text"
+                            value={link.label}
+                            onChange={(e) => {
+                              const updated = [...(content.footer?.quickLinks || [])];
+                              updated[idx] = { ...updated[idx], label: e.target.value };
+                              setContent({
+                                ...content,
+                                footer: { ...content.footer, quickLinks: updated },
+                              });
+                            }}
+                            className="w-full px-3 py-1.5 rounded-lg bg-black/60 border border-neutral-700 text-white text-xs focus:border-[#fec52d] focus:outline-none"
+                            placeholder="Home / Works / Contact"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-neutral-500 mb-1">
+                            Destination URL (href)
+                          </label>
+                          <input
+                            type="text"
+                            value={link.href}
+                            onChange={(e) => {
+                              const updated = [...(content.footer?.quickLinks || [])];
+                              updated[idx] = { ...updated[idx], href: e.target.value };
+                              setContent({
+                                ...content,
+                                footer: { ...content.footer, quickLinks: updated },
+                              });
+                            }}
+                            className="w-full px-3 py-1.5 rounded-lg bg-black/60 border border-neutral-700 text-white text-xs font-mono focus:border-[#fec52d] focus:outline-none"
+                            placeholder="/ or /works or /about"
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = (content.footer?.quickLinks || []).filter((_, i) => i !== idx);
+                          setContent({
+                            ...content,
+                            footer: { ...content.footer, quickLinks: updated },
+                          });
+                        }}
+                        className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-colors self-end mb-0.5"
+                        title="Remove Link"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Social Media Links */}
               <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
                 <h3 className="font-horas text-xl uppercase tracking-wider text-white">
@@ -784,56 +881,235 @@ export default function AdminPage() {
                 </h2>
               </div>
 
-              {/* Hero Bio & Avatar */}
-              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
-                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
-                  Hero Intro Statement &amp; Badges
-                </h3>
-                <div>
-                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
-                    Hero Bio Heading
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={content.home.hero.bioHeading}
-                    onChange={(e) =>
-                      setContent({
-                        ...content,
-                        home: {
-                          ...content.home,
-                          hero: { ...content.home.hero, bioHeading: e.target.value },
-                        },
-                      })
-                    }
-                    className="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-[#fec52d] focus:outline-none font-horas tracking-wide leading-relaxed"
-                  />
+              {/* Hero 5-Lane Continuous Poster Matrix Manager */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-800 pb-4">
+                  <div>
+                    <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#fec52d]">
+                      // HERO VERTICAL MATRIX
+                    </span>
+                    <h3 className="font-horas text-2xl uppercase tracking-wider text-white mt-1">
+                      Hero Poster Lanes (Continuous Feed)
+                    </h3>
+                    <p className="text-xs font-ppmori text-neutral-400 mt-1">
+                      Add, upload, and remove movie posters from each of the 5 scrolling vertical lanes.
+                    </p>
+                  </div>
+                  <div className="text-xs font-mono text-neutral-400 bg-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-800 w-max">
+                    Total Posters:{' '}
+                    <span className="text-[#fec52d] font-bold">
+                      {Object.values(content.home.hero.posterColumns || {}).reduce(
+                        (acc, arr) => acc + (arr?.length || 0),
+                        0
+                      )}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Badges */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {content.home.hero.badges.map((badge, idx) => (
-                    <div key={idx}>
-                      <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
-                        Badge {idx + 1}
-                      </label>
-                      <input
-                        type="text"
-                        value={badge}
-                        onChange={(e) => {
-                          const newBadges = [...content.home.hero.badges];
-                          newBadges[idx] = e.target.value;
-                          setContent({
-                            ...content,
-                            home: {
-                              ...content.home,
-                              hero: { ...content.home.hero, badges: newBadges },
-                            },
-                          });
-                        }}
-                        className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono focus:border-[#fec52d] focus:outline-none"
-                      />
-                    </div>
-                  ))}
+                <div className="flex flex-col gap-8">
+                  {(['lane1', 'lane2', 'lane3', 'lane4', 'lane5'] as const).map((laneKey, laneIdx) => {
+                    const posters = content.home.hero.posterColumns?.[laneKey] || [];
+                    return (
+                      <div
+                        key={laneKey}
+                        className="p-5 rounded-xl bg-neutral-900/50 border border-neutral-800/80 flex flex-col gap-4"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="w-2 h-2 rounded-full bg-[#fec52d]" />
+                            <h4 className="font-horas text-lg uppercase tracking-wide text-white">
+                              Lane 0{laneIdx + 1}
+                            </h4>
+                            <span className="text-[11px] font-mono text-neutral-500">
+                              ({posters.length} posters)
+                            </span>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newPosters = [
+                                ...posters,
+                                {
+                                  title: 'New Film Poster',
+                                  image: '/film_posters_cache/poster_187.webp',
+                                },
+                              ];
+                              setContent({
+                                ...content,
+                                home: {
+                                  ...content.home,
+                                  hero: {
+                                    ...content.home.hero,
+                                    posterColumns: {
+                                      ...content.home.hero.posterColumns,
+                                      [laneKey]: newPosters,
+                                    },
+                                  },
+                                },
+                              });
+                            }}
+                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-white text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>Add Poster</span>
+                          </button>
+                        </div>
+
+                        {/* Poster Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          {posters.map((poster, pIdx) => {
+                            const fieldKey = `hero_${laneKey}_${pIdx}`;
+                            return (
+                              <div
+                                key={pIdx}
+                                className="p-3 rounded-xl bg-black/60 border border-neutral-800 flex flex-col gap-3 group relative"
+                              >
+                                <div className="relative aspect-[2/3] w-full rounded-lg overflow-hidden bg-neutral-950 border border-white/5">
+                                  {poster.image ? (
+                                    <Image
+                                      src={poster.image}
+                                      alt={poster.title || 'Poster'}
+                                      fill
+                                      className="object-cover object-center select-none"
+                                      unoptimized={poster.image.startsWith('http')}
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-xs text-neutral-600 font-mono">
+                                      No Image
+                                    </div>
+                                  )}
+
+                                  {/* Delete button on hover */}
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = posters.filter((_, idx) => idx !== pIdx);
+                                      setContent({
+                                        ...content,
+                                        home: {
+                                          ...content.home,
+                                          hero: {
+                                            ...content.home.hero,
+                                            posterColumns: {
+                                              ...content.home.hero.posterColumns,
+                                              [laneKey]: updated,
+                                            },
+                                          },
+                                        },
+                                      });
+                                    }}
+                                    className="absolute top-2 right-2 p-1.5 rounded-md bg-red-600/90 text-white hover:bg-red-500 shadow-md transition-colors cursor-pointer"
+                                    title="Delete Poster"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                  <div>
+                                    <label className="block text-[10px] font-mono uppercase text-neutral-500 mb-1">
+                                      Film Title
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={poster.title}
+                                      onChange={(e) => {
+                                        const updated = [...posters];
+                                        updated[pIdx] = { ...updated[pIdx], title: e.target.value };
+                                        setContent({
+                                          ...content,
+                                          home: {
+                                            ...content.home,
+                                            hero: {
+                                              ...content.home.hero,
+                                              posterColumns: {
+                                                ...content.home.hero.posterColumns,
+                                                [laneKey]: updated,
+                                              },
+                                            },
+                                          },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono focus:border-[#fec52d] focus:outline-none"
+                                      placeholder="Poster Title"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-[10px] font-mono uppercase text-neutral-500 mb-1">
+                                      Image Source / Upload
+                                    </label>
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="text"
+                                        value={poster.image}
+                                        onChange={(e) => {
+                                          const updated = [...posters];
+                                          updated[pIdx] = { ...updated[pIdx], image: e.target.value };
+                                          setContent({
+                                            ...content,
+                                            home: {
+                                              ...content.home,
+                                              hero: {
+                                                ...content.home.hero,
+                                                posterColumns: {
+                                                  ...content.home.hero.posterColumns,
+                                                  [laneKey]: updated,
+                                                },
+                                              },
+                                            },
+                                          });
+                                        }}
+                                        className="w-full px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-[11px] font-mono focus:border-[#fec52d] focus:outline-none truncate"
+                                        placeholder="/path/to/poster.webp or https://..."
+                                      />
+                                      <label className="flex-shrink-0 p-1.5 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-neutral-300 transition-colors cursor-pointer border border-neutral-700">
+                                        <Upload className="w-3.5 h-3.5" />
+                                        <input
+                                          type="file"
+                                          accept="image/*"
+                                          className="hidden"
+                                          onChange={(e) =>
+                                            handleFileUpload(
+                                              e,
+                                              (url) => {
+                                                const updated = [...posters];
+                                                updated[pIdx] = { ...updated[pIdx], image: url };
+                                                setContent({
+                                                  ...content,
+                                                  home: {
+                                                    ...content.home,
+                                                    hero: {
+                                                      ...content.home.hero,
+                                                      posterColumns: {
+                                                        ...content.home.hero.posterColumns,
+                                                        [laneKey]: updated,
+                                                      },
+                                                    },
+                                                  },
+                                                });
+                                              },
+                                              fieldKey
+                                            )
+                                          }
+                                        />
+                                      </label>
+                                    </div>
+                                    {uploadingField === fieldKey && (
+                                      <span className="text-[10px] font-mono text-[#fec52d] animate-pulse mt-1 block">
+                                        Uploading to Supabase...
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -1134,6 +1410,119 @@ export default function AdminPage() {
                   <Plus className="w-4 h-4" />
                   <span>Add Project</span>
                 </button>
+              </div>
+
+              {/* Works Page Hero Banner Customization */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-5">
+                <div className="border-b border-neutral-800 pb-3">
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#fec52d]">
+                    // PAGE HEADER
+                  </span>
+                  <h3 className="font-horas text-2xl uppercase tracking-wider text-white mt-0.5">
+                    Works Page Hero Banner
+                  </h3>
+                  <p className="text-xs font-ppmori text-neutral-400">
+                    Customize the title, subtitle, and backdrop image of the /works archive page.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1.5">
+                      Hero Tag
+                    </label>
+                    <input
+                      type="text"
+                      value={content.works.heroTag || '// PORTFOLIO ARCHIVE'}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          works: { ...content.works, heroTag: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs font-mono focus:border-[#fec52d] focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1.5">
+                      Page Main Title
+                    </label>
+                    <input
+                      type="text"
+                      value={content.works.title}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          works: { ...content.works, title: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm font-horas tracking-wider focus:border-[#fec52d] focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1.5">
+                      Subtitle / Editorial Description
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={content.works.subtitle}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          works: { ...content.works, subtitle: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs focus:border-[#fec52d] focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1.5">
+                      Hero Background Image URL / Direct Upload
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={content.works.backgroundImage || '/extracted_assets/work/work_hero_bg_clean.webp'}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            works: { ...content.works, backgroundImage: e.target.value },
+                          })
+                        }
+                        className="w-full px-3 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs font-mono focus:border-[#fec52d] focus:outline-none truncate"
+                      />
+                      <label className="flex-shrink-0 px-4 py-2.5 rounded-xl bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-white text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer border border-neutral-700 flex items-center gap-1.5">
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Upload</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) =>
+                            handleFileUpload(
+                              e,
+                              (url) => {
+                                setContent({
+                                  ...content,
+                                  works: { ...content.works, backgroundImage: url },
+                                });
+                              },
+                              'works_hero_bg'
+                            )
+                          }
+                        />
+                      </label>
+                    </div>
+                    {uploadingField === 'works_hero_bg' && (
+                      <span className="text-[10px] font-mono text-[#fec52d] animate-pulse mt-1 block">
+                        Uploading banner to Supabase...
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Projects List */}
@@ -1448,14 +1837,18 @@ export default function AdminPage() {
             <div className="flex flex-col gap-8">
               <div>
                 <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d] mb-1">
-                  // CONTACT PAGE COPY
+                  // CONTACT PAGE COPY &amp; INQUIRY FORM
                 </p>
                 <h2 className="font-horas text-3xl sm:text-4xl uppercase tracking-tight text-white">
-                  Headings &amp; Working Hours
+                  Coordinates, Form Titles &amp; Working Hours
                 </h2>
               </div>
 
+              {/* Main Headings */}
               <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                  Header Banner &amp; Tagline
+                </h3>
                 <div>
                   <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
                     Header Tag
@@ -1504,9 +1897,177 @@ export default function AdminPage() {
                     className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm"
                   />
                 </div>
-                <div>
+              </div>
+
+              {/* Left Column: Coordinates Title & Cards */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                  Left Column: Studio Coordinates Cards
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Coordinates Section Title
+                    </label>
+                    <input
+                      type="text"
+                      value={content.contact.coordinatesTitle || 'Studio Coordinates'}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          contact: { ...content.contact, coordinatesTitle: e.target.value },
+                        })
+                      }
+                      className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm"
+                      placeholder="Studio Coordinates"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Email Card Title
+                    </label>
+                    <input
+                      type="text"
+                      value={content.contact.cards?.emailTitle || ''}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          contact: {
+                            ...content.contact,
+                            cards: {
+                              ...content.contact.cards,
+                              emailTitle: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-4 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs"
+                      placeholder="Email Us"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Email Subtitle / Response Time
+                    </label>
+                    <input
+                      type="text"
+                      value={content.contact.cards?.emailSubtitle || ''}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          contact: {
+                            ...content.contact,
+                            cards: {
+                              ...content.contact.cards,
+                              emailSubtitle: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-4 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs"
+                      placeholder="Typically responds within 24 hours"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Phone Card Title
+                    </label>
+                    <input
+                      type="text"
+                      value={content.contact.cards?.phoneTitle || ''}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          contact: {
+                            ...content.contact,
+                            cards: {
+                              ...content.contact.cards,
+                              phoneTitle: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-4 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs"
+                      placeholder="Call Us"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Phone Subtitle
+                    </label>
+                    <input
+                      type="text"
+                      value={content.contact.cards?.phoneSubtitle || ''}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          contact: {
+                            ...content.contact,
+                            cards: {
+                              ...content.contact.cards,
+                              phoneSubtitle: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-4 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs"
+                      placeholder="Direct studio line"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Location Card Title
+                    </label>
+                    <input
+                      type="text"
+                      value={content.contact.cards?.locationTitle || ''}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          contact: {
+                            ...content.contact,
+                            cards: {
+                              ...content.contact.cards,
+                              locationTitle: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-4 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs"
+                      placeholder="Studio Coordinates"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Location Subtitle
+                    </label>
+                    <input
+                      type="text"
+                      value={content.contact.cards?.locationSubtitle || ''}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          contact: {
+                            ...content.contact,
+                            cards: {
+                              ...content.contact.cards,
+                              locationSubtitle: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-4 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs"
+                      placeholder="By appointment only"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-neutral-800">
                   <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
-                    Studio Working Hours
+                    Studio Working Hours / Schedule
                   </label>
                   <input
                     type="text"
@@ -1518,6 +2079,65 @@ export default function AdminPage() {
                       })
                     }
                     className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                    placeholder="Monday – Saturday // 09:30 AM – 07:00 PM IST"
+                  />
+                </div>
+              </div>
+
+              {/* Right Column: Project Enquiry Form Titles */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                  Right Column: Enquiry Form Text
+                </h3>
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                    Form Heading
+                  </label>
+                  <input
+                    type="text"
+                    value={content.contact.formTitle || 'Initiate Project Enquiry'}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        contact: { ...content.contact, formTitle: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm"
+                    placeholder="Initiate Project Enquiry"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                    Form Prompt / Subtitle
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={content.contact.formSubtitle || 'Fill out the brief coordinates below. Submissions land directly with our senior key art team.'}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        contact: { ...content.contact, formSubtitle: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-sm"
+                    placeholder="Fill out the brief coordinates below. Submissions land directly with our senior key art team."
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                    Submit Button Text
+                  </label>
+                  <input
+                    type="text"
+                    value={content.contact.formButtonText || 'Submit Project Brief'}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        contact: { ...content.contact, formButtonText: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                    placeholder="Submit Project Brief"
                   />
                 </div>
               </div>

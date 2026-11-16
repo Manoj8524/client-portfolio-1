@@ -17,8 +17,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Message must be at least 5 characters' }, { status: 400 });
     }
 
-    // Save lead to inquiries database
-    const saved = addContactMessage({
+    // Save lead to Supabase & local database
+    const saved = await addContactMessage({
       full_name,
       email_address,
       phone_number: phone_number || '',
@@ -60,7 +60,10 @@ export async function POST(req: NextRequest) {
       id: saved.id,
     });
   } catch (err: any) {
-    console.error('Contact API error:', err);
-    return NextResponse.json({ ok: false, error: err.message || 'Internal server error' }, { status: 500 });
+    console.error('Contact form submission error:', err);
+    return NextResponse.json(
+      { ok: false, error: err.message || 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

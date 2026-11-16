@@ -128,7 +128,7 @@ export default function ContactPage() {
           {/* Left Column: Coordinates & Studio Info */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <h2 className="font-horas text-2xl uppercase tracking-wider text-white">
-              Studio Coordinates
+              {contact?.coordinatesTitle || 'Studio Coordinates'}
             </h2>
 
             <div className="flex flex-col gap-4">
@@ -174,10 +174,10 @@ export default function ContactPage() {
           <div className="lg:col-span-7">
             <div className="p-8 sm:p-10 md:p-12 rounded-3xl bg-neutral-950/90 border border-neutral-900 shadow-2xl relative overflow-hidden backdrop-blur-xl">
               <h2 className="font-horas text-2xl sm:text-3xl uppercase tracking-wider text-white mb-2">
-                Initiate Project Enquiry
+                {contact?.formTitle || 'Initiate Project Enquiry'}
               </h2>
               <p className="text-xs sm:text-sm font-ppmori text-neutral-400 mb-8">
-                Fill out the brief coordinates below. Submissions land directly with our senior key art team.
+                {contact?.formSubtitle || 'Fill out the brief coordinates below. Submissions land directly with our senior key art team.'}
               </p>
 
               {submitted ? (
@@ -288,7 +288,7 @@ export default function ContactPage() {
                       <span>Dispatching Brief...</span>
                     ) : (
                       <>
-                        <span>Submit Project Brief</span>
+                        <span>{contact?.formButtonText || 'Submit Project Brief'}</span>
                         <Send className="w-4 h-4" />
                       </>
                     )}
