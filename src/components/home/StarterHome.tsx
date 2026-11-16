@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { SiteContent, HeroPosterItem } from '@/lib/contentStore';
@@ -13,7 +14,9 @@ interface StarterHomeProps {
 }
 
 export default function StarterHome({ initialData }: StarterHomeProps) {
+  const router = useRouter();
   const [content, setContent] = useState<SiteContent>(initialData || (defaultContent as SiteContent));
+  const [navigating, setNavigating] = useState(false);
   const watchRef = useRef<HTMLDivElement>(null);
   const galaxyContainerRef = useRef<HTMLDivElement>(null);
 
@@ -42,13 +45,27 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
     offset: ['start start', 'end end'],
   });
 
-  // Scale smoothly zooms from 1 to 45, diving deep into the center of the "O"
-  const galaxyZoom = useTransform(galaxyProgress, [0.05, 0.95], [1, 45]);
-  const galaxyBackdropScale = useTransform(galaxyProgress, [0, 1], [1, 1.3]);
+  // Scale smoothly zooms from 1 to 65, diving deep into the center of the "O"
+  const galaxyZoom = useTransform(galaxyProgress, [0.05, 0.92], [1, 65]);
+  const galaxyBackdropScale = useTransform(galaxyProgress, [0, 1], [1, 1.4]);
 
   // Center CTA button and text details fade out smoothly as dive accelerates
   const galaxyCtaOpacity = useTransform(galaxyProgress, [0, 0.22], [1, 0]);
   const galaxyCtaY = useTransform(galaxyProgress, [0, 0.22], [0, 30]);
+
+  // Fade to black flash towards the end of dive before entering /works
+  const galaxyFadeToBlack = useTransform(galaxyProgress, [0.82, 0.98], [0, 1]);
+
+  // When user completes the zoom dive (>= 0.96 progress), smoothly trigger router navigation to /works
+  useEffect(() => {
+    const unsubscribe = galaxyProgress.on('change', (latest) => {
+      if (latest >= 0.96 && !navigating) {
+        setNavigating(true);
+        router.push('/works');
+      }
+    });
+    return () => unsubscribe();
+  }, [galaxyProgress, navigating, router]);
 
   const scrollToNext = () => {
     const el = document.getElementById('featured-showcase');
@@ -71,7 +88,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
                 src={poster.image}
                 alt={poster.title || 'Film Poster'}
                 fill
-                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 20vw"
+                sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"
                 className="object-cover object-center group-hover/poster:scale-105 transition-transform duration-700 ease-out select-none"
                 priority={idx < 4}
                 loading={idx < 4 ? undefined : 'lazy'}
@@ -92,11 +109,12 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
     <div className="w-full bg-black text-white font-ppmori overflow-x-hidden p-0 m-0 selection:bg-[#fec52d] selection:text-black">
       {/* =========================================================================
           SECTION 1: HERO - DYNAMIC 5-COLUMN CONTINUOUS VERTICAL POSTER MATRIX
-          (Exact approved hero section retained intact)
+          Mobile: Exactly 3 responsive columns visible
+          Tablet / Desktop: 4 to 5 continuous lanes
           ========================================================================= */}
       <section className="relative w-full h-screen min-h-[700px] flex flex-col justify-between items-center overflow-hidden pt-20 p-0 m-0">
-        {/* Background 5-Column Continuous Upward Scrolling Poster Lanes */}
-        <div className="absolute inset-0 z-0 flex gap-3 sm:gap-4 md:gap-5 px-3 sm:px-6 md:px-8 py-0 overflow-hidden pointer-events-none select-none">
+        {/* Background Continuous Upward Scrolling Poster Lanes */}
+        <div className="absolute inset-0 z-0 flex gap-2.5 sm:gap-4 md:gap-5 px-2 sm:px-6 md:px-8 py-0 overflow-hidden pointer-events-none select-none">
           {renderColumn(hero.posterColumns?.lane1 || [], 'animate-scroll-lane-1')}
           {renderColumn(hero.posterColumns?.lane2 || [], 'animate-scroll-lane-2')}
           {renderColumn(hero.posterColumns?.lane3 || [], 'animate-scroll-lane-3')}
@@ -146,68 +164,30 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
         className="w-full p-0 m-0 bg-black border-t border-neutral-900/80"
       >
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-0 p-0 m-0">
-          {/* Card 1: Orange Mechanical Device */}
-          <Link
-            href="/works?category=BRANDING"
-            className="group relative aspect-[1600/2012] w-full block overflow-hidden rounded-none border-b border-neutral-900/80 md:border-b-0 md:border-r border-neutral-900/80 bg-neutral-950"
-          >
-            <Image
-              src="/extracted_assets/home/home_showcase_1.webp"
-              alt="Brand, website design, Development"
-              fill
-              sizes="(max-width: 768px) 100vw, 33.33vw"
-              className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
-              quality={90}
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-            <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="w-10 h-10 rounded-full bg-[#fec52d] text-black flex items-center justify-center shadow-lg">
-                <ArrowUpRight className="w-5 h-5" />
+          {(home.showcaseCards || []).slice(0, 3).map((card, idx) => (
+            <Link
+              key={idx}
+              href={card.link || '/works'}
+              className={`group relative aspect-[1600/2012] w-full block overflow-hidden rounded-none border-neutral-900/80 bg-neutral-950 ${
+                idx < 2 ? 'border-b md:border-b-0 md:border-r' : ''
+              }`}
+            >
+              <Image
+                src={card.image || `/extracted_assets/home/home_showcase_${idx + 1}.webp`}
+                alt={card.title || 'Portfolio Showcase'}
+                fill
+                sizes="(max-width: 768px) 100vw, 33.33vw"
+                className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                quality={90}
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+              <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="w-10 h-10 rounded-full bg-[#fec52d] text-black flex items-center justify-center shadow-lg">
+                  <ArrowUpRight className="w-5 h-5" />
+                </div>
               </div>
-            </div>
-          </Link>
-
-          {/* Card 2: Outdoor Boxes Packaging */}
-          <Link
-            href="/works?category=PRINT+%26+ADS"
-            className="group relative aspect-[1600/2012] w-full block overflow-hidden rounded-none border-b border-neutral-900/80 md:border-b-0 md:border-r border-neutral-900/80 bg-neutral-950"
-          >
-            <Image
-              src="/extracted_assets/home/home_showcase_2.webp"
-              alt="Held by Hands Outdoor Boxes Packaging"
-              fill
-              sizes="(max-width: 768px) 100vw, 33.33vw"
-              className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
-              quality={90}
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-            <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="w-10 h-10 rounded-full bg-[#fec52d] text-black flex items-center justify-center shadow-lg">
-                <ArrowUpRight className="w-5 h-5" />
-              </div>
-            </div>
-          </Link>
-
-          {/* Card 3: Dior Luxury Cosmetic Bottles Pour */}
-          <Link
-            href="/works?category=BRANDING"
-            className="group relative aspect-[1600/2012] w-full block overflow-hidden rounded-none bg-neutral-950"
-          >
-            <Image
-              src="/extracted_assets/home/home_showcase_3.webp"
-              alt="DIOR Brand, Packaging, Development"
-              fill
-              sizes="(max-width: 768px) 100vw, 33.33vw"
-              className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
-              quality={90}
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-            <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="w-10 h-10 rounded-full bg-[#fec52d] text-black flex items-center justify-center shadow-lg">
-                <ArrowUpRight className="w-5 h-5" />
-              </div>
-            </div>
-          </Link>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -220,13 +200,13 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
         className="w-full p-0 m-0 bg-black overflow-hidden border-t border-neutral-900/80"
       >
         <Link
-          href="/works?category=PRINT+%26+ADS"
+          href={home.featuredWatch?.cta?.href || '/works?category=PRINT+%26+ADS'}
           className="group relative block aspect-[4800/1983] w-full overflow-hidden rounded-none bg-neutral-950 cursor-pointer"
         >
           <motion.div style={{ scale: watchScale }} className="relative w-full h-full will-change-transform">
             <Image
-              src="/extracted_assets/home/home_featured_watch.webp"
-              alt="sotto zero Smartwatch - Brand, website Strategy, Development"
+              src={home.featuredWatch?.image || '/extracted_assets/home/home_featured_watch.webp'}
+              alt={home.featuredWatch?.title || 'Featured Project'}
               fill
               sizes="100vw"
               className="object-cover object-center select-none group-hover:scale-105 transition-transform duration-1000 ease-out"
@@ -244,12 +224,12 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-0 p-0 m-0">
           {/* Left: Laptop Mockup (Width 2788 / 4800 ~ 58%) */}
           <Link
-            href="/works?category=PRINT+%26+ADS"
+            href={home.splitShowcase?.leftLink || '/works?category=PRINT+%26+ADS'}
             className="lg:col-span-7 group relative block aspect-[2788/1437] w-full overflow-hidden rounded-none border-b lg:border-b-0 lg:border-r border-neutral-900/80 bg-neutral-950"
           >
             <Image
-              src="/extracted_assets/home/home_split_laptop.webp"
-              alt="Devices & Mockups"
+              src={home.splitShowcase?.leftImage || '/extracted_assets/home/home_split_laptop.webp'}
+              alt={home.splitShowcase?.leftAlt || 'Devices & Mockups'}
               fill
               sizes="(max-width: 1024px) 100vw, 58.33vw"
               className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -260,12 +240,12 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
 
           {/* Right: Smartphone Design Projects (Width 2012 / 4800 ~ 42%) */}
           <Link
-            href="/works?category=BRANDING"
+            href={home.splitShowcase?.rightLink || '/works?category=BRANDING'}
             className="lg:col-span-5 group relative block aspect-[2012/1437] w-full overflow-hidden rounded-none bg-neutral-950"
           >
             <Image
-              src="/extracted_assets/home/home_split_mobile.webp"
-              alt="R Design Mobile Projects"
+              src={home.splitShowcase?.rightImage || '/extracted_assets/home/home_split_mobile.webp'}
+              alt={home.splitShowcase?.rightAlt || 'R Design Mobile Projects'}
               fill
               sizes="(max-width: 1024px) 100vw, 41.67vw"
               className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -289,7 +269,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
             transition={{ duration: 0.6 }}
             className="font-horas text-3xl sm:text-4xl md:text-5xl uppercase font-bold tracking-wider text-white"
           >
-            BRANDS I’VE WORKED WITH
+            {brandsTicker?.title || 'BRANDS I’VE WORKED WITH'}
           </motion.h2>
         </div>
 
@@ -321,11 +301,11 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
       {/* =========================================================================
           SECTION 6: ZOOM INTO THE "O" CINEMATIC DIVE SECTION
           Scroll-driven zoom directly through the center portal of "O", diving cleanly
-          straight into the Footer.
+          straight into the Works page.
           ========================================================================= */}
       <section
         ref={galaxyContainerRef}
-        className="relative w-full h-[175vh] bg-black p-0 m-0 border-t border-neutral-900/80"
+        className="relative w-full h-[220vh] bg-black p-0 m-0 border-t border-neutral-900/80"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black">
           {/* Luxury Cinematic Dark Background */}
@@ -386,13 +366,25 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
               className="mt-8 sm:mt-10 pointer-events-auto"
             >
               <Link
-                href={zoomSection?.cta?.href || '/contact'}
+                href={zoomSection?.cta?.href || '/works'}
                 className="px-9 py-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/25 text-white hover:bg-[#fec52d] hover:text-black hover:scale-105 font-medium text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-300 shadow-2xl flex items-center gap-3 group"
               >
-                <span>{zoomSection?.cta?.label || 'Initiate Collaboration'}</span>
+                <span>{zoomSection?.cta?.label || 'Explore Selected Works'}</span>
                 <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
               </Link>
             </motion.div>
+          </motion.div>
+
+          {/* Smooth black transition curtain when diving into /works */}
+          <motion.div
+            style={{ opacity: galaxyFadeToBlack }}
+            className="absolute inset-0 bg-black z-20 pointer-events-none flex items-center justify-center"
+          >
+            {navigating && (
+              <span className="font-mono text-xs uppercase tracking-[0.3em] text-[#fec52d] animate-pulse">
+                Entering Works Archive...
+              </span>
+            )}
           </motion.div>
         </div>
       </section>

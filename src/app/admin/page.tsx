@@ -682,6 +682,143 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* Main Navbar Links Manager */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                      Main Header Navigation Links
+                    </h3>
+                    <p className="text-xs text-neutral-400 font-mono mt-0.5">
+                      Change navbar order, names, or link destinations
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = [...(content.navigation?.links || [])];
+                      updated.push({ label: 'New Link', href: '/' });
+                      setContent({
+                        ...content,
+                        navigation: {
+                          ...content.navigation,
+                          links: updated,
+                        },
+                      });
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#fec52d]/10 border border-[#fec52d]/40 text-[#fec52d] text-xs font-mono hover:bg-[#fec52d] hover:text-black transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Nav Link</span>
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {(content.navigation?.links || []).map((link, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-neutral-900 border border-neutral-800"
+                    >
+                      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-neutral-500 mb-1">
+                            Link Label (Index {idx + 1})
+                          </label>
+                          <input
+                            type="text"
+                            value={link.label}
+                            onChange={(e) => {
+                              const updated = [...(content.navigation?.links || [])];
+                              updated[idx] = { ...updated[idx], label: e.target.value };
+                              setContent({
+                                ...content,
+                                navigation: { ...content.navigation, links: updated },
+                              });
+                            }}
+                            className="w-full px-3 py-1.5 rounded-lg bg-black/60 border border-neutral-700 text-white text-xs focus:border-[#fec52d] focus:outline-none"
+                            placeholder="Home / Works / About / Contact"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-neutral-500 mb-1">
+                            Destination URL (href)
+                          </label>
+                          <input
+                            type="text"
+                            value={link.href}
+                            onChange={(e) => {
+                              const updated = [...(content.navigation?.links || [])];
+                              updated[idx] = { ...updated[idx], href: e.target.value };
+                              setContent({
+                                ...content,
+                                navigation: { ...content.navigation, links: updated },
+                              });
+                            }}
+                            className="w-full px-3 py-1.5 rounded-lg bg-black/60 border border-neutral-700 text-white text-xs font-mono focus:border-[#fec52d] focus:outline-none"
+                            placeholder="/ or /works or /about"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1 self-end mb-0.5">
+                        <button
+                          type="button"
+                          disabled={idx === 0}
+                          onClick={() => {
+                            if (idx === 0) return;
+                            const updated = [...(content.navigation?.links || [])];
+                            const temp = updated[idx];
+                            updated[idx] = updated[idx - 1];
+                            updated[idx - 1] = temp;
+                            setContent({
+                              ...content,
+                              navigation: { ...content.navigation, links: updated },
+                            });
+                          }}
+                          className="p-2 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-neutral-300 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                          title="Move Left / Up"
+                        >
+                          ↑
+                        </button>
+                        <button
+                          type="button"
+                          disabled={idx === (content.navigation?.links || []).length - 1}
+                          onClick={() => {
+                            if (idx === (content.navigation?.links || []).length - 1) return;
+                            const updated = [...(content.navigation?.links || [])];
+                            const temp = updated[idx];
+                            updated[idx] = updated[idx + 1];
+                            updated[idx + 1] = temp;
+                            setContent({
+                              ...content,
+                              navigation: { ...content.navigation, links: updated },
+                            });
+                          }}
+                          className="p-2 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-neutral-300 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                          title="Move Right / Down"
+                        >
+                          ↓
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = (content.navigation?.links || []).filter((_, i) => i !== idx);
+                            setContent({
+                              ...content,
+                              navigation: { ...content.navigation, links: updated },
+                            });
+                          }}
+                          className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-colors"
+                          title="Remove Link"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Quick Links Manager */}
               <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
                 <div className="flex items-center justify-between">
@@ -1113,31 +1250,157 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* 3-Column Showcase Cards */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-6">
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#fec52d]">
+                    // 3-COLUMN SHOWCASE CARDS
+                  </span>
+                  <h3 className="font-horas text-2xl uppercase tracking-wider text-white mt-1">
+                    Featured Project Showcase Grid (3 Columns)
+                  </h3>
+                  <p className="text-xs font-ppmori text-neutral-400 mt-1">
+                    Update images, titles, tags, and link destinations for the 3 flagship full-bleed cards.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {(content.home.showcaseCards || []).slice(0, 3).map((card, idx) => {
+                    const fieldKey = `showcase_card_${idx}`;
+                    return (
+                      <div
+                        key={idx}
+                        className="p-4 rounded-xl bg-neutral-900/60 border border-neutral-800 flex flex-col gap-3"
+                      >
+                        <span className="text-xs font-mono uppercase text-[#fec52d]">
+                          Card 0{idx + 1}
+                        </span>
+
+                        <div>
+                          <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                            Tag / Category
+                          </label>
+                          <input
+                            type="text"
+                            value={card.tag}
+                            onChange={(e) => {
+                              const updated = [...(content.home.showcaseCards || [])];
+                              updated[idx] = { ...updated[idx], tag: e.target.value };
+                              setContent({
+                                ...content,
+                                home: { ...content.home, showcaseCards: updated },
+                              });
+                            }}
+                            className="w-full px-3 py-1.5 rounded-lg bg-black border border-neutral-800 text-white text-xs font-mono"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                            Title
+                          </label>
+                          <input
+                            type="text"
+                            value={card.title}
+                            onChange={(e) => {
+                              const updated = [...(content.home.showcaseCards || [])];
+                              updated[idx] = { ...updated[idx], title: e.target.value };
+                              setContent({
+                                ...content,
+                                home: { ...content.home, showcaseCards: updated },
+                              });
+                            }}
+                            className="w-full px-3 py-1.5 rounded-lg bg-black border border-neutral-800 text-white text-xs"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                            Destination Link
+                          </label>
+                          <input
+                            type="text"
+                            value={card.link}
+                            onChange={(e) => {
+                              const updated = [...(content.home.showcaseCards || [])];
+                              updated[idx] = { ...updated[idx], link: e.target.value };
+                              setContent({
+                                ...content,
+                                home: { ...content.home, showcaseCards: updated },
+                              });
+                            }}
+                            className="w-full px-3 py-1.5 rounded-lg bg-black border border-neutral-800 text-white text-xs font-mono"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                            Image URL &amp; Upload
+                          </label>
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={card.image}
+                              onChange={(e) => {
+                                const updated = [...(content.home.showcaseCards || [])];
+                                updated[idx] = { ...updated[idx], image: e.target.value };
+                                setContent({
+                                  ...content,
+                                  home: { ...content.home, showcaseCards: updated },
+                                });
+                              }}
+                              className="flex-1 px-3 py-1.5 rounded-lg bg-black border border-neutral-800 text-white text-xs font-mono truncate"
+                            />
+                            <label className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-neutral-200 text-xs font-mono flex items-center gap-1 cursor-pointer">
+                              <Upload className="w-3.5 h-3.5" />
+                              <span>Upload</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) =>
+                                  handleFileUpload(
+                                    e,
+                                    (url) => {
+                                      const updated = [...(content.home.showcaseCards || [])];
+                                      updated[idx] = { ...updated[idx], image: url };
+                                      setContent({
+                                        ...content,
+                                        home: { ...content.home, showcaseCards: updated },
+                                      });
+                                    },
+                                    fieldKey
+                                  )
+                                }
+                              />
+                            </label>
+                          </div>
+                          {uploadingField === fieldKey && (
+                            <span className="text-[10px] font-mono text-[#fec52d] animate-pulse mt-1 block">
+                              Uploading...
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Featured Watch Showcase */}
               <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
-                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
-                  Featured Watch Showcase
-                </h3>
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#fec52d]">
+                    // ULTRA-WIDE HERO SHOWCASE
+                  </span>
+                  <h3 className="font-horas text-2xl uppercase tracking-wider text-white mt-1">
+                    Featured Project Banner (Sotto Zero Watch)
+                  </h3>
+                  <p className="text-xs font-ppmori text-neutral-400 mt-1">
+                    Update the full-bleed banner image, title, and destination link.
+                  </p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
-                      Badge Tag
-                    </label>
-                    <input
-                      type="text"
-                      value={content.home.featuredWatch.badge}
-                      onChange={(e) =>
-                        setContent({
-                          ...content,
-                          home: {
-                            ...content.home,
-                            featuredWatch: { ...content.home.featuredWatch, badge: e.target.value },
-                          },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
-                    />
-                  </div>
                   <div>
                     <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
                       Showcase Title
@@ -1154,16 +1417,16 @@ export default function AdminPage() {
                           },
                         })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm font-horas"
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm"
                     />
                   </div>
-                  <div className="md:col-span-2">
+                  <div>
                     <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
-                      Description
+                      Destination Link
                     </label>
                     <input
                       type="text"
-                      value={content.home.featuredWatch.description}
+                      value={content.home.featuredWatch.cta?.href || '/works?category=PRINT+%26+ADS'}
                       onChange={(e) =>
                         setContent({
                           ...content,
@@ -1171,12 +1434,15 @@ export default function AdminPage() {
                             ...content.home,
                             featuredWatch: {
                               ...content.home.featuredWatch,
-                              description: e.target.value,
+                              cta: {
+                                ...content.home.featuredWatch.cta,
+                                href: e.target.value,
+                              },
                             },
                           },
                         })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm"
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
                     />
                   </div>
                   <div className="md:col-span-2">
@@ -1201,7 +1467,7 @@ export default function AdminPage() {
                         }
                         className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
                       />
-                      <label className="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-mono flex items-center gap-1.5 cursor-pointer">
+                      <label className="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-white text-xs font-mono flex items-center gap-1.5 cursor-pointer">
                         <Upload className="w-3.5 h-3.5" />
                         <span>Upload</span>
                         <input
@@ -1223,6 +1489,368 @@ export default function AdminPage() {
                                   },
                                 }),
                               'featuredWatch'
+                            )
+                          }
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Split 2-Column Showcase (Laptop & Mobile) */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-6">
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#fec52d]">
+                    // SPLIT 2-COLUMN SHOWCASE
+                  </span>
+                  <h3 className="font-horas text-2xl uppercase tracking-wider text-white mt-1">
+                    Devices &amp; Mockups Split Section (Laptop + Mobile)
+                  </h3>
+                  <p className="text-xs font-ppmori text-neutral-400 mt-1">
+                    Manage the 58/42 split showcase section images and links.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Left Column: Laptop Mockup */}
+                  <div className="p-4 rounded-xl bg-neutral-900/60 border border-neutral-800 flex flex-col gap-3">
+                    <span className="text-xs font-mono uppercase text-[#fec52d]">
+                      Left Column (Laptop Mockup - 58% Width)
+                    </span>
+
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                        Alt Label / Title
+                      </label>
+                      <input
+                        type="text"
+                        value={content.home.splitShowcase?.leftAlt || 'Devices & Mockups'}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            home: {
+                              ...content.home,
+                              splitShowcase: {
+                                ...content.home.splitShowcase,
+                                leftAlt: e.target.value,
+                                leftImage: content.home.splitShowcase?.leftImage || '/extracted_assets/home/home_split_laptop.webp',
+                                leftLink: content.home.splitShowcase?.leftLink || '/works?category=PRINT+%26+ADS',
+                                rightImage: content.home.splitShowcase?.rightImage || '/extracted_assets/home/home_split_mobile.webp',
+                                rightLink: content.home.splitShowcase?.rightLink || '/works?category=BRANDING',
+                              },
+                            },
+                          })
+                        }
+                        className="w-full px-3 py-1.5 rounded-lg bg-black border border-neutral-800 text-white text-xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                        Destination Link
+                      </label>
+                      <input
+                        type="text"
+                        value={content.home.splitShowcase?.leftLink || '/works?category=PRINT+%26+ADS'}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            home: {
+                              ...content.home,
+                              splitShowcase: {
+                                ...content.home.splitShowcase,
+                                leftLink: e.target.value,
+                                leftImage: content.home.splitShowcase?.leftImage || '/extracted_assets/home/home_split_laptop.webp',
+                                rightImage: content.home.splitShowcase?.rightImage || '/extracted_assets/home/home_split_mobile.webp',
+                                rightLink: content.home.splitShowcase?.rightLink || '/works?category=BRANDING',
+                              },
+                            },
+                          })
+                        }
+                        className="w-full px-3 py-1.5 rounded-lg bg-black border border-neutral-800 text-white text-xs font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                        Image URL &amp; Upload
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={content.home.splitShowcase?.leftImage || '/extracted_assets/home/home_split_laptop.webp'}
+                          onChange={(e) =>
+                            setContent({
+                              ...content,
+                              home: {
+                                ...content.home,
+                                splitShowcase: {
+                                  ...content.home.splitShowcase,
+                                  leftImage: e.target.value,
+                                  leftLink: content.home.splitShowcase?.leftLink || '/works?category=PRINT+%26+ADS',
+                                  rightImage: content.home.splitShowcase?.rightImage || '/extracted_assets/home/home_split_mobile.webp',
+                                  rightLink: content.home.splitShowcase?.rightLink || '/works?category=BRANDING',
+                                },
+                              },
+                            })
+                          }
+                          className="flex-1 px-3 py-1.5 rounded-lg bg-black border border-neutral-800 text-white text-xs font-mono truncate"
+                        />
+                        <label className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-neutral-200 text-xs font-mono flex items-center gap-1 cursor-pointer">
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Upload</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) =>
+                              handleFileUpload(
+                                e,
+                                (url) =>
+                                  setContent({
+                                    ...content,
+                                    home: {
+                                      ...content.home,
+                                      splitShowcase: {
+                                        ...content.home.splitShowcase,
+                                        leftImage: url,
+                                        leftLink: content.home.splitShowcase?.leftLink || '/works?category=PRINT+%26+ADS',
+                                        rightImage: content.home.splitShowcase?.rightImage || '/extracted_assets/home/home_split_mobile.webp',
+                                        rightLink: content.home.splitShowcase?.rightLink || '/works?category=BRANDING',
+                                      },
+                                    },
+                                  }),
+                                'split_left'
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Mobile Projects */}
+                  <div className="p-4 rounded-xl bg-neutral-900/60 border border-neutral-800 flex flex-col gap-3">
+                    <span className="text-xs font-mono uppercase text-[#fec52d]">
+                      Right Column (Mobile Projects - 42% Width)
+                    </span>
+
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                        Alt Label / Title
+                      </label>
+                      <input
+                        type="text"
+                        value={content.home.splitShowcase?.rightAlt || 'R Design Mobile Projects'}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            home: {
+                              ...content.home,
+                              splitShowcase: {
+                                ...content.home.splitShowcase,
+                                rightAlt: e.target.value,
+                                leftImage: content.home.splitShowcase?.leftImage || '/extracted_assets/home/home_split_laptop.webp',
+                                leftLink: content.home.splitShowcase?.leftLink || '/works?category=PRINT+%26+ADS',
+                                rightImage: content.home.splitShowcase?.rightImage || '/extracted_assets/home/home_split_mobile.webp',
+                                rightLink: content.home.splitShowcase?.rightLink || '/works?category=BRANDING',
+                              },
+                            },
+                          })
+                        }
+                        className="w-full px-3 py-1.5 rounded-lg bg-black border border-neutral-800 text-white text-xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                        Destination Link
+                      </label>
+                      <input
+                        type="text"
+                        value={content.home.splitShowcase?.rightLink || '/works?category=BRANDING'}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            home: {
+                              ...content.home,
+                              splitShowcase: {
+                                ...content.home.splitShowcase,
+                                rightLink: e.target.value,
+                                leftImage: content.home.splitShowcase?.leftImage || '/extracted_assets/home/home_split_laptop.webp',
+                                leftLink: content.home.splitShowcase?.leftLink || '/works?category=PRINT+%26+ADS',
+                                rightImage: content.home.splitShowcase?.rightImage || '/extracted_assets/home/home_split_mobile.webp',
+                              },
+                            },
+                          })
+                        }
+                        className="w-full px-3 py-1.5 rounded-lg bg-black border border-neutral-800 text-white text-xs font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-neutral-400 mb-1">
+                        Image URL &amp; Upload
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={content.home.splitShowcase?.rightImage || '/extracted_assets/home/home_split_mobile.webp'}
+                          onChange={(e) =>
+                            setContent({
+                              ...content,
+                              home: {
+                                ...content.home,
+                                splitShowcase: {
+                                  ...content.home.splitShowcase,
+                                  rightImage: e.target.value,
+                                  leftImage: content.home.splitShowcase?.leftImage || '/extracted_assets/home/home_split_laptop.webp',
+                                  leftLink: content.home.splitShowcase?.leftLink || '/works?category=PRINT+%26+ADS',
+                                  rightLink: content.home.splitShowcase?.rightLink || '/works?category=BRANDING',
+                                },
+                              },
+                            })
+                          }
+                          className="flex-1 px-3 py-1.5 rounded-lg bg-black border border-neutral-800 text-white text-xs font-mono truncate"
+                        />
+                        <label className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-neutral-200 text-xs font-mono flex items-center gap-1 cursor-pointer">
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Upload</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) =>
+                              handleFileUpload(
+                                e,
+                                (url) =>
+                                  setContent({
+                                    ...content,
+                                    home: {
+                                      ...content.home,
+                                      splitShowcase: {
+                                        ...content.home.splitShowcase,
+                                        rightImage: url,
+                                        leftImage: content.home.splitShowcase?.leftImage || '/extracted_assets/home/home_split_laptop.webp',
+                                        leftLink: content.home.splitShowcase?.leftLink || '/works?category=PRINT+%26+ADS',
+                                        rightLink: content.home.splitShowcase?.rightLink || '/works?category=BRANDING',
+                                      },
+                                    },
+                                  }),
+                                'split_right'
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Brands Worked With Marquee */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#fec52d]">
+                    // BRANDS LOGO TICKER
+                  </span>
+                  <h3 className="font-horas text-2xl uppercase tracking-wider text-white mt-1">
+                    Brands I’ve Worked With Marquee Ticker
+                  </h3>
+                  <p className="text-xs font-ppmori text-neutral-400 mt-1">
+                    Edit heading text and upload/replace the seamless client brands banner strip.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Section Heading
+                    </label>
+                    <input
+                      type="text"
+                      value={content.home.brandsTicker?.title || 'BRANDS I’VE WORKED WITH'}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          home: {
+                            ...content.home,
+                            brandsTicker: {
+                              ...content.home.brandsTicker,
+                              title: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Sub-tag / Note
+                    </label>
+                    <input
+                      type="text"
+                      value={content.home.brandsTicker?.tag || '// Trusted By Premier Studios & Visionary Brands'}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          home: {
+                            ...content.home,
+                            brandsTicker: {
+                              ...content.home.brandsTicker,
+                              tag: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                      Brands Ticker Image Strip URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={content.home.brandsTicker?.image || '/extracted_assets/home/home_brands_ticker.webp'}
+                        onChange={(e) =>
+                          setContent({
+                            ...content,
+                            home: {
+                              ...content.home,
+                              brandsTicker: {
+                                ...content.home.brandsTicker,
+                                image: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                      />
+                      <label className="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-white text-xs font-mono flex items-center gap-1.5 cursor-pointer">
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Upload</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) =>
+                            handleFileUpload(
+                              e,
+                              (url) =>
+                                setContent({
+                                  ...content,
+                                  home: {
+                                    ...content.home,
+                                    brandsTicker: {
+                                      ...content.home.brandsTicker,
+                                      image: url,
+                                    },
+                                  },
+                                }),
+                              'brandsTicker'
                             )
                           }
                         />

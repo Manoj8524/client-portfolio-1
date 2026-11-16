@@ -24,8 +24,8 @@ export default function Footer() {
       .catch(() => {});
   }, []);
 
-  // Hide on admin routes
-  if (pathname?.startsWith('/admin')) {
+  // Hide on admin routes or home page
+  if (pathname?.startsWith('/admin') || pathname === '/') {
     return null;
   }
 

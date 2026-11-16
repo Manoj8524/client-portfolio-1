@@ -79,6 +79,14 @@ export interface SiteContent {
       image: string;
       link: string;
     }>;
+    splitShowcase?: {
+      leftImage: string;
+      leftLink: string;
+      leftAlt?: string;
+      rightImage: string;
+      rightLink: string;
+      rightAlt?: string;
+    };
     disciplines: Array<{
       name: string;
       path: string;
@@ -86,6 +94,7 @@ export interface SiteContent {
       slug: string;
     }>;
     brandsTicker: {
+      title?: string;
       tag: string;
       image: string;
     };

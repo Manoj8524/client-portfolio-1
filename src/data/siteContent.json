@@ -18,9 +18,9 @@
   "navigation": {
     "links": [
       { "label": "Home", "href": "/" },
-      { "label": "About", "href": "/about" },
       { "label": "Works", "href": "/works" },
       { "label": "Services", "href": "/works" },
+      { "label": "About", "href": "/about" },
       { "label": "Contact", "href": "/contact" }
     ],
     "cta": {
@@ -91,27 +91,35 @@
     },
     "showcaseCards": [
       {
-        "tag": "01 // DESKTOP ARCHITECTURE",
-        "title": "ENTERPRISE DIGITAL CANVAS",
+        "tag": "01 // BRANDING",
+        "title": "Brand, website design, Development",
         "description": "Tailored for ultra-wide cinematic displays and studio creative reviews.",
         "image": "/extracted_assets/home/home_showcase_1.webp",
-        "link": "/works"
+        "link": "/works?category=BRANDING"
       },
       {
-        "tag": "02 // MOBILE TOUCH EXPERIENCE",
-        "title": "TACTILE VISUAL NARRATIVE",
+        "tag": "02 // PACKAGING",
+        "title": "Held by Hands Outdoor Boxes Packaging",
         "description": "Fluid 120Hz gesture navigation, instant key visual teasers, and responsive key art.",
         "image": "/extracted_assets/home/home_showcase_2.webp",
-        "link": "/works"
+        "link": "/works?category=PRINT+%26+ADS"
       },
       {
-        "tag": "03 // STUDIO WORKSTATION",
-        "title": "PRECISION KEY ART WORKFLOW",
+        "tag": "03 // LUXURY",
+        "title": "DIOR Brand, Packaging, Development",
         "description": "High bit-depth retouching, typographical architecture, and print color matching.",
         "image": "/extracted_assets/home/home_showcase_3.webp",
-        "link": "/works"
+        "link": "/works?category=BRANDING"
       }
     ],
+    "splitShowcase": {
+      "leftImage": "/extracted_assets/home/home_split_laptop.webp",
+      "leftLink": "/works?category=PRINT+%26+ADS",
+      "leftAlt": "Devices & Mockups",
+      "rightImage": "/extracted_assets/home/home_split_mobile.webp",
+      "rightLink": "/works?category=BRANDING",
+      "rightAlt": "R Design Mobile Projects"
+    },
     "disciplines": [
       {
         "name": "Film Poster Design",
@@ -139,6 +147,7 @@
       }
     ],
     "brandsTicker": {
+      "title": "BRANDS I’VE WORKED WITH",
       "tag": "// Trusted By Premier Studios & Visionary Brands",
       "image": "/extracted_assets/home/home_brands_ticker.webp"
     },
