@@ -39,25 +39,31 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
   });
   const watchScale = useTransform(watchProgress, [0, 0.5, 1], [0.98, 1.02, 0.99]);
 
-  // Galaxy Zoom pinned portal dive into the "O" straight into the footer
+  // Galaxy Zoom pinned portal dive into the "O" straight into the Works Hero
   const { scrollYProgress: galaxyProgress } = useScroll({
     target: galaxyContainerRef,
     offset: ['start start', 'end end'],
   });
 
-  // Scale smoothly zooms from 1 to 65, diving deep into the center of the "O"
-  const galaxyZoom = useTransform(galaxyProgress, [0.05, 0.92], [1, 65]);
-  const galaxyBackdropScale = useTransform(galaxyProgress, [0, 1], [1, 1.4]);
+  // Scale smoothly zooms from 1 to 75, diving deep into the golden circular void of "O"
+  const galaxyZoom = useTransform(galaxyProgress, [0.05, 0.90], [1, 75]);
+  const galaxyBackdropScale = useTransform(galaxyProgress, [0, 1], [1, 1.45]);
 
   // Center CTA button and text details fade out smoothly as dive accelerates
-  const galaxyCtaOpacity = useTransform(galaxyProgress, [0, 0.22], [1, 0]);
-  const galaxyCtaY = useTransform(galaxyProgress, [0, 0.22], [0, 30]);
+  const galaxyCtaOpacity = useTransform(galaxyProgress, [0, 0.20], [1, 0]);
+  const galaxyCtaY = useTransform(galaxyProgress, [0, 0.20], [0, 30]);
 
-  // Fade to black flash towards the end of dive before entering /works
-  const galaxyFadeToBlack = useTransform(galaxyProgress, [0.82, 0.98], [0, 1]);
+  // Works Hero reveal starts seamlessly inside the "O" portal as it enlarges
+  // From 0.70 to 0.95, the Works Hero emerges with a cinematic reveal
+  const worksRevealOpacity = useTransform(galaxyProgress, [0.70, 0.92], [0, 1]);
+  const worksRevealScale = useTransform(galaxyProgress, [0.70, 0.96], [0.82, 1]);
+  const worksRevealContentY = useTransform(galaxyProgress, [0.75, 0.96], [40, 0]);
 
-  // When user completes the zoom dive (>= 0.96 progress), smoothly trigger router navigation to /works
+  // When user reaches end of the dive (>= 0.96 progress), smoothly transition route to /works
   useEffect(() => {
+    // Prefetch /works for instant route navigation
+    router.prefetch('/works');
+
     const unsubscribe = galaxyProgress.on('change', (latest) => {
       if (latest >= 0.96 && !navigating) {
         setNavigating(true);
@@ -375,16 +381,44 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
             </motion.div>
           </motion.div>
 
-          {/* Smooth black transition curtain when diving into /works */}
+          {/* Smooth In-Portal Works Hero Preview emerges through the void of "O" */}
           <motion.div
-            style={{ opacity: galaxyFadeToBlack }}
-            className="absolute inset-0 bg-black z-20 pointer-events-none flex items-center justify-center"
+            style={{
+              opacity: worksRevealOpacity,
+              scale: worksRevealScale,
+            }}
+            className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center overflow-hidden"
           >
-            {navigating && (
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-[#fec52d] animate-pulse">
-                Entering Works Archive...
-              </span>
-            )}
+            {/* Works Background Image filling the frame */}
+            <div className="absolute inset-0 z-0">
+              <Image
+                src={content.works?.backgroundImage || '/extracted_assets/work/work_hero_bg_clean.webp'}
+                alt="Works Background"
+                fill
+                sizes="100vw"
+                className="object-cover object-center select-none"
+                quality={92}
+              />
+              <div className="absolute inset-0 bg-radial from-transparent via-black/25 to-black/85 z-1" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/80 z-1" />
+            </div>
+
+            {/* Works Hero Title & Typography smoothly rising into focus */}
+            <motion.div
+              style={{ y: worksRevealContentY }}
+              className="relative z-10 text-center px-6 max-w-4xl flex flex-col items-center"
+            >
+              <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">
+                {content.works?.heroTag || '// PORTFOLIO ARCHIVE'}
+              </p>
+              <h1 className="font-horas text-5xl sm:text-7xl md:text-8xl uppercase tracking-tighter text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
+                {content.works?.title || 'SELECTED ARCHIVE'}
+              </h1>
+              <p className="mt-4 font-ppmori text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
+                {content.works?.subtitle ||
+                  'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
+              </p>
+            </motion.div>
           </motion.div>
         </div>
       </section>
