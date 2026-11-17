@@ -68,8 +68,8 @@ function PortalCircle({
           quality={92}
           priority
         />
-        <div className="absolute inset-0 bg-radial from-transparent via-black/25 to-black/85 z-1" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/80 z-1" />
+        {/* Subtle top vignette only for header contrast - zero bottom black overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-1" />
       </div>
 
       {/* Works Hero typography rises into view */}
