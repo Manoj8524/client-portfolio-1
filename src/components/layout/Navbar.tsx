@@ -38,10 +38,7 @@ export default function Navbar() {
   const disciplines = home?.disciplines || [];
 
   return (
-    <header
-      className="padding-primary fixed top-0 left-0 w-full z-50 flex h-20 shrink-0 items-center justify-between will-change-transform bg-transparent"
-      style={{ opacity: 'var(--zoom-navbar-opacity, 1)', transition: 'opacity 0.1s linear' }}
-    >
+    <header className="padding-primary fixed top-0 left-0 w-full z-50 flex h-20 shrink-0 items-center justify-between will-change-transform bg-transparent">
       {/* Brand / Project Name */}
       <Link href="/" aria-current="page" className="flex items-center gap-2 group">
         <div className="py-2">
