@@ -34,26 +34,36 @@ const FAIL = (msg) => { console.error(`  ❌ FAIL: ${msg}`); process.exitCode = 
     FAIL(`Missing ZOOM / EXTRAORDINARY headlines. Found: ${h2Texts.join(' | ')}`);
   }
 
-  // ── 3. No duplicate works hero image on Home page ───────────────────────────
-  console.log('\n── Test 3: No duplicate hero image on Home page ──');
-  const duplicateImages = await page.evaluate(() => {
+  // ── 3. Works hero image mounted cleanly on Home page (exactly 1, no duplicates) ───
+  console.log('\n── Test 3: Works hero image cleanly mounted ──');
+  const heroImageCount = await page.evaluate(() => {
     const images = Array.from(document.querySelectorAll('img'));
     return images.filter(img => img.src.includes('work_hero_bg_clean.webp')).length;
   });
-  if (duplicateImages === 0) {
-    PASS('Zero duplicate works hero images on Home page');
+  if (heroImageCount === 1) {
+    PASS('Exactly 1 Works hero image pre-loaded in portal reveal (no duplicates)');
   } else {
-    FAIL(`Found ${duplicateImages} works hero images on Home page (expected 0)`);
+    FAIL(`Found ${heroImageCount} works hero images on Home page (expected 1)`);
   }
 
-  // ── 4. Zoom CTA button links directly to /works ─────────────────────────────
-  console.log('\n── Test 4: Zoom CTA button links directly to /works ──');
-  const ctaLink = await page.$('section a[href="/works"]');
-  if (ctaLink) {
-    const text = await ctaLink.textContent();
-    PASS(`CTA button links directly to /works ("${text.trim()}")`);
+  // ── 4. Zoom CTA button present ──────────────────────────────────────────────
+  console.log('\n── Test 4: Zoom CTA button present ──');
+  const ctaBtn = await page.$('#works-portal-section button, #works-portal-section a');
+  if (ctaBtn) {
+    const text = await ctaBtn.textContent();
+    PASS(`CTA button found in zoom section ("${text.trim()}")`);
   } else {
-    FAIL('CTA button linking to /works not found in zoom section');
+    FAIL('CTA button not found in zoom section');
+  }
+
+  // ── 4b. Pre-loaded Works Archive present on Home page with zero lag ─────────
+  console.log('\n── Test 4b: Pre-loaded Works archive on Home page ──');
+  const homeCategories = await page.$$eval('#works-section nav button', els => els.length);
+  const homeProjects = await page.$$eval('#works-section #work-grid .group', els => els.length);
+  if (homeCategories >= 5 && homeProjects >= 10) {
+    PASS(`Home page has ${homeCategories} categories and ${homeProjects} pre-loaded projects`);
+  } else {
+    FAIL(`Home page works archive incomplete: ${homeCategories} categories, ${homeProjects} projects`);
   }
 
   // ── 5. Standalone /works route loads fast with complete hero & cards ────────
