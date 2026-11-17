@@ -46,20 +46,24 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
   });
 
   // Scale zoom effect: typography smoothly zooms forward into the screen
-  const textZoom = useTransform(galaxyProgress, [0.05, 0.70], [1, 5]);
-  const textOpacity = useTransform(galaxyProgress, [0.45, 0.70], [1, 0]);
-  const galaxyBackdropScale = useTransform(galaxyProgress, [0, 0.80], [1, 1.35]);
+  const textZoom = useTransform(galaxyProgress, [0.05, 0.65], [1, 5]);
+  const textOpacity = useTransform(galaxyProgress, [0.40, 0.65], [1, 0]);
+  const galaxyBackdropScale = useTransform(galaxyProgress, [0, 0.90], [1, 1.5]);
 
   // CTA button fades smoothly as dive begins
   const galaxyCtaOpacity = useTransform(galaxyProgress, [0, 0.18], [1, 0]);
   const galaxyCtaY = useTransform(galaxyProgress, [0, 0.18], [0, 24]);
 
-  // Navigate directly to /works when the zoom completes
+  // Black exit overlay: ramps from transparent → fully black BEFORE route change
+  // User sees: text zooms → black fills screen → Works page fades in from black
+  const exitOverlayOpacity = useTransform(galaxyProgress, [0.60, 0.88], [0, 1]);
+
+  // Navigate to /works only after the black overlay is fully opaque (progress >= 0.90)
   useEffect(() => {
     router.prefetch('/works');
 
     const unsubscribe = galaxyProgress.on('change', (latest) => {
-      if (latest >= 0.70 && !navigating) {
+      if (latest >= 0.90 && !navigating) {
         setNavigating(true);
         router.push('/works');
       }
@@ -366,6 +370,14 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
               <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
             </Link>
           </motion.div>
+
+          {/* ── LAYER 3: Black Exit Overlay — covers screen before route change ── */}
+          {/* Ramps to opaque at 0.88 progress; router.push fires at 0.90 (screen is already black) */}
+          <motion.div
+            style={{ opacity: exitOverlayOpacity }}
+            className="absolute inset-0 z-50 bg-black pointer-events-none"
+            aria-hidden="true"
+          />
         </div>
       </section>
     </div>

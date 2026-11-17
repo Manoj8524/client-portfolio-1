@@ -58,7 +58,12 @@ function WorksContent() {
     : allProjects.filter((item) => item.category?.toUpperCase() === activeTab.toUpperCase());
 
   return (
-    <div className="w-full bg-black text-white font-ppmori overflow-x-hidden p-0 m-0 selection:bg-[#fec52d] selection:text-black pt-20">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      className="w-full bg-black text-white font-ppmori overflow-x-hidden p-0 m-0 selection:bg-[#fec52d] selection:text-black pt-20"
+    >
       {/* =========================================================================
           HERO BANNER: EDITABLE WORKS BANNER
           ========================================================================= */}
@@ -190,7 +195,7 @@ function WorksContent() {
           </AnimatePresence>
         </motion.div>
       </section>
-    </div>
+    </motion.div>
   );
 }
 
