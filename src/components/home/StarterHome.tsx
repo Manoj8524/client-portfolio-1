@@ -4,13 +4,89 @@ import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useScroll, useTransform, MotionValue, useMotionValueEvent } from 'framer-motion';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { SiteContent, HeroPosterItem } from '@/lib/contentStore';
 import defaultContent from '@/data/siteContent.json';
 
 interface StarterHomeProps {
   initialData?: SiteContent;
+}
+
+// ─── PortalCircle: crisp SVG circle clip-path expands to reveal Works Hero ───
+interface PortalCircleProps {
+  progress: MotionValue<number>;      // 0 → 210 (percentage of viewport diagonal)
+  backgroundImage: string;
+  heroTag: string;
+  title: string;
+  subtitle: string;
+  revealOpacity: MotionValue<number>;
+  revealContentY: MotionValue<number>;
+}
+
+function PortalCircle({
+  progress,
+  backgroundImage,
+  heroTag,
+  title,
+  subtitle,
+  revealOpacity,
+  revealContentY,
+}: PortalCircleProps) {
+  const [clipValue, setClipValue] = React.useState(0);
+
+  useMotionValueEvent(progress, 'change', (v) => {
+    setClipValue(v);
+  });
+
+  // Build clip-path: circle grows from center
+  // At 0% → tiny dot; at 210% → covers full viewport
+  const clipPath = `circle(${clipValue}% at 50% 50%)`;
+
+  return (
+    <div
+      className="absolute inset-0 z-20 pointer-events-none overflow-hidden"
+      style={{ clipPath, WebkitClipPath: clipPath }}
+    >
+      {/* Golden ring border – visible at small circle sizes */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: 'transparent',
+          boxShadow: `inset 0 0 0 ${Math.max(0, 6 - clipValue * 0.05)}px #fec52d`,
+        }}
+      />
+
+      {/* Works Hero background image fills the circle */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={backgroundImage}
+          alt="Works Background"
+          fill
+          sizes="100vw"
+          className="object-cover object-center select-none"
+          quality={92}
+          priority
+        />
+        <div className="absolute inset-0 bg-radial from-transparent via-black/25 to-black/85 z-1" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/80 z-1" />
+      </div>
+
+      {/* Works Hero typography rises into view */}
+      <motion.div
+        style={{ opacity: revealOpacity, y: revealContentY }}
+        className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6"
+      >
+        <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">{heroTag}</p>
+        <h1 className="font-horas text-5xl sm:text-7xl md:text-8xl uppercase tracking-tighter text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
+          {title}
+        </h1>
+        <p className="mt-4 font-ppmori text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
+          {subtitle}
+        </p>
+      </motion.div>
+    </div>
+  );
 }
 
 export default function StarterHome({ initialData }: StarterHomeProps) {
@@ -39,57 +115,33 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
   });
   const watchScale = useTransform(watchProgress, [0, 0.5, 1], [0.98, 1.02, 0.99]);
 
-  // ─── SECTION 6: Ultra-Smooth Full Cinematic Portal Dive ─────────────────────
+  // Galaxy Zoom pinned portal dive into the "O" straight into the Works Hero
   const { scrollYProgress: galaxyProgress } = useScroll({
     target: galaxyContainerRef,
     offset: ['start start', 'end end'],
   });
 
-  // Spring-dampened scroll progress for physics-based smoothness
-  const smoothProgress = useSpring(galaxyProgress, {
-    stiffness: 60,
-    damping: 22,
-    restDelta: 0.0001,
-  });
+  // Portal circle clip-path: starts tiny (0%) grows to cover full screen (200%)
+  const portalSize = useTransform(galaxyProgress, [0.05, 0.88], [0, 210]);
+  const galaxyBackdropScale = useTransform(galaxyProgress, [0, 1], [1, 1.12]);
 
-  // Backdrop zooms majestically from 1× to 2.8× — full cinematic pull-in
-  const backdropScale = useTransform(smoothProgress, [0, 0.75], [1, 2.8]);
+  // Text + CTA fade out as portal opens
+  const galaxyCtaOpacity = useTransform(galaxyProgress, [0, 0.18], [1, 0]);
+  const galaxyCtaY = useTransform(galaxyProgress, [0, 0.18], [0, 24]);
+  const textBlockOpacity = useTransform(galaxyProgress, [0, 0.22], [1, 0]);
 
-  // Backdrop filter string: brightness dims to 0 as works page takes over
-  const backdropBrightness = useTransform(smoothProgress, [0.3, 0.70], [1, 0]);
-  const backdropFilter = useTransform(backdropBrightness, (v: number) => `brightness(${v})`);
+  // Works Hero reveal: fades + rises smoothly through the portal
+  const worksRevealOpacity = useTransform(galaxyProgress, [0.65, 0.90], [0, 1]);
+  const worksRevealScale = useTransform(galaxyProgress, [0.65, 0.92], [0.90, 1]);
+  const worksRevealContentY = useTransform(galaxyProgress, [0.70, 0.92], [32, 0]);
 
-  // "ZOOM INTO THE EXTRAORDINARY" text: fades out in first 20% of scroll
-  const textOpacity = useTransform(smoothProgress, [0, 0.18], [1, 0]);
-  const textScale  = useTransform(smoothProgress, [0, 0.20], [1, 1.12]);
-
-  // CTA button fades out even faster
-  const ctaOpacity = useTransform(smoothProgress, [0, 0.12], [1, 0]);
-
-  // Works hero fullscreen fade-in: starts at 25%, fully visible by 65%
-  const worksOpacity = useTransform(smoothProgress, [0.22, 0.60], [0, 1]);
-  const worksScale   = useTransform(smoothProgress, [0.22, 0.65], [1.06, 1.0]);
-  const worksContentY = useTransform(smoothProgress, [0.25, 0.65], [30, 0]);
-
-  // Navbar fades out as works hero takes over for seamless page blending
-  const navbarOpacity = useTransform(smoothProgress, [0.3, 0.60], [1, 0]);
-
-  // Write navbar opacity to CSS variable on the document root
+  // When user reaches end of the dive (>= 0.93 progress), smoothly transition route to /works
   useEffect(() => {
-    const unsubscribe = navbarOpacity.on('change', (v) => {
-      document.documentElement.style.setProperty('--zoom-navbar-opacity', String(v));
-    });
-    return () => {
-      unsubscribe();
-      document.documentElement.style.removeProperty('--zoom-navbar-opacity');
-    };
-  }, [navbarOpacity]);
-
-  // Trigger route push at 72% scroll — works page fully visible before nav happens
-  useEffect(() => {
+    // Prefetch /works for instant route navigation
     router.prefetch('/works');
+
     const unsubscribe = galaxyProgress.on('change', (latest) => {
-      if (latest >= 0.72 && !navigating) {
+      if (latest >= 0.93 && !navigating) {
         setNavigating(true);
         router.push('/works');
       }
@@ -329,23 +381,20 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
       </section>
 
       {/* =========================================================================
-          SECTION 6: ULTRA-SMOOTH FULL CINEMATIC ZOOM PORTAL DIVE
-          Scroll-driven: backdrop pulls in, text dissolves, works hero rises,
-          then instant route push to /works with zero blank flash.
+          SECTION 6: CINEMATIC PORTAL DIVE — scroll-driven circle clip-path
+          A crisp golden circle grows from center to fill the full screen,
+          revealing the Works Hero page underneath — zero font pixelation.
           ========================================================================= */}
       <section
-        id="zoom-section"
         ref={galaxyContainerRef}
-        className="relative w-full h-[300vh] bg-black p-0 m-0 border-t border-neutral-900/80"
+        className="relative w-full h-[260vh] bg-black p-0 m-0 border-t border-neutral-900/80"
       >
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
-          {/* ── LAYER 0: Cinematic Backdrop (scales to full bleed) ──────────── */}
+        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black">
+
+          {/* ── LAYER 0: Cinematic backdrop (gently parallax) ── */}
           <motion.div
-            style={{
-              scale: backdropScale,
-              filter: backdropFilter,
-            }}
-            className="absolute inset-0 z-0 will-change-transform"
+            style={{ scale: galaxyBackdropScale }}
+            className="absolute inset-0 z-0 select-none pointer-events-none will-change-transform"
           >
             <Image
               src={zoomSection?.backdropImage || '/extracted_assets/home/plain_portal_bg.webp'}
@@ -353,99 +402,60 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
               fill
               sizes="100vw"
               className="object-cover object-center select-none"
-              quality={95}
+              quality={90}
               priority
             />
-            <div className="absolute inset-0 bg-radial from-transparent via-black/30 to-black z-1" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/90 z-1" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/70 z-1" />
           </motion.div>
 
-          {/* ── LAYER 1: "ZOOM INTO THE EXTRAORDINARY" text ─────────────────── */}
+          {/* ── LAYER 1: Static typography — fades out before portal opens ── */}
           <motion.div
-            style={{
-              opacity: textOpacity,
-              scale: textScale,
-              transformOrigin: 'center center',
-            }}
-            className="relative z-10 w-full max-w-5xl px-6 flex flex-col items-center justify-center will-change-transform select-none pointer-events-none"
+            style={{ opacity: textBlockOpacity }}
+            className="relative z-10 flex flex-col items-center text-center select-none pointer-events-none px-6"
           >
-            <div className="flex flex-col items-center text-center">
-              {/* ZOOM — golden "O" with void hole */}
-              <div className="font-horas text-6xl sm:text-8xl md:text-9xl lg:text-[148px] uppercase font-bold tracking-tight text-white leading-[0.88] drop-shadow-[0_10px_40px_rgba(0,0,0,0.98)] flex items-center justify-center">
-                <span>Z</span>
-                <span className="relative inline-flex items-center justify-center text-[#fec52d]">
-                  O
-                  <span className="absolute w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-black shadow-inner" />
-                </span>
-                <span>O</span>
-                <span>M</span>
-              </div>
-              <div className="font-horas text-2xl sm:text-4xl md:text-5xl lg:text-6xl uppercase tracking-[0.25em] text-neutral-300 font-semibold mt-2 sm:mt-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
-                {zoomSection?.word2 || 'INTO THE'}
-              </div>
-              <div className="font-horas text-4xl sm:text-6xl md:text-7xl lg:text-8xl uppercase tracking-wider text-white font-bold mt-1 sm:mt-2 drop-shadow-[0_8px_24px_rgba(0,0,0,0.9)]">
-                {zoomSection?.word3 || 'EXTRAORDINARY'}
-              </div>
-            </div>
+            {/* Tag line */}
+            <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-6 opacity-80">
+              {zoomSection?.word2 || '// SCROLL TO ENTER'}
+            </p>
 
-            {/* CTA Button */}
-            <motion.div style={{ opacity: ctaOpacity }} className="mt-8 sm:mt-10 pointer-events-auto">
-              <Link
-                href={zoomSection?.cta?.href || '/works'}
-                className="px-9 py-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/25 text-white hover:bg-[#fec52d] hover:text-black hover:scale-105 font-medium text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-300 shadow-2xl flex items-center gap-3 group"
-              >
-                <span>{zoomSection?.cta?.label || 'Explore Selected Works'}</span>
-                <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
-              </Link>
-            </motion.div>
+            {/* Large headline */}
+            <h2 className="font-horas text-6xl sm:text-8xl md:text-9xl lg:text-[140px] uppercase font-bold tracking-tight text-white leading-[0.88] drop-shadow-[0_8px_32px_rgba(0,0,0,0.95)]">
+              {zoomSection?.word1 || 'ENTER THE'}
+            </h2>
+            <h2 className="font-horas text-4xl sm:text-6xl md:text-7xl lg:text-[100px] uppercase font-bold tracking-widest text-[#fec52d] leading-[0.88] mt-2 drop-shadow-[0_8px_32px_rgba(0,0,0,0.95)]">
+              {zoomSection?.word3 || 'ARCHIVE'}
+            </h2>
+
+            {/* Sub line */}
+            <p className="mt-6 font-ppmori text-sm sm:text-base text-neutral-400 max-w-sm leading-relaxed">
+              {zoomSection?.word2 || 'Scroll to dive into selected works'}
+            </p>
           </motion.div>
 
-          {/* ── LAYER 2: Works Hero full-bleed crossfade ─────────────────────── */}
+          {/* ── LAYER 2: CTA Button — fades with text ── */}
           <motion.div
-            style={{ opacity: worksOpacity, scale: worksScale }}
-            className="absolute inset-0 z-20 will-change-transform overflow-hidden"
+            style={{ opacity: galaxyCtaOpacity, y: galaxyCtaY }}
+            className="absolute bottom-12 z-10 pointer-events-auto"
           >
-            {/* Works background image */}
-            <div className="absolute inset-0 z-0">
-              <Image
-                src={content.works?.backgroundImage || '/extracted_assets/work/work_hero_bg_clean.webp'}
-                alt="Works Background"
-                fill
-                sizes="100vw"
-                className="object-cover object-center select-none"
-                quality={95}
-                priority
-              />
-              <div className="absolute inset-0 bg-radial from-transparent via-black/20 to-black/80 z-1" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/70 z-1" />
-            </div>
-
-            {/* Works hero content */}
-            <motion.div
-              style={{ y: worksContentY }}
-              className="absolute inset-0 flex items-center justify-center z-10"
+            <Link
+              href={zoomSection?.cta?.href || '/works'}
+              className="px-8 py-3.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/25 text-white hover:bg-[#fec52d] hover:text-black font-medium text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-300 shadow-2xl flex items-center gap-3 group"
             >
-              <div className="text-center px-6 max-w-4xl flex flex-col items-center">
-                <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">
-                  {content.works?.heroTag || '// PORTFOLIO ARCHIVE'}
-                </p>
-                <h1 className="font-horas text-5xl sm:text-7xl md:text-8xl uppercase tracking-tighter text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
-                  {content.works?.title || 'SELECTED ARCHIVE'}
-                </h1>
-                <p className="mt-4 font-ppmori text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
-                  {content.works?.subtitle ||
-                    'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
-                </p>
-                <div
-                  onClick={() => { if (!navigating) { setNavigating(true); router.push('/works'); } }}
-                  className="cursor-pointer mt-8 inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-[#fec52d] text-black font-semibold text-xs uppercase tracking-widest hover:scale-105 transition-transform shadow-xl"
-                >
-                  <span>View Works Archive</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </div>
-              </div>
-            </motion.div>
+              <span>{zoomSection?.cta?.label || 'Explore Selected Works'}</span>
+              <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
+            </Link>
           </motion.div>
+
+          {/* ── LAYER 3: Golden portal circle that grows via clip-path ── */}
+          <PortalCircle
+            progress={portalSize}
+            backgroundImage={content.works?.backgroundImage || '/extracted_assets/work/work_hero_bg_clean.webp'}
+            heroTag={content.works?.heroTag || '// PORTFOLIO ARCHIVE'}
+            title={content.works?.title || 'SELECTED ARCHIVE'}
+            subtitle={content.works?.subtitle || 'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
+            revealOpacity={worksRevealOpacity}
+            revealContentY={worksRevealContentY}
+          />
         </div>
       </section>
     </div>
