@@ -144,7 +144,8 @@ function WorksContent() {
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33.33vw"
                     className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out select-none"
                     quality={90}
-                    loading={idx < 3 ? 'eager' : 'lazy'}
+                    loading={idx < 6 ? 'eager' : 'lazy'}
+                    priority={idx < 4}
                   />
 
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-colors duration-300" />
