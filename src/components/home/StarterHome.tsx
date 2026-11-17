@@ -100,7 +100,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
                 loading={idx < 4 ? undefined : 'lazy'}
                 quality={85}
               />
-              <div className="absolute inset-0 bg-black/15 group-hover/poster:bg-black/0 transition-colors duration-300" />
+              <div className="absolute inset-0 bg-black/0 group-hover/poster:bg-black/20 transition-colors duration-300" />
             </div>
           ))}
         </div>
@@ -132,9 +132,9 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
           </div>
         </div>
 
-        {/* Cinematic Vignette Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/35 to-black/95 z-10 pointer-events-none" />
-        <div className="absolute inset-0 bg-radial from-transparent via-black/40 to-black/90 z-10 pointer-events-none" />
+        {/* Cinematic Vignette Overlays - Softened for clear, vibrant poster visibility */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/60 z-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-radial from-transparent via-transparent to-black/35 z-10 pointer-events-none" />
 
         {/* Top spacer */}
         <div className="h-10" />
