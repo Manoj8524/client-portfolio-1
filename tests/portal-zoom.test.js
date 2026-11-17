@@ -28,9 +28,9 @@ const FAIL = (msg) => { console.error(`  ❌ FAIL: ${msg}`); process.exitCode = 
 
   // ── 2. Portal zoom section is in the DOM ────────────────────────────────────
   console.log('\n── Test 2: Portal zoom section present ──');
-  const portalSection = await page.$('section[class*="h-[200vh]"]');
-  if (portalSection) PASS('Portal section (h-[200vh]) found in DOM');
-  else FAIL('Portal section not found — expected class h-[200vh]');
+  const portalSection = await page.$('section[class*="h-[160vh]"], section[class*="h-[200vh]"]');
+  if (portalSection) PASS('Portal section found in DOM');
+  else FAIL('Portal section not found');
 
   // ── 3. Portal clip-path circle layer present ────────────────────────────────
   console.log('\n── Test 3: PortalCircle clip-path present ──');
@@ -41,11 +41,16 @@ const FAIL = (msg) => { console.error(`  ❌ FAIL: ${msg}`); process.exitCode = 
   if (portalCircleDiv) PASS('clip-path circle div found in DOM');
   else FAIL('clip-path circle div NOT found — PortalCircle may not be rendering');
 
-  // ── 4. Works section is PRE-LOADED directly on Home page ───────────────────
-  console.log('\n── Test 4: Works section pre-loaded on Home page ──');
+  // ── 4. Works section is PRE-LOADED directly on Home page with HERO BANNER ────
+  console.log('\n── Test 4: Works section & Hero Banner pre-loaded on Home page ──');
   const worksSection = await page.$('#works-section');
-  if (worksSection) PASS('#works-section pre-rendered in DOM on Home page (0ms latency)');
-  else FAIL('#works-section not found on Home page');
+  const heroH1 = await page.$('#works-section h1');
+  const heroH1Text = heroH1 ? await heroH1.textContent() : '';
+  if (worksSection && heroH1Text.includes('SELECTED ARCHIVE')) {
+    PASS('#works-section with Hero Banner ("SELECTED ARCHIVE") pre-rendered in DOM');
+  } else {
+    FAIL('#works-section or Hero Banner missing on Home page');
+  }
 
   // ── 5. Category Navigation Tabs pre-rendered on Home page ───────────────────
   console.log('\n── Test 5: Category tabs present on Home page ──');

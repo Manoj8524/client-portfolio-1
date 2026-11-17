@@ -401,7 +401,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
           ========================================================================= */}
       <section
         ref={galaxyContainerRef}
-        className="relative w-full h-[200vh] bg-black p-0 m-0 border-t border-neutral-900/80"
+        className="relative w-full h-[160vh] bg-black p-0 m-0 border-t border-neutral-900/80"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black">
 
@@ -478,6 +478,38 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
           Loaded directly while Home page is active — zero black screen, zero wait!
           ========================================================================= */}
       <div id="works-section" className="w-full bg-black text-white p-0 m-0 relative z-20">
+        {/* =========================================================================
+            WORKS HERO BANNER (Full Art & Typography, Zero Black Screen)
+            ========================================================================= */}
+        <section className="relative w-full h-[60vh] sm:h-[70vh] flex items-center justify-center overflow-hidden p-0 m-0 border-t border-neutral-900/80">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={content.works?.backgroundImage || '/extracted_assets/work/work_hero_bg_clean.webp'}
+              alt="Works Background"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-center select-none"
+              quality={92}
+            />
+            {/* Subtle top vignette only for header contrast - zero bottom black overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-1" />
+          </div>
+
+          <div className="relative z-10 text-center px-6 max-w-4xl flex flex-col items-center">
+            <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">
+              {content.works?.heroTag || '// PORTFOLIO ARCHIVE'}
+            </p>
+            <h1 className="font-horas text-5xl sm:text-7xl md:text-8xl uppercase tracking-tighter text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
+              {content.works?.title || 'SELECTED ARCHIVE'}
+            </h1>
+            <p className="mt-4 font-ppmori text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
+              {content.works?.subtitle ||
+                'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
+            </p>
+          </div>
+        </section>
+
         {/* Category Navigation Tabs */}
         <section className="sticky top-20 z-30 w-full bg-black/90 backdrop-blur-xl border-y border-neutral-900/80 py-4 px-6">
           <div className="max-w-7xl mx-auto flex items-center justify-center">
