@@ -2701,16 +2701,27 @@ export default function AdminPage() {
 
               {/* Stats Numbers */}
               <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
-                <h3 className="font-horas text-xl uppercase tracking-wider text-white">
-                  Key Metrics &amp; Achievements (Numerical Bar)
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <h3 className="font-horas text-xl uppercase tracking-wider text-white">
+                    Key Metrics &amp; Achievements (Numerical Bar)
+                  </h3>
+                  <p className="text-xs text-neutral-400 mt-1">
+                    Configure the 4 numerical stats highlighted on the About page.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                   {content.about.stats.map((st, idx) => (
                     <div
                       key={idx}
-                      className="p-4 rounded-xl bg-neutral-900 border border-neutral-800 flex flex-col gap-2"
+                      className="p-4 rounded-xl bg-neutral-900/90 border border-neutral-800 flex flex-col gap-3 min-w-0"
                     >
-                      <div className="flex gap-2">
+                      <span className="text-[10px] font-mono text-[#fec52d] uppercase tracking-wider font-semibold">
+                        Metric 0{idx + 1}
+                      </span>
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <label className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">
+                          Value
+                        </label>
                         <input
                           type="text"
                           value={st.value}
@@ -2723,8 +2734,13 @@ export default function AdminPage() {
                             });
                           }}
                           placeholder="e.g. 180+"
-                          className="w-24 px-3 py-1.5 rounded-lg bg-neutral-800 border border-neutral-700 text-white font-horas text-xl"
+                          className="w-full px-3 py-1.5 rounded-lg bg-neutral-800 border border-neutral-700 text-[#fec52d] font-horas text-xl font-bold min-w-0 focus:border-[#fec52d] outline-none"
                         />
+                      </div>
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <label className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">
+                          Label
+                        </label>
                         <input
                           type="text"
                           value={st.label}
@@ -2736,24 +2752,29 @@ export default function AdminPage() {
                               about: { ...content.about, stats: updated },
                             });
                           }}
-                          placeholder="Label..."
-                          className="flex-1 px-3 py-1.5 rounded-lg bg-neutral-800 border border-neutral-700 text-white text-xs font-semibold"
+                          placeholder="e.g. Official Key Visuals"
+                          className="w-full px-3 py-1.5 rounded-lg bg-neutral-800 border border-neutral-700 text-white text-xs font-semibold min-w-0 focus:border-[#fec52d] outline-none"
                         />
                       </div>
-                      <input
-                        type="text"
-                        value={st.sub}
-                        onChange={(e) => {
-                          const updated = [...content.about.stats];
-                          updated[idx].sub = e.target.value;
-                          setContent({
-                            ...content,
-                            about: { ...content.about, stats: updated },
-                          });
-                        }}
-                        placeholder="Subtext..."
-                        className="w-full px-3 py-1 rounded bg-neutral-800 text-neutral-400 text-[11px] font-mono"
-                      />
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <label className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">
+                          Subtext
+                        </label>
+                        <input
+                          type="text"
+                          value={st.sub}
+                          onChange={(e) => {
+                            const updated = [...content.about.stats];
+                            updated[idx].sub = e.target.value;
+                            setContent({
+                              ...content,
+                              about: { ...content.about, stats: updated },
+                            });
+                          }}
+                          placeholder="e.g. Pan-Indian & Global Titles"
+                          className="w-full px-3 py-1.5 rounded-lg bg-neutral-800 border border-neutral-700 text-neutral-300 text-[11px] font-mono min-w-0 focus:border-[#fec52d] outline-none"
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
