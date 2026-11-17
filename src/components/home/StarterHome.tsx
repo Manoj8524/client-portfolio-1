@@ -45,20 +45,50 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
     offset: ['start start', 'end end'],
   });
 
-  // Scale zoom effect: typography smoothly zooms forward past camera & fades
-  const textZoom = useTransform(galaxyProgress, [0.0, 0.60], [1, 5]);
-  const textOpacity = useTransform(galaxyProgress, [0.15, 0.55], [1, 0]);
-  const galaxyBackdropScale = useTransform(galaxyProgress, [0, 0.70], [1, 1.25]);
-  const galaxyBackdropOpacity = useTransform(galaxyProgress, [0.30, 0.65], [1, 0]);
+  // Scale zoom effect: typography smoothly zooms forward into camera & dissolves
+  // Peaks at last zoom point (~0.50) where it flies past camera
+  const textZoom = useTransform(galaxyProgress, (v) => {
+    if (v <= 0.0) return 1;
+    if (v >= 0.50) return 5.5;
+    return 1 + (v / 0.50) * 4.5;
+  });
+  const textOpacity = useTransform(galaxyProgress, (v) => {
+    if (v <= 0.25) return 1;
+    if (v >= 0.48) return 0;
+    return 1 - (v - 0.25) / (0.48 - 0.25);
+  });
+  const galaxyBackdropScale = useTransform(galaxyProgress, (v) => {
+    if (v <= 0.0) return 1;
+    if (v >= 0.55) return 1.30;
+    return 1 + (v / 0.55) * 0.30;
+  });
+  const galaxyBackdropOpacity = useTransform(galaxyProgress, (v) => {
+    if (v <= 0.28) return 1;
+    if (v >= 0.50) return 0;
+    return 1 - (v - 0.28) / (0.50 - 0.28);
+  });
 
   // CTA button fades smoothly as dive begins
-  const galaxyCtaOpacity = useTransform(galaxyProgress, [0, 0.15], [1, 0]);
-  const galaxyCtaY = useTransform(galaxyProgress, [0, 0.15], [0, 24]);
+  const galaxyCtaOpacity = useTransform(galaxyProgress, (v) => {
+    if (v <= 0.0) return 1;
+    if (v >= 0.12) return 0;
+    return 1 - v / 0.12;
+  });
+  const galaxyCtaY = useTransform(galaxyProgress, [0, 0.12], [0, 24]);
 
-  // Works Hero emerges from INSIDE the zoom:
-  // Starts slightly scaled down (0.88) and smoothly scales up to 1.0 (full screen) as opacity goes 0 -> 1
-  const worksHeroScale = useTransform(galaxyProgress, [0.20, 0.75], [0.88, 1.0]);
-  const worksHeroOpacity = useTransform(galaxyProgress, [0.25, 0.70], [0, 1]);
+  // WORKS PAGE OPENS IN A ZOOM OUT FROM THE LAST ZOOM POINT:
+  // Directly from the peak zoom point (0.45), Works page emerges at scale 1.32
+  // and smoothly ZOOMS OUT to scale 1.0 (crisp full screen)!
+  const worksScale = useTransform(galaxyProgress, (v) => {
+    if (v <= 0.45) return 1.32;
+    if (v >= 0.85) return 1.0;
+    return 1.32 - ((v - 0.45) / (0.85 - 0.45)) * 0.32;
+  });
+  const worksOpacity = useTransform(galaxyProgress, (v) => {
+    if (v <= 0.45) return 0;
+    if (v >= 0.68) return 1;
+    return (v - 0.45) / (0.68 - 0.45);
+  });
 
   // Smooth zero-lag URL synchronization: reflect /works as user dives into works archive
   useEffect(() => {
@@ -123,7 +153,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
     : allProjects.filter((item) => item.category?.toUpperCase() === activeCategory.toUpperCase());
 
   return (
-    <div className="w-full bg-black text-white font-ppmori overflow-x-hidden p-0 m-0 selection:bg-[#fec52d] selection:text-black">
+    <div className="w-full bg-black text-white font-ppmori overflow-x-clip p-0 m-0 selection:bg-[#fec52d] selection:text-black">
       {/* =========================================================================
           SECTION 1: HERO - DYNAMIC 5-COLUMN CONTINUOUS VERTICAL POSTER MATRIX
           Mobile: Exactly 3 responsive columns visible
@@ -317,19 +347,22 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
 
       {/* =========================================================================
           SECTION 6: CINEMATIC PORTAL DIVE — ZOOM INTO SELECTED ARCHIVE
-          The typography zooms forward past camera while the Works Hero emerges
-          from inside the center of the zoom, scaling to full screen with zero lag.
+          The typography zooms forward into camera past screen (peak zoom),
+          and directly from that last zoom point, the Works Page opens in a ZOOM OUT
+          (scale 1.32 -> 1.0) with zero bottom scroll and zero black screen.
           ========================================================================= */}
       <section
         ref={galaxyContainerRef}
-        id="works-portal-section"
-        className="relative w-full h-[125vh] bg-black p-0 m-0 border-t border-neutral-900/80"
+        className="relative w-full h-[180vh] bg-black p-0 m-0 border-t border-neutral-900/80"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black">
 
-          {/* ── LAYER 0: Cinematic backdrop (Home Portal) ── */}
+          {/* ── LAYER 0: Cinematic backdrop (parallax + dissolves as zoom completes) ── */}
           <motion.div
-            style={{ scale: galaxyBackdropScale, opacity: galaxyBackdropOpacity }}
+            style={{
+              scale: galaxyBackdropScale,
+              opacity: galaxyBackdropOpacity,
+            }}
             className="absolute inset-0 z-0 select-none pointer-events-none will-change-transform"
           >
             <Image
@@ -344,12 +377,12 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 z-1" />
           </motion.div>
 
-          {/* ── LAYER 1: PRE-LOADED WORKS HERO EMERGING FROM INSIDE THE ZOOM ── */}
-          {/* As the zoom happens, Works Hero expands from inside the zoom to full screen */}
+          {/* ── LAYER 1: PRE-LOADED WORKS HERO EMERGING FROM INSIDE THE ZOOM (ZOOM OUT) ── */}
+          {/* As the zoom reaches its peak, the Works Hero opens with a ZOOM OUT (scale: 1.32 -> 1.0) */}
           <motion.div
             style={{
-              scale: worksHeroScale,
-              opacity: worksHeroOpacity,
+              scale: worksScale,
+              opacity: worksOpacity,
             }}
             className="absolute inset-0 z-10 flex items-center justify-center overflow-hidden pointer-events-none will-change-transform"
           >
@@ -381,7 +414,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
             </div>
           </motion.div>
 
-          {/* ── LAYER 2: Zooming Typography (scales forward smoothly into screen) ── */}
+          {/* ── LAYER 2: Zooming Typography (scales forward smoothly past camera & dissolves) ── */}
           <motion.div
             style={{
               scale: textZoom,
@@ -411,23 +444,21 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
           {/* ── LAYER 3: CTA Button ── */}
           <motion.div
             style={{ opacity: galaxyCtaOpacity, y: galaxyCtaY }}
-            className="absolute bottom-12 z-30 pointer-events-auto"
+            className="absolute bottom-12 z-20 pointer-events-auto"
           >
-            <button
-              onClick={() => {
-                document.getElementById('works-section')?.scrollIntoView({ behavior: 'smooth' });
-              }}
+            <Link
+              href={zoomSection?.cta?.href || '/works'}
               className="px-8 py-3.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/25 text-white hover:bg-[#fec52d] hover:text-black font-medium text-xs sm:text-sm uppercase tracking-[0.2em] transition-all duration-300 shadow-2xl flex items-center gap-3 group cursor-pointer"
             >
               <span>{zoomSection?.cta?.label || 'Initiate Collaboration'}</span>
-              <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
-            </button>
+              <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
+            </Link>
           </motion.div>
         </div>
       </section>
 
       {/* =========================================================================
-          SECTION 7: PRE-LOADED WORKS ARCHIVE — Category Tabs & Portfolio Grid
+          SECTION 7: WORKS ARCHIVE — Category Tabs & Portfolio Grid
           Seamlessly attached below the portal zoom — ZERO LAG, ZERO RELOAD.
           ========================================================================= */}
       <div id="works-section" className="relative w-full bg-black text-white font-ppmori z-30">
