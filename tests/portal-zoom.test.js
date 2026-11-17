@@ -1,11 +1,10 @@
 /**
  * Playwright test:
- * 1. Portal zoom section with SVG clip-path circle expand.
- * 2. Works Section pre-rendered and loaded directly on Home page.
- * 3. 0ms latency, zero black screen, dynamic category filtering.
- * 4. Direct /works standalone route test.
- *
- * Run: node tests/portal-zoom.test.js
+ * 1. Home page loads with clean ZOOM into EXTRAORDINARY section.
+ * 2. No duplicate hero image on Home page.
+ * 3. CTA button links directly to /works.
+ * 4. Dedicated /works route loads fast with complete hero banner and cards.
+ * 5. Zero JS errors.
  */
 
 const { chromium } = require('playwright');
@@ -26,61 +25,39 @@ const FAIL = (msg) => { console.error(`  ❌ FAIL: ${msg}`); process.exitCode = 
   if (res.status() === 200) PASS('Homepage returned 200');
   else FAIL(`Homepage returned ${res.status()}`);
 
-  // ── 2. Portal zoom section is in the DOM ────────────────────────────────────
-  console.log('\n── Test 2: Portal zoom section present ──');
-  const portalSection = await page.$('section[class*="h-[160vh]"], section[class*="h-[200vh]"]');
-  if (portalSection) PASS('Portal section found in DOM');
-  else FAIL('Portal section not found');
+  // ── 2. Zoom section with ZOOM & EXTRAORDINARY typography is present ─────────
+  console.log('\n── Test 2: Zoom section present ──');
+  const h2Texts = await page.$$eval('section h2', (els) => els.map(e => e.textContent.trim()));
+  if (h2Texts.some(t => t.includes('ZOOM')) && h2Texts.some(t => t.includes('EXTRAORDINARY'))) {
+    PASS(`Found ZOOM & EXTRAORDINARY headlines: ${h2Texts.join(' | ')}`);
+  } else {
+    FAIL(`Missing ZOOM / EXTRAORDINARY headlines. Found: ${h2Texts.join(' | ')}`);
+  }
 
-  // ── 3. Portal clip-path circle layer present ────────────────────────────────
-  console.log('\n── Test 3: PortalCircle clip-path present ──');
-  const portalCircleDiv = await page.evaluate(() => {
-    const divs = document.querySelectorAll('div[style*="clip-path"]');
-    return divs.length > 0;
+  // ── 3. No duplicate works hero image on Home page ───────────────────────────
+  console.log('\n── Test 3: No duplicate hero image on Home page ──');
+  const duplicateImages = await page.evaluate(() => {
+    const images = Array.from(document.querySelectorAll('img'));
+    return images.filter(img => img.src.includes('work_hero_bg_clean.webp')).length;
   });
-  if (portalCircleDiv) PASS('clip-path circle div found in DOM');
-  else FAIL('clip-path circle div NOT found — PortalCircle may not be rendering');
-
-  // ── 4. Works section is PRE-LOADED directly on Home page with HERO BANNER ────
-  console.log('\n── Test 4: Works section & Hero Banner pre-loaded on Home page ──');
-  const worksSection = await page.$('#works-section');
-  const heroH1 = await page.$('#works-section h1');
-  const heroH1Text = heroH1 ? await heroH1.textContent() : '';
-  if (worksSection && heroH1Text.includes('SELECTED ARCHIVE')) {
-    PASS('#works-section with Hero Banner ("SELECTED ARCHIVE") pre-rendered in DOM');
+  if (duplicateImages === 0) {
+    PASS('Zero duplicate works hero images on Home page');
   } else {
-    FAIL('#works-section or Hero Banner missing on Home page');
+    FAIL(`Found ${duplicateImages} works hero images on Home page (expected 0)`);
   }
 
-  // ── 5. Category Navigation Tabs pre-rendered on Home page ───────────────────
-  console.log('\n── Test 5: Category tabs present on Home page ──');
-  const categoryButtons = await page.$$eval('#works-section nav button', (els) => els.map(e => e.textContent.trim()));
-  if (categoryButtons.includes('ALL') && categoryButtons.includes('FILM POSTERS')) {
-    PASS(`Found category buttons on Home: ${categoryButtons.join(', ')}`);
+  // ── 4. Zoom CTA button links directly to /works ─────────────────────────────
+  console.log('\n── Test 4: Zoom CTA button links directly to /works ──');
+  const ctaLink = await page.$('section a[href="/works"]');
+  if (ctaLink) {
+    const text = await ctaLink.textContent();
+    PASS(`CTA button links directly to /works ("${text.trim()}")`);
   } else {
-    FAIL(`Category buttons missing or incorrect: ${categoryButtons.join(', ')}`);
+    FAIL('CTA button linking to /works not found in zoom section');
   }
 
-  // ── 6. Project cards pre-rendered on Home page ──────────────────────────────
-  console.log('\n── Test 6: Project cards pre-rendered in work-grid ──');
-  const cardCount = await page.$$eval('#works-section #work-grid .group', (els) => els.length);
-  if (cardCount > 0) PASS(`Work grid has ${cardCount} pre-loaded project cards on Home`);
-  else FAIL('No project cards found in #work-grid on Home page');
-
-  // ── 7. Category filter interactivity on Home page ───────────────────────────
-  console.log('\n── Test 7: Category filter interactivity ──');
-  const brandingBtn = await page.$('#works-section nav button:has-text("BRANDING")');
-  if (brandingBtn) {
-    await brandingBtn.click();
-    await page.waitForTimeout(300);
-    const brandingCards = await page.$$eval('#works-section #work-grid .group', (els) => els.length);
-    PASS(`Clicking BRANDING filtered cards smoothly (showing ${brandingCards} cards)`);
-  } else {
-    FAIL('BRANDING button not found');
-  }
-
-  // ── 8. Standalone /works route loads fast ───────────────────────────────────
-  console.log('\n── Test 8: /works route loads fast ──');
+  // ── 5. Standalone /works route loads fast with complete hero & cards ────────
+  console.log('\n── Test 5: /works route loads fast ──');
   const t0 = Date.now();
   const worksRes = await page.goto(`${BASE_URL}/works`, { waitUntil: 'domcontentloaded' });
   const loadMs = Date.now() - t0;
@@ -90,8 +67,31 @@ const FAIL = (msg) => { console.error(`  ❌ FAIL: ${msg}`); process.exitCode = 
     FAIL(`/works status ${worksRes.status()}, load time ${loadMs}ms`);
   }
 
-  // ── 9. Zero JavaScript errors across the entire flow ────────────────────────
-  console.log('\n── Test 9: No JS runtime errors ──');
+  // ── 6. Works page has SELECTED ARCHIVE headline & categories ────────────────
+  console.log('\n── Test 6: Works page content verified ──');
+  const worksH1 = await page.$eval('h1', el => el.textContent.trim());
+  if (worksH1.includes('SELECTED ARCHIVE')) {
+    PASS(`Works page h1: "${worksH1}"`);
+  } else {
+    FAIL(`Unexpected Works h1: "${worksH1}"`);
+  }
+
+  const categoryCount = await page.$$eval('nav button', els => els.length);
+  if (categoryCount >= 5) {
+    PASS(`Found ${categoryCount} category filter buttons`);
+  } else {
+    FAIL(`Expected at least 5 category buttons, found ${categoryCount}`);
+  }
+
+  const projectCards = await page.$$eval('#work-grid .group', els => els.length);
+  if (projectCards > 0) {
+    PASS(`Found ${projectCards} portfolio project cards in #work-grid`);
+  } else {
+    FAIL('Zero project cards found in #work-grid');
+  }
+
+  // ── 7. Zero JavaScript console errors ───────────────────────────────────────
+  console.log('\n── Test 7: No JS runtime errors ──');
   const errors = [];
   page.on('pageerror', (err) => errors.push(err.message));
   await page.goto(BASE_URL, { waitUntil: 'networkidle' });
