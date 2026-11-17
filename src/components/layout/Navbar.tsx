@@ -105,6 +105,15 @@ export default function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
+                onClick={(e) => {
+                  if (link.href === '/works' && pathname === '/') {
+                    const el = document.getElementById('works-section');
+                    if (el) {
+                      e.preventDefault();
+                      el.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }
+                }}
                 className={`group inline-flex h-9 w-max items-center justify-center rounded-full text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out hover:text-[#fec52d] drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] ${
                   isActive ? 'text-[#fec52d] font-semibold' : 'text-neutral-300'
                 }`}
@@ -140,6 +149,16 @@ export default function Navbar() {
             <Link
               key={link.label}
               href={link.href}
+              onClick={(e) => {
+                if (link.href === '/works' && pathname === '/') {
+                  const el = document.getElementById('works-section');
+                  if (el) {
+                    e.preventDefault();
+                    setMobileMenuOpen(false);
+                    el.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }
+              }}
               className={`text-base font-medium transition-colors ${
                 pathname === link.href ? 'text-[#fec52d] font-bold' : 'text-neutral-300'
               }`}

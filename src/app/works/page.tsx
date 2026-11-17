@@ -198,8 +198,11 @@ export default function WorksPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-black flex items-center justify-center text-white font-mono text-xs uppercase tracking-widest">
-          Loading Portfolio...
+        <div className="w-full min-h-screen bg-black text-white font-ppmori pt-20 flex flex-col items-center justify-center">
+          <div className="text-center px-6">
+            <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">// PORTFOLIO ARCHIVE</p>
+            <h1 className="font-horas text-5xl sm:text-7xl uppercase tracking-tighter text-white">SELECTED ARCHIVE</h1>
+          </div>
         </div>
       }
     >
