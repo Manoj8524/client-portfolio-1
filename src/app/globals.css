@@ -210,27 +210,11 @@ body {
   }
 }
 
-.animate-scroll-lane-1 {
-  animation: verticalScrollUp 18s linear infinite;
-  will-change: transform;
-}
-
-.animate-scroll-lane-2 {
-  animation: verticalScrollUp 25s linear infinite;
-  will-change: transform;
-}
-
-.animate-scroll-lane-3 {
-  animation: verticalScrollUp 34s linear infinite;
-  will-change: transform;
-}
-
-.animate-scroll-lane-4 {
-  animation: verticalScrollUp 45s linear infinite;
-  will-change: transform;
-}
-
+.animate-scroll-lane-1,
+.animate-scroll-lane-2,
+.animate-scroll-lane-3,
+.animate-scroll-lane-4,
 .animate-scroll-lane-5 {
-  animation: verticalScrollUp 58s linear infinite;
+  animation: verticalScrollUp 28s linear infinite;
   will-change: transform;
 }

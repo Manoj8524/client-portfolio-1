@@ -102,6 +102,7 @@ export interface SiteContent {
       word1: string;
       word2: string;
       word3: string;
+      subtitle?: string;
       backdropImage: string;
       cta: { label: string; href: string };
     };

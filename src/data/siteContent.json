@@ -155,7 +155,8 @@
       "word1": "ZOOM",
       "word2": "INTO THE",
       "word3": "EXTRAORDINARY",
-      "backdropImage": "/extracted_assets/home/plain_portal_bg.webp",
+      "subtitle": "Scroll to dive into selected works",
+      "backdropImage": "/extracted_assets/home/home_galaxy_zoom.webp",
       "cta": {
         "label": "Initiate Collaboration",
         "href": "/contact"

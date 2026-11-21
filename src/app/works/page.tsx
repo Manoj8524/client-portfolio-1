@@ -58,10 +58,7 @@ function WorksContent() {
     : allProjects.filter((item) => item.category?.toUpperCase() === activeTab.toUpperCase());
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 1.04 }}
-      animate={{ opacity: 1, scale: 1.0 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    <div
       className="w-full bg-black text-white font-ppmori overflow-x-hidden p-0 m-0 selection:bg-[#fec52d] selection:text-black pt-20"
     >
       {/* =========================================================================
@@ -195,7 +192,7 @@ function WorksContent() {
           </AnimatePresence>
         </motion.div>
       </section>
-    </motion.div>
+    </div>
   );
 }
 

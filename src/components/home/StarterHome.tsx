@@ -117,7 +117,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
           {loopPosters.map((poster, idx) => (
             <div
               key={`${poster.image}-${idx}`}
-              className="group/poster relative aspect-[2/3] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-neutral-900 border border-white/5 shadow-2xl flex-shrink-0"
+              className="group/poster relative aspect-[4/5] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-neutral-900 border border-white/5 shadow-2xl flex-shrink-0"
             >
               <Image
                 src={poster.image}
@@ -366,7 +366,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
             className="absolute inset-0 z-0 select-none pointer-events-none will-change-transform"
           >
             <Image
-              src={zoomSection?.backdropImage || '/extracted_assets/home/plain_portal_bg.webp'}
+              src={zoomSection?.backdropImage || '/extracted_assets/home/home_galaxy_zoom.webp'}
               alt="Cinematic Portal Backdrop"
               fill
               sizes="100vw"
@@ -437,7 +437,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
 
             {/* Sub line */}
             <p className="mt-6 font-ppmori text-sm sm:text-base text-neutral-400 max-w-sm leading-relaxed">
-              {zoomSection?.word2 || 'Scroll to dive into selected works'}
+              {zoomSection?.subtitle || 'Scroll to dive into selected works'}
             </p>
           </motion.div>
 
