@@ -33,20 +33,29 @@ const { chromium } = require('playwright');
   });
   console.log('Poster cards format:', posterClasses);
 
-  // 3. Verify Zoom portal text and backdrop
+  // 3. Verify Zoom portal text and clean backdrop
   const zoomInfo = await page.evaluate(() => {
     const h2s = Array.from(document.querySelectorAll('h2')).filter(h => h.textContent.includes('ZOOM') || h.textContent.includes('EXTRAORDINARY'));
     const container = h2s[0]?.closest('section');
     const ps = container ? Array.from(container.querySelectorAll('p')).map(p => p.textContent.trim()) : [];
+    const headlines = container ? Array.from(container.querySelectorAll('h2, h3')).map(h => h.textContent.trim()) : [];
     const bgImg = container ? container.querySelector('img[alt*="Portal"]')?.getAttribute('src') : null;
     return {
       ps,
+      headlines,
       bgImg
     };
   });
   console.log('Zoom section verification:', zoomInfo);
 
   await browser.close();
+
+  if (zoomInfo.bgImg && zoomInfo.bgImg.includes('home_galaxy_zoom_clean.webp')) {
+    console.log('✅ PASS: Clean textless cosmic portal backdrop in use!');
+  } else {
+    console.error('❌ FAIL: Expected home_galaxy_zoom_clean.webp but got', zoomInfo.bgImg);
+    process.exit(1);
+  }
 
   const allSameDuration = lanes.length === 5 && lanes.every(l => l.animationDuration === lanes[0].animationDuration);
   if (!allSameDuration) {

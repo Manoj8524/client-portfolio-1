@@ -366,12 +366,12 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
             className="absolute inset-0 z-0 select-none pointer-events-none will-change-transform"
           >
             <Image
-              src={zoomSection?.backdropImage || '/extracted_assets/home/home_galaxy_zoom.webp'}
+              src={zoomSection?.backdropImage || '/extracted_assets/home/home_galaxy_zoom_clean.webp'}
               alt="Cinematic Portal Backdrop"
               fill
               sizes="100vw"
               className="object-cover object-center select-none"
-              quality={90}
+              quality={95}
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 z-1" />
@@ -422,18 +422,23 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
             }}
             className="relative z-20 flex flex-col items-center text-center select-none pointer-events-none px-6 will-change-transform"
           >
-            {/* Tag line */}
-            <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-6 opacity-80">
-              {zoomSection?.word2 || '// SCROLL TO ENTER'}
-            </p>
+            {/* 3-Line Cinematic Typography matching original 01.psb portal design */}
+            <div className="flex flex-col items-center select-none drop-shadow-[0_8px_32px_rgba(0,0,0,0.95)]">
+              {/* Line 1: ZOOM */}
+              <h2 className="font-horas text-6xl sm:text-8xl md:text-9xl lg:text-[140px] uppercase font-bold tracking-tight text-white leading-[0.88]">
+                {zoomSection?.word1 || 'ZOOM'}
+              </h2>
 
-            {/* Large headline */}
-            <h2 className="font-horas text-6xl sm:text-8xl md:text-9xl lg:text-[140px] uppercase font-bold tracking-tight text-white leading-[0.88] drop-shadow-[0_8px_32px_rgba(0,0,0,0.95)]">
-              {zoomSection?.word1 || 'ZOOM'}
-            </h2>
-            <h2 className="font-horas text-4xl sm:text-6xl md:text-7xl lg:text-[100px] uppercase font-bold tracking-widest text-[#fec52d] leading-[0.88] mt-2 drop-shadow-[0_8px_32px_rgba(0,0,0,0.95)]">
-              {zoomSection?.word3 || 'EXTRAORDINARY'}
-            </h2>
+              {/* Line 2: INTO THE */}
+              <h3 className="font-horas text-3xl sm:text-5xl md:text-6xl lg:text-[76px] uppercase font-bold tracking-[0.2em] text-[#fec52d] leading-[0.92] mt-2 sm:mt-3">
+                {zoomSection?.word2 || 'INTO THE'}
+              </h3>
+
+              {/* Line 3: EXTRAORDINARY */}
+              <h2 className="font-horas text-5xl sm:text-7xl md:text-8xl lg:text-[124px] uppercase font-bold tracking-tight text-white leading-[0.88] mt-2 sm:mt-3">
+                {zoomSection?.word3 || 'EXTRAORDINARY'}
+              </h2>
+            </div>
 
             {/* Sub line */}
             <p className="mt-6 font-ppmori text-sm sm:text-base text-neutral-400 max-w-sm leading-relaxed">

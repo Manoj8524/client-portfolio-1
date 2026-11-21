@@ -1868,7 +1868,7 @@ export default function AdminPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
-                      Word 1 (Contains &quot;O&quot;)
+                      Word 1 (e.g. ZOOM)
                     </label>
                     <input
                       type="text"
