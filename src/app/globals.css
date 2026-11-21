@@ -150,6 +150,7 @@ body {
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -163,6 +164,19 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #404040;
+}
+
+/* Hide scrollbar completely for elements with .no-scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Marquee Animations */

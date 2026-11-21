@@ -463,19 +463,19 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
           ========================================================================= */}
       <div id="works-section" className="relative w-full bg-black text-white font-ppmori z-30">
         {/* Category Navigation Tabs (sticky top-20) */}
-        <section className="sticky top-20 z-30 w-full bg-black/90 backdrop-blur-xl border-y border-neutral-900/80 py-4 px-6">
-          <div className="max-w-7xl mx-auto flex items-center justify-center">
-            <nav className="flex items-center gap-2 sm:gap-6 md:gap-8 overflow-x-auto no-scrollbar py-1 select-none">
+        <section className="sticky top-20 z-30 w-full bg-black/90 backdrop-blur-xl border-y border-neutral-900/80 py-3 sm:py-4 px-3 sm:px-6">
+          <div className="max-w-7xl mx-auto flex items-center justify-start sm:justify-center w-full overflow-hidden">
+            <nav className="flex items-center gap-2 sm:gap-6 md:gap-8 overflow-x-auto no-scrollbar py-1 px-1 sm:px-0 select-none scroll-smooth w-full sm:w-auto">
               {categories.map((cat) => {
                 const isActive = activeCategory === cat;
                 return (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`relative text-xs sm:text-sm font-medium uppercase tracking-[0.18em] transition-all duration-300 cursor-pointer py-1.5 px-3 rounded-full ${
+                    className={`relative text-xs sm:text-sm font-medium uppercase tracking-[0.14em] sm:tracking-[0.18em] transition-all duration-300 cursor-pointer py-1.5 px-3.5 sm:px-4 rounded-full whitespace-nowrap flex-shrink-0 ${
                       isActive
-                        ? 'text-[#fec52d] font-semibold bg-neutral-900 border border-[#fec52d]/30'
-                        : 'text-neutral-400 hover:text-[#fec52d]'
+                        ? 'text-[#fec52d] font-semibold bg-neutral-900 border border-[#fec52d]/40 shadow-[0_0_12px_rgba(254,197,45,0.12)]'
+                        : 'text-neutral-400 hover:text-[#fec52d] hover:bg-neutral-900/50'
                     }`}
                   >
                     {cat}
