@@ -10,7 +10,17 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [content, setContent] = useState(initialContent);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 15);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -38,7 +48,13 @@ export default function Navbar() {
   const disciplines = home?.disciplines || [];
 
   return (
-    <header className="padding-primary fixed top-0 left-0 w-full z-50 flex h-20 shrink-0 items-center justify-between will-change-transform bg-transparent">
+    <header
+      className={`padding-primary fixed top-0 left-0 w-full z-50 flex h-20 shrink-0 items-center justify-between will-change-transform transition-all duration-300 ${
+        isScrolled
+          ? 'bg-black/95 backdrop-blur-2xl border-b border-neutral-900/80 shadow-[0_10px_30px_rgba(0,0,0,0.8)]'
+          : 'bg-transparent'
+      }`}
+    >
       {/* Brand / Project Name */}
       <Link href="/" aria-current="page" className="flex items-center gap-2 group">
         <div className="py-2">
