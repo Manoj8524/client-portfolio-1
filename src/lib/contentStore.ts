@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import defaultSiteContent from '@/data/siteContent.json';
 import { supabaseAdmin, supabase } from './supabase';
 
 export interface SiteSettings {
@@ -196,7 +197,7 @@ function readFallbackContent(): SiteContent {
     console.error('Failed to read local fallback content:', err);
   }
   if (cachedContent) return cachedContent;
-  return {} as SiteContent;
+  return defaultSiteContent as unknown as SiteContent;
 }
 
 /**
