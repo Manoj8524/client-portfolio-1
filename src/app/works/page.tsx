@@ -74,6 +74,7 @@ function WorksContent() {
             sizes="100vw"
             className="object-cover object-center select-none"
             quality={92}
+            unoptimized={works?.backgroundImage?.startsWith('http')}
           />
           {/* Subtle top vignette only for header contrast - zero bottom black overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-1" />
@@ -148,6 +149,7 @@ function WorksContent() {
                     quality={90}
                     loading={idx < 6 ? 'eager' : 'lazy'}
                     priority={idx < 4}
+                    unoptimized={item.image?.startsWith('http')}
                   />
 
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-colors duration-300" />

@@ -65,11 +65,11 @@ const { chromium } = require('playwright');
     console.log(`✅ PASS: All 5 lanes have uniform speed (${lanes[0].animationDuration})!`);
   }
 
-  if (!posterClasses.sampleClass.includes('aspect-[4/5]')) {
-    console.error('❌ FAIL: Posters do not have aspect-[4/5]!');
+  if (!posterClasses.sampleClass.includes('aspect-[2/3]')) {
+    console.error('❌ FAIL: Posters do not have aspect-[2/3]!');
     process.exit(1);
   } else {
-    console.log('✅ PASS: Posters have social media aspect-[4/5] (ratio ~0.80)!');
+    console.log('✅ PASS: Posters have cinematic 2:3 aspect ratio (ratio ~0.67)!');
   }
 
   console.log('✅ All checks passed successfully!');

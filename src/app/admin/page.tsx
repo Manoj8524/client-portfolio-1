@@ -2167,6 +2167,7 @@ export default function AdminPage() {
                         alt={proj.title}
                         fill
                         className="object-cover object-center"
+                        unoptimized={proj.image?.startsWith('http')}
                       />
                     </div>
 

@@ -117,7 +117,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
           {loopPosters.map((poster, idx) => (
             <div
               key={`${poster.image}-${idx}`}
-              className="group/poster relative aspect-[4/5] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-neutral-900 border border-white/5 shadow-2xl flex-shrink-0"
+              className="group/poster relative aspect-[2/3] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-neutral-900 border border-white/5 shadow-2xl flex-shrink-0"
             >
               <Image
                 src={poster.image}
@@ -128,6 +128,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
                 priority={idx < 4}
                 loading={idx < 4 ? undefined : 'lazy'}
                 quality={85}
+                unoptimized={poster.image?.startsWith('http')}
               />
               <div className="absolute inset-0 bg-black/0 group-hover/poster:bg-black/20 transition-colors duration-300" />
             </div>
@@ -226,6 +227,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
                 sizes="(max-width: 768px) 100vw, 33.33vw"
                 className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
                 quality={90}
+                unoptimized={(card.image || '').startsWith('http')}
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
               <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -258,6 +260,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
               sizes="100vw"
               className="object-cover object-center select-none group-hover:scale-105 transition-transform duration-1000 ease-out"
               quality={92}
+              unoptimized={(home.featuredWatch?.image || '').startsWith('http')}
             />
           </motion.div>
         </Link>
@@ -281,6 +284,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
               sizes="(max-width: 1024px) 100vw, 58.33vw"
               className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
               quality={90}
+              unoptimized={(home.splitShowcase?.leftImage || '').startsWith('http')}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
           </Link>
@@ -297,6 +301,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
               sizes="(max-width: 1024px) 100vw, 41.67vw"
               className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
               quality={90}
+              unoptimized={(home.splitShowcase?.rightImage || '').startsWith('http')}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
           </Link>
