@@ -1494,6 +1494,23 @@ export default function AdminPage() {
                         />
                       </label>
                     </div>
+
+                    {/* Live Watch Banner Preview */}
+                    <div className="mt-3 relative w-full h-44 rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800">
+                      {content.home.featuredWatch?.image ? (
+                        <Image
+                          src={content.home.featuredWatch.image}
+                          alt="Featured Watch Preview"
+                          fill
+                          className="object-cover object-center"
+                          unoptimized={content.home.featuredWatch.image.startsWith('http')}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xs text-neutral-600 font-mono">
+                          No Watch Image
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1856,6 +1873,23 @@ export default function AdminPage() {
                         />
                       </label>
                     </div>
+
+                    {/* Live Brands Banner Preview */}
+                    <div className="mt-3 relative w-full h-44 rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800">
+                      {content.home.brandsTicker?.image ? (
+                        <Image
+                          src={content.home.brandsTicker.image}
+                          alt="Brands Banner Preview"
+                          fill
+                          className="object-cover object-center"
+                          unoptimized={content.home.brandsTicker.image.startsWith('http')}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xs text-neutral-600 font-mono">
+                          No Brands Banner Image
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1971,6 +2005,23 @@ export default function AdminPage() {
                           }
                         />
                       </label>
+                    </div>
+
+                    {/* Live Zoom Backdrop Preview */}
+                    <div className="mt-3 relative w-full h-44 rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800">
+                      {content.home.zoomSection?.backdropImage ? (
+                        <Image
+                          src={content.home.zoomSection.backdropImage}
+                          alt="Zoom Backdrop Preview"
+                          fill
+                          className="object-cover object-center"
+                          unoptimized={content.home.zoomSection.backdropImage.startsWith('http')}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xs text-neutral-600 font-mono">
+                          No Backdrop Image
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div>
@@ -2149,6 +2200,41 @@ export default function AdminPage() {
                         Uploading banner to Supabase...
                       </span>
                     )}
+
+                    {/* Full Hero Backdrop Image Live Preview */}
+                    <div className="mt-3 relative w-full h-64 sm:h-80 md:h-96 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 shadow-2xl group">
+                      {content.works.backgroundImage ? (
+                        <>
+                          <Image
+                            src={content.works.backgroundImage}
+                            alt="Works Hero Banner Preview"
+                            fill
+                            className="object-cover object-center select-none"
+                            unoptimized={content.works.backgroundImage.startsWith('http')}
+                          />
+                          {/* Live Overlay Simulator showing Tag, Title, Subtitle as they appear on the live site */}
+                          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 flex flex-col items-center justify-center p-6 text-center pointer-events-none">
+                            <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-2 drop-shadow-md">
+                              {content.works.heroTag || '// PORTFOLIO ARCHIVE'}
+                            </span>
+                            <span className="font-horas text-3xl sm:text-5xl md:text-6xl uppercase tracking-tight text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]">
+                              {content.works.title || 'SELECTED ARCHIVE'}
+                            </span>
+                            <span className="mt-3 text-xs sm:text-sm font-ppmori text-neutral-300 max-w-xl line-clamp-2 drop-shadow-md">
+                              {content.works.subtitle || 'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
+                            </span>
+                          </div>
+                          <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[10px] font-mono uppercase tracking-wider text-[#fec52d] flex items-center gap-1.5 shadow-lg">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#fec52d] animate-pulse" />
+                            <span>Live Banner Preview</span>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xs text-neutral-500 font-mono">
+                          No Backdrop Image Selected
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
