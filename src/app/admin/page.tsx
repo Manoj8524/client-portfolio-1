@@ -2277,7 +2277,7 @@ export default function AdminPage() {
                     Works Grid Poster Aspect Ratio
                   </h3>
                   <p className="text-xs font-ppmori text-neutral-400 mt-1">
-                    Choose the global default aspect ratio for all poster cards across the works archive.
+                    Choose the global fallback aspect ratio for all poster cards across the works archive.
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -2302,6 +2302,69 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* Category-Specific Aspect Ratio Controls */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-4">
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#fec52d]">
+                    // CATEGORY IMAGE SIZE ADJUSTMENTS
+                  </span>
+                  <h3 className="font-horas text-2xl uppercase tracking-wider text-white mt-1">
+                    Category-Specific Image Aspect Ratios
+                  </h3>
+                  <p className="text-xs font-ppmori text-neutral-400 mt-1">
+                    Adjust the image card size and aspect ratio for each individual category. All cards under each category adapt dynamically.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                  {(content.works.categories || ['BRANDING', 'FILM POSTERS', 'SOCIAL MEDIA CREATIVES', 'PRINT & ADS'])
+                    .filter((cat) => cat !== 'ALL')
+                    .map((cat) => {
+                      const currentVal = content.works.categoryRatios?.[cat] || 'default';
+                      return (
+                        <div
+                          key={cat}
+                          className="p-4 rounded-xl bg-neutral-900/60 border border-neutral-800/80 flex flex-col gap-2.5 hover:border-neutral-700 transition-colors"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-mono font-bold text-neutral-200 tracking-wider uppercase">
+                              {cat}
+                            </span>
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#fec52d]/10 text-[#fec52d] border border-[#fec52d]/20">
+                              {currentVal === 'default' ? (content.works.gridAspectRatio || '2/3') : currentVal}
+                            </span>
+                          </div>
+                          <select
+                            id={`category-ratio-select-${cat.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+                            value={currentVal}
+                            onChange={(e) => {
+                              const newRatios = {
+                                ...(content.works.categoryRatios || {}),
+                                [cat]: e.target.value,
+                              };
+                              setContent({
+                                ...content,
+                                works: {
+                                  ...content.works,
+                                  categoryRatios: newRatios,
+                                },
+                              });
+                            }}
+                            className="w-full px-3 py-2 rounded-lg bg-neutral-950 border border-neutral-700 text-xs font-mono font-medium text-white focus:border-[#fec52d] outline-none cursor-pointer"
+                          >
+                            <option value="default">Default ({content.works.gridAspectRatio || '2/3'})</option>
+                            <option value="2/3">2:3 (Cinema Poster)</option>
+                            <option value="4/5">4:5 (Standard Editorial)</option>
+                            <option value="1/1">1:1 (Square Artwork)</option>
+                            <option value="3/4">3:4 (Portrait)</option>
+                            <option value="16/9">16:9 (Landscape / Branding)</option>
+                          </select>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+
               {/* Projects List */}
               <div className="grid grid-cols-1 gap-6">
                 {content.works.projects.map((proj, idx) => (
@@ -2314,7 +2377,7 @@ export default function AdminPage() {
                       style={{
                         aspectRatio: proj.aspectRatio && proj.aspectRatio !== 'default'
                           ? proj.aspectRatio
-                          : (content.works.gridAspectRatio || '2/3'),
+                          : (content.works.categoryRatios?.[proj.category] || content.works.gridAspectRatio || '2/3'),
                       }}
                       className="relative w-32 rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 flex-shrink-0"
                     >

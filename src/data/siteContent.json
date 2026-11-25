@@ -368,6 +368,12 @@
     "subtitle": "Bespoke film poster key art, character visuals, and cinematic advertising campaigns.",
     "backgroundImage": "/extracted_assets/work/work_hero_bg_clean.webp",
     "gridAspectRatio": "2/3",
+    "categoryRatios": {
+      "FILM POSTERS": "2/3",
+      "BRANDING": "16/9",
+      "SOCIAL MEDIA CREATIVES": "4/5",
+      "PRINT & ADS": "4/5"
+    },
     "categories": [
       "ALL",
       "BRANDING",

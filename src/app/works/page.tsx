@@ -99,7 +99,7 @@ function WorksContent() {
       {/* =========================================================================
           CATEGORY NAVIGATION TABS
           ========================================================================= */}
-      <section className="sticky top-20 z-30 w-full bg-black/90 backdrop-blur-xl border-y border-neutral-900/80 py-3 sm:py-4 px-3 sm:px-6">
+      <section className="sticky top-20 z-30 w-full bg-black border-y border-neutral-900/80 py-3 sm:py-4 px-3 sm:px-6 shadow-[0_8px_20px_rgba(0,0,0,0.7)]">
         <div className="max-w-7xl mx-auto flex items-center justify-start sm:justify-center w-full overflow-hidden">
           <nav className="flex items-center gap-2 sm:gap-6 md:gap-8 overflow-x-auto no-scrollbar py-1 px-1 sm:px-0 select-none scroll-smooth w-full sm:w-auto">
             {categories.map((cat) => {
@@ -123,7 +123,7 @@ function WorksContent() {
       </section>
 
       {/* =========================================================================
-          PORTFOLIO GRID: 4 Columns (Magic in White 2:3 ratio)
+          PORTFOLIO GRID: 4 Columns (Dynamic Category & Grid Aspect Ratios)
           ========================================================================= */}
       <section id="work-grid" className="w-full p-0 m-0 bg-black">
         <motion.div
@@ -132,7 +132,12 @@ function WorksContent() {
         >
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item, idx) => {
-              const itemRatio = item.aspectRatio && item.aspectRatio !== 'default' ? item.aspectRatio : defaultGridRatio;
+              // 1. Individual project override -> 2. Category ratio -> 3. Active tab ratio -> 4. Global grid ratio
+              const categoryRatio = (item.category && works?.categoryRatios?.[item.category]) ||
+                (activeTab !== 'ALL' && works?.categoryRatios?.[activeTab]);
+              const itemRatio = item.aspectRatio && item.aspectRatio !== 'default'
+                ? item.aspectRatio
+                : (categoryRatio || defaultGridRatio);
               const itemPosition = item.objectPosition || 'center';
               return (
                 <motion.div

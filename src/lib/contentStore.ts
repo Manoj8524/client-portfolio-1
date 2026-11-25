@@ -146,6 +146,7 @@ export interface SiteContent {
     subtitle: string;
     backgroundImage?: string;
     gridAspectRatio?: string;
+    categoryRatios?: Record<string, string>;
     categories: string[];
     projects: WorkProjectItem[];
   };
