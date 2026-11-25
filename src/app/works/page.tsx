@@ -6,12 +6,13 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
+import type { SiteContent, WorkProjectItem } from '@/lib/contentStore';
 import initialContent from '@/data/siteContent.json';
 
 function WorksContent() {
   const searchParams = useSearchParams();
   const rawCategory = searchParams.get('category');
-  const [content, setContent] = useState(initialContent);
+  const [content, setContent] = useState<SiteContent>(initialContent as unknown as SiteContent);
 
   // Sync latest updates from content store on mount
   useEffect(() => {
@@ -52,6 +53,7 @@ function WorksContent() {
   }, [rawCategory, categories]);
 
   const allProjects = works?.projects || [];
+  const defaultGridRatio = works?.gridAspectRatio || '2/3';
 
   const filteredItems = activeTab === 'ALL'
     ? allProjects
@@ -129,28 +131,33 @@ function WorksContent() {
           className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 p-0 m-0"
         >
           <AnimatePresence mode="popLayout">
-            {filteredItems.map((item, idx) => (
-              <motion.div
-                key={item.id}
-                layout
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.35, delay: idx * 0.03 }}
-                className="group relative w-full aspect-[2/3] overflow-hidden rounded-none border-b sm:border-r border-neutral-900/60 bg-neutral-950 block"
-              >
-                <div className="relative w-full h-full block overflow-hidden">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33.33vw, 25vw"
-                    className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out select-none"
-                    quality={90}
-                    loading={idx < 6 ? 'eager' : 'lazy'}
-                    priority={idx < 4}
-                    unoptimized={item.image?.startsWith('http')}
-                  />
+            {filteredItems.map((item, idx) => {
+              const itemRatio = item.aspectRatio && item.aspectRatio !== 'default' ? item.aspectRatio : defaultGridRatio;
+              const itemPosition = item.objectPosition || 'center';
+              return (
+                <motion.div
+                  key={item.id}
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.35, delay: idx * 0.03 }}
+                  style={{ aspectRatio: itemRatio }}
+                  className="group relative w-full overflow-hidden rounded-none border-b sm:border-r border-neutral-900/60 bg-neutral-950 block"
+                >
+                  <div className="relative w-full h-full block overflow-hidden">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33.33vw, 25vw"
+                      style={{ objectPosition: itemPosition }}
+                      className="object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out select-none"
+                      quality={90}
+                      loading={idx < 6 ? 'eager' : 'lazy'}
+                      priority={idx < 4}
+                      unoptimized={item.image?.startsWith('http')}
+                    />
 
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-colors duration-300" />
 
@@ -190,7 +197,8 @@ function WorksContent() {
                   </div>
                 </div>
               </motion.div>
-            ))}
+            );
+          })}
           </AnimatePresence>
         </motion.div>
       </section>

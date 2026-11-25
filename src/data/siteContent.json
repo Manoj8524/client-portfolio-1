@@ -17,11 +17,26 @@
   },
   "navigation": {
     "links": [
-      { "label": "Home", "href": "/" },
-      { "label": "Works", "href": "/works" },
-      { "label": "Services", "href": "/works" },
-      { "label": "About", "href": "/about" },
-      { "label": "Contact", "href": "/contact" }
+      {
+        "label": "Home",
+        "href": "/"
+      },
+      {
+        "label": "Works",
+        "href": "/works"
+      },
+      {
+        "label": "Services",
+        "href": "/works"
+      },
+      {
+        "label": "About",
+        "href": "/about"
+      },
+      {
+        "label": "Contact",
+        "href": "/contact"
+      }
     ],
     "cta": {
       "label": "GET IN TOUCH",
@@ -37,48 +52,145 @@
         "180+ OFFICIAL KEY VISUALS",
         "AVAILABLE FOR FREELANCE & COMMISSIONS"
       ],
-      "ctaPrimary": { "label": "GET IN TOUCH", "href": "/contact" },
-      "ctaSecondary": { "label": "EXPLORE WORKS", "href": "/works" },
+      "posterAspectRatio": "4/5",
+      "ctaPrimary": {
+        "label": "GET IN TOUCH",
+        "href": "/contact"
+      },
+      "ctaSecondary": {
+        "label": "EXPLORE WORKS",
+        "href": "/works"
+      },
       "posterColumns": {
         "lane1": [
-          { "image": "https://ik.imagekit.io/7yturtsdn0/jn_77c7c8b4fe_Ay--j7Fe4.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center", "title": "Jana Nayagan" },
-          { "image": "/extracted_assets/hero_wall_crops/crop_c0_p0.webp", "title": "Joji" },
-          { "image": "https://ik.imagekit.io/7yturtsdn0/tt_726a32ab03_-X1prKJYmo.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center", "title": "Thalaivan Thalaivi" },
-          { "image": "/extracted_assets/hero_wall_crops/crop_c0_p1.webp", "title": "Vijay Superum Pournamiyum" },
-          { "image": "/film_posters_cache/poster_187.webp", "title": "Turbo" },
-          { "image": "/film_posters_cache/poster_202.webp", "title": "Aasha" }
+          {
+            "image": "https://ik.imagekit.io/7yturtsdn0/jn_77c7c8b4fe_Ay--j7Fe4.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center",
+            "title": "Jana Nayagan"
+          },
+          {
+            "image": "/extracted_assets/hero_wall_crops/crop_c0_p0.webp",
+            "title": "Joji"
+          },
+          {
+            "image": "https://ik.imagekit.io/7yturtsdn0/tt_726a32ab03_-X1prKJYmo.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center",
+            "title": "Thalaivan Thalaivi"
+          },
+          {
+            "image": "/extracted_assets/hero_wall_crops/crop_c0_p1.webp",
+            "title": "Vijay Superum Pournamiyum"
+          },
+          {
+            "image": "/film_posters_cache/poster_187.webp",
+            "title": "Turbo"
+          },
+          {
+            "image": "/film_posters_cache/poster_202.webp",
+            "title": "Aasha"
+          }
         ],
         "lane2": [
-          { "image": "https://ik.imagekit.io/7yturtsdn0/coolie_bf653c3463_RQCWkJgl6.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center", "title": "Coolie" },
-          { "image": "/extracted_assets/hero_wall_crops/crop_c1_p0.webp", "title": "Victoria" },
-          { "image": "https://ik.imagekit.io/7yturtsdn0/jaat_5754c2af2c_sIA3w4j2vS.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center", "title": "Jaat" },
-          { "image": "/extracted_assets/hero_wall_crops/crop_c1_p1.webp", "title": "Action Hero Biju" },
-          { "image": "/film_posters_cache/poster_204.webp", "title": "Dhoomakethu" },
-          { "image": "/film_posters_cache/poster_205.webp", "title": "Mela" }
+          {
+            "image": "https://ik.imagekit.io/7yturtsdn0/coolie_bf653c3463_RQCWkJgl6.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center",
+            "title": "Coolie"
+          },
+          {
+            "image": "/extracted_assets/hero_wall_crops/crop_c1_p0.webp",
+            "title": "Victoria"
+          },
+          {
+            "image": "https://ik.imagekit.io/7yturtsdn0/jaat_5754c2af2c_sIA3w4j2vS.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center",
+            "title": "Jaat"
+          },
+          {
+            "image": "/extracted_assets/hero_wall_crops/crop_c1_p1.webp",
+            "title": "Action Hero Biju"
+          },
+          {
+            "image": "/film_posters_cache/poster_204.webp",
+            "title": "Dhoomakethu"
+          },
+          {
+            "image": "/film_posters_cache/poster_205.webp",
+            "title": "Mela"
+          }
         ],
         "lane3": [
-          { "image": "https://ik.imagekit.io/7yturtsdn0/Thug_Life_poster_01_a52762edbe_J1zu2bQ2F.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center", "title": "Thug Life" },
-          { "image": "https://ik.imagekit.io/7yturtsdn0/parasakthi_08a705dcb4_rXa5RNZvK.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center", "title": "Parasakthi" },
-          { "image": "/extracted_assets/hero_wall_crops/crop_c2_p0.webp", "title": "Thudarum" },
-          { "image": "/extracted_assets/hero_wall_crops/crop_c2_p1.webp", "title": "Sookshmadarshini" },
-          { "image": "/film_posters_cache/poster_207.webp", "title": "Operation Ganga" },
-          { "image": "/film_posters_cache/poster_208.webp", "title": "Rao Bahadur" }
+          {
+            "image": "https://ik.imagekit.io/7yturtsdn0/Thug_Life_poster_01_a52762edbe_J1zu2bQ2F.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center",
+            "title": "Thug Life"
+          },
+          {
+            "image": "https://ik.imagekit.io/7yturtsdn0/parasakthi_08a705dcb4_rXa5RNZvK.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center",
+            "title": "Parasakthi"
+          },
+          {
+            "image": "/extracted_assets/hero_wall_crops/crop_c2_p0.webp",
+            "title": "Thudarum"
+          },
+          {
+            "image": "/extracted_assets/hero_wall_crops/crop_c2_p1.webp",
+            "title": "Sookshmadarshini"
+          },
+          {
+            "image": "/film_posters_cache/poster_207.webp",
+            "title": "Operation Ganga"
+          },
+          {
+            "image": "/film_posters_cache/poster_208.webp",
+            "title": "Rao Bahadur"
+          }
         ],
         "lane4": [
-          { "image": "https://ik.imagekit.io/7yturtsdn0/vm_ff3f97280f_zQqHV8RSz.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center", "title": "Vidaamuyarchi" },
-          { "image": "/extracted_assets/hero_wall_crops/crop_c3_p0.webp", "title": "Shesham Mikeil Fathima" },
-          { "image": "/extracted_assets/hero_wall_crops/crop_c3_p1.webp", "title": "Premalu" },
-          { "image": "/film_posters_cache/poster_211.webp", "title": "Petta Rap" },
-          { "image": "/film_posters_cache/poster_212.webp", "title": "Aavesham" },
-          { "image": "/film_posters_cache/poster_214.webp", "title": "Bramayugam" }
+          {
+            "image": "https://ik.imagekit.io/7yturtsdn0/vm_ff3f97280f_zQqHV8RSz.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center",
+            "title": "Vidaamuyarchi"
+          },
+          {
+            "image": "/extracted_assets/hero_wall_crops/crop_c3_p0.webp",
+            "title": "Shesham Mikeil Fathima"
+          },
+          {
+            "image": "/extracted_assets/hero_wall_crops/crop_c3_p1.webp",
+            "title": "Premalu"
+          },
+          {
+            "image": "/film_posters_cache/poster_211.webp",
+            "title": "Petta Rap"
+          },
+          {
+            "image": "/film_posters_cache/poster_212.webp",
+            "title": "Aavesham"
+          },
+          {
+            "image": "/film_posters_cache/poster_214.webp",
+            "title": "Bramayugam"
+          }
         ],
         "lane5": [
-          { "image": "https://ik.imagekit.io/7yturtsdn0/madharsi_d36ad71cdd_C8QbiX7zO_.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center", "title": "Madharasi" },
-          { "image": "/extracted_assets/hero_wall_crops/crop_c4_p0.webp", "title": "Second Show" },
-          { "image": "/extracted_assets/hero_wall_crops/crop_c4_p1.webp", "title": "Rao Bahadur" },
-          { "image": "/film_posters_cache/poster_215.webp", "title": "The Goat Life" },
-          { "image": "/film_posters_cache/poster_216.webp", "title": "Manjummel Boys" },
-          { "image": "/film_posters_cache/poster_217.webp", "title": "King of Kotha" }
+          {
+            "image": "https://ik.imagekit.io/7yturtsdn0/madharsi_d36ad71cdd_C8QbiX7zO_.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center",
+            "title": "Madharasi"
+          },
+          {
+            "image": "/extracted_assets/hero_wall_crops/crop_c4_p0.webp",
+            "title": "Second Show"
+          },
+          {
+            "image": "/extracted_assets/hero_wall_crops/crop_c4_p1.webp",
+            "title": "Rao Bahadur"
+          },
+          {
+            "image": "/film_posters_cache/poster_215.webp",
+            "title": "The Goat Life"
+          },
+          {
+            "image": "/film_posters_cache/poster_216.webp",
+            "title": "Manjummel Boys"
+          },
+          {
+            "image": "/film_posters_cache/poster_217.webp",
+            "title": "King of Kotha"
+          }
         ]
       }
     },
@@ -87,7 +199,10 @@
       "title": "THE ART OF HIGH HOROLOGY",
       "description": "Cinematic advertising and bespoke key visuals crafted for world-class luxury timepieces. Precision rendered for timeless visual impact.",
       "image": "/extracted_assets/home/home_featured_watch.webp",
-      "cta": { "label": "Explore Case Study", "href": "/works" }
+      "cta": {
+        "label": "Explore Case Study",
+        "href": "/works"
+      }
     },
     "showcaseCards": [
       {
@@ -201,10 +316,26 @@
       ]
     },
     "stats": [
-      { "value": "180+", "label": "Official Key Visuals", "sub": "Pan-Indian & Global Titles" },
-      { "value": "12+", "label": "Film Industry Awards", "sub": "Poster & Key Art Accolades" },
-      { "value": "45+", "label": "Premier Studios", "sub": "Production Houses & Brands" },
-      { "value": "8+", "label": "Years of Craft", "sub": "Cinema & Editorial Design" }
+      {
+        "value": "180+",
+        "label": "Official Key Visuals",
+        "sub": "Pan-Indian & Global Titles"
+      },
+      {
+        "value": "12+",
+        "label": "Film Industry Awards",
+        "sub": "Poster & Key Art Accolades"
+      },
+      {
+        "value": "45+",
+        "label": "Premier Studios",
+        "sub": "Production Houses & Brands"
+      },
+      {
+        "value": "8+",
+        "label": "Years of Craft",
+        "sub": "Cinema & Editorial Design"
+      }
     ],
     "journeyMilestonesHeading": {
       "tag": "// EVOLUTION & TIMELINE",
@@ -236,6 +367,7 @@
     "title": "SELECTED ARCHIVE",
     "subtitle": "Bespoke film poster key art, character visuals, and cinematic advertising campaigns.",
     "backgroundImage": "/extracted_assets/work/work_hero_bg_clean.webp",
+    "gridAspectRatio": "2/3",
     "categories": [
       "ALL",
       "BRANDING",
@@ -400,11 +532,26 @@
     "newsletterHeading": "Subscribe to Our Newsletter",
     "newsletterDesc": "Stay updated with our latest offers, key art releases, and studio projects. Sign up for our newsletter.",
     "quickLinks": [
-      { "label": "Home", "href": "/" },
-      { "label": "Works", "href": "/works" },
-      { "label": "About Us", "href": "/about" },
-      { "label": "Contact Us", "href": "/contact" },
-      { "label": "Privacy Policy", "href": "/privacy-policy" }
+      {
+        "label": "Home",
+        "href": "/"
+      },
+      {
+        "label": "Works",
+        "href": "/works"
+      },
+      {
+        "label": "About Us",
+        "href": "/about"
+      },
+      {
+        "label": "Contact Us",
+        "href": "/contact"
+      },
+      {
+        "label": "Privacy Policy",
+        "href": "/privacy-policy"
+      }
     ]
   }
 }

@@ -40,6 +40,8 @@ export interface WorkProjectItem {
   client?: string;
   awards?: string;
   featured?: boolean;
+  aspectRatio?: string;
+  objectPosition?: string;
 }
 
 export interface SiteContent {
@@ -56,6 +58,7 @@ export interface SiteContent {
       avatar: string;
       bioHeading: string;
       badges: string[];
+      posterAspectRatio?: string;
       ctaPrimary: { label: string; href: string };
       ctaSecondary: { label: string; href: string };
       posterColumns: {
@@ -142,6 +145,7 @@ export interface SiteContent {
     title: string;
     subtitle: string;
     backgroundImage?: string;
+    gridAspectRatio?: string;
     categories: string[];
     projects: WorkProjectItem[];
   };
@@ -207,11 +211,16 @@ function readFallbackContent(): SiteContent {
 export async function getSiteContentAsync(): Promise<SiteContent> {
   try {
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      const { data, error } = await supabaseAdmin
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Supabase request timeout')), 1500)
+      );
+      const fetchPromise = supabaseAdmin
         .from('site_content')
         .select('data')
         .eq('id', 'current')
         .maybeSingle();
+
+      const { data, error }: any = await Promise.race([fetchPromise, timeoutPromise]);
 
       if (!error && data?.data) {
         cachedContent = data.data as SiteContent;
@@ -294,10 +303,15 @@ export async function updateSiteContent(newContent: Partial<SiteContent>): Promi
 export async function getContactMessagesAsync(): Promise<ContactMessage[]> {
   try {
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      const { data, error } = await supabaseAdmin
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Supabase request timeout')), 1500)
+      );
+      const fetchPromise = supabaseAdmin
         .from('contact_messages')
         .select('*')
         .order('created_at', { ascending: false });
+
+      const { data, error }: any = await Promise.race([fetchPromise, timeoutPromise]);
 
       if (!error && Array.isArray(data)) {
         return data as ContactMessage[];

@@ -109,6 +109,11 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
     }
   };
 
+  const { home, works } = content;
+  const { hero, brandsTicker, zoomSection } = home;
+  const heroPosterRatio = hero?.posterAspectRatio || '4/5';
+  const defaultGridRatio = works?.gridAspectRatio || '2/3';
+
   const renderColumn = (posters: HeroPosterItem[], animationClass: string) => {
     const loopPosters = [...posters, ...posters];
     return (
@@ -117,7 +122,8 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
           {loopPosters.map((poster, idx) => (
             <div
               key={`${poster.image}-${idx}`}
-              className="group/poster relative aspect-[4/5] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-neutral-900 border border-white/5 shadow-2xl flex-shrink-0"
+              style={{ aspectRatio: heroPosterRatio }}
+              className="group/poster relative w-full rounded-xl sm:rounded-2xl overflow-hidden bg-neutral-900 border border-white/5 shadow-2xl flex-shrink-0"
             >
               <Image
                 src={poster.image}
@@ -137,9 +143,6 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
       </div>
     );
   };
-
-  const { home, works } = content;
-  const { hero, brandsTicker, zoomSection } = home;
 
   const categories = works?.categories || [
     'ALL',
@@ -504,26 +507,31 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
         {/* Portfolio 4-Column Grid (Magic in White 2:3 ratio) */}
         <section id="work-grid" className="w-full p-0 m-0 bg-black">
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 p-0 m-0">
-            {filteredProjects.map((item, idx) => (
-              <div
-                key={item.id}
-                className="group relative w-full aspect-[2/3] overflow-hidden rounded-none border-b sm:border-r border-neutral-900/60 bg-neutral-950 block"
-              >
-                <Link
-                  href={`/works/film-poster-design/${item.id}`}
-                  className="relative w-full h-full block overflow-hidden cursor-pointer"
+            {filteredProjects.map((item, idx) => {
+              const itemRatio = item.aspectRatio && item.aspectRatio !== 'default' ? item.aspectRatio : defaultGridRatio;
+              const itemPosition = item.objectPosition || 'center';
+              return (
+                <div
+                  key={item.id}
+                  style={{ aspectRatio: itemRatio }}
+                  className="group relative w-full overflow-hidden rounded-none border-b sm:border-r border-neutral-900/60 bg-neutral-950 block"
                 >
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33.33vw, 25vw"
-                    className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out select-none"
-                    quality={90}
-                    loading={idx < 6 ? 'eager' : 'lazy'}
-                    priority={idx < 4}
-                    unoptimized={item.image?.startsWith('http')}
-                  />
+                  <Link
+                    href={`/works/film-poster-design/${item.id}`}
+                    className="relative w-full h-full block overflow-hidden cursor-pointer"
+                  >
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33.33vw, 25vw"
+                      style={{ objectPosition: itemPosition }}
+                      className="object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out select-none"
+                      quality={90}
+                      loading={idx < 6 ? 'eager' : 'lazy'}
+                      priority={idx < 4}
+                      unoptimized={item.image?.startsWith('http')}
+                    />
 
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-colors duration-300" />
 
@@ -563,7 +571,8 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
                   </div>
                 </Link>
               </div>
-            ))}
+            );
+          })}
           </div>
         </section>
       </div>

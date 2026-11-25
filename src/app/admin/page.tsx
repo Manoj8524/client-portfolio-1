@@ -1032,14 +1032,42 @@ export default function AdminPage() {
                       Add, upload, and remove movie posters from each of the 5 scrolling vertical lanes.
                     </p>
                   </div>
-                  <div className="text-xs font-mono text-neutral-400 bg-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-800 w-max">
-                    Total Posters:{' '}
-                    <span className="text-[#fec52d] font-bold">
-                      {Object.values(content.home.hero.posterColumns || {}).reduce(
-                        (acc, arr) => acc + (arr?.length || 0),
-                        0
-                      )}
-                    </span>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-2 text-xs font-mono text-neutral-400 bg-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-800">
+                      <span>Marquee Poster Ratio:</span>
+                      <select
+                        id="hero-poster-aspect-ratio-select"
+                        value={content.home.hero.posterAspectRatio || '4/5'}
+                        onChange={(e) => {
+                          setContent({
+                            ...content,
+                            home: {
+                              ...content.home,
+                              hero: {
+                                ...content.home.hero,
+                                posterAspectRatio: e.target.value,
+                              },
+                            },
+                          });
+                        }}
+                        className="bg-transparent text-[#fec52d] font-bold outline-none cursor-pointer"
+                      >
+                        <option value="4/5" className="bg-neutral-900 text-white">4:5 (Standard)</option>
+                        <option value="2/3" className="bg-neutral-900 text-white">2:3 (Cinema Poster)</option>
+                        <option value="1/1" className="bg-neutral-900 text-white">1:1 (Square)</option>
+                        <option value="3/4" className="bg-neutral-900 text-white">3:4 (Portrait)</option>
+                        <option value="16/9" className="bg-neutral-900 text-white">16:9 (Landscape)</option>
+                      </select>
+                    </div>
+                    <div className="text-xs font-mono text-neutral-400 bg-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-800 w-max">
+                      Total Posters:{' '}
+                      <span className="text-[#fec52d] font-bold">
+                        {Object.values(content.home.hero.posterColumns || {}).reduce(
+                          (acc, arr) => acc + (arr?.length || 0),
+                          0
+                        )}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -2239,6 +2267,41 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* Works Grid Global Aspect Ratio Settings */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#fec52d]">
+                    // GLOBAL GRID DISPLAY SETTINGS
+                  </span>
+                  <h3 className="font-horas text-2xl uppercase tracking-wider text-white mt-1">
+                    Works Grid Poster Aspect Ratio
+                  </h3>
+                  <p className="text-xs font-ppmori text-neutral-400 mt-1">
+                    Choose the global default aspect ratio for all poster cards across the works archive.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <label className="text-xs font-mono uppercase text-neutral-400 whitespace-nowrap">Grid Ratio:</label>
+                  <select
+                    id="global-grid-aspect-ratio-select"
+                    value={content.works.gridAspectRatio || '2/3'}
+                    onChange={(e) => {
+                      setContent({
+                        ...content,
+                        works: { ...content.works, gridAspectRatio: e.target.value },
+                      });
+                    }}
+                    className="px-4 py-2 rounded-xl bg-neutral-900 border border-neutral-700 text-[#fec52d] text-xs font-mono font-bold focus:border-[#fec52d] outline-none cursor-pointer"
+                  >
+                    <option value="2/3">2:3 (Cinema Poster / 4-Col Default)</option>
+                    <option value="4/5">4:5 (Standard Editorial Poster)</option>
+                    <option value="1/1">1:1 (Square Artwork)</option>
+                    <option value="3/4">3:4 (Classic Portrait)</option>
+                    <option value="16/9">16:9 (Landscape Banner)</option>
+                  </select>
+                </div>
+              </div>
+
               {/* Projects List */}
               <div className="grid grid-cols-1 gap-6">
                 {content.works.projects.map((proj, idx) => (
@@ -2246,13 +2309,21 @@ export default function AdminPage() {
                     key={proj.id || idx}
                     className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col md:flex-row gap-6 items-start"
                   >
-                    {/* Thumbnail Preview */}
-                    <div className="relative w-32 h-44 rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 flex-shrink-0">
+                    {/* Thumbnail Preview with Dynamic Ratio & Alignment */}
+                    <div
+                      style={{
+                        aspectRatio: proj.aspectRatio && proj.aspectRatio !== 'default'
+                          ? proj.aspectRatio
+                          : (content.works.gridAspectRatio || '2/3'),
+                      }}
+                      className="relative w-32 rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 flex-shrink-0"
+                    >
                       <Image
                         src={proj.image}
                         alt={proj.title}
                         fill
-                        className="object-cover object-center"
+                        style={{ objectPosition: proj.objectPosition || 'center' }}
+                        className="object-cover"
                         unoptimized={proj.image?.startsWith('http')}
                       />
                     </div>
@@ -2403,6 +2474,53 @@ export default function AdminPage() {
                           }}
                           className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs"
                         />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                          Poster Ratio Override
+                        </label>
+                        <select
+                          value={proj.aspectRatio || 'default'}
+                          onChange={(e) => {
+                            const updated = [...content.works.projects];
+                            updated[idx].aspectRatio = e.target.value;
+                            setContent({
+                              ...content,
+                              works: { ...content.works, projects: updated },
+                            });
+                          }}
+                          className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                        >
+                          <option value="default">Default ({content.works.gridAspectRatio || '2/3'})</option>
+                          <option value="2/3">2:3 (Cinema Poster)</option>
+                          <option value="4/5">4:5 (Standard Editorial)</option>
+                          <option value="1/1">1:1 (Square Artwork)</option>
+                          <option value="3/4">3:4 (Classic Portrait)</option>
+                          <option value="16/9">16:9 (Landscape Banner)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                          Image Focus / Alignment
+                        </label>
+                        <select
+                          value={proj.objectPosition || 'center'}
+                          onChange={(e) => {
+                            const updated = [...content.works.projects];
+                            updated[idx].objectPosition = e.target.value;
+                            setContent({
+                              ...content,
+                              works: { ...content.works, projects: updated },
+                            });
+                          }}
+                          className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                        >
+                          <option value="center">Center Focused</option>
+                          <option value="top">Top (Headshot / Title)</option>
+                          <option value="bottom">Bottom (Credits / Base)</option>
+                        </select>
                       </div>
 
                       <div className="flex items-center justify-between pt-6">
