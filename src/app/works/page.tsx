@@ -28,8 +28,8 @@ function WorksContent() {
   const { works } = content;
   const categories = works?.categories || [
     'ALL',
-    'FILM POSTERS',
     'BRANDING',
+    'FILM POSTERS',
     'SOCIAL MEDIA CREATIVES',
     'PRINT & ADS',
   ];
@@ -121,12 +121,12 @@ function WorksContent() {
       </section>
 
       {/* =========================================================================
-          PORTFOLIO GRID: 3 Columns
+          PORTFOLIO GRID: 4 Columns (Magic in White 2:3 ratio)
           ========================================================================= */}
       <section id="work-grid" className="w-full p-0 m-0 bg-black">
         <motion.div
           layout
-          className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 p-0 m-0"
+          className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 p-0 m-0"
         >
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item, idx) => (
@@ -137,14 +137,14 @@ function WorksContent() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.35, delay: idx * 0.03 }}
-                className="group relative w-full aspect-[1588/1985] overflow-hidden rounded-none border-b sm:border-r border-neutral-900/60 bg-neutral-950 block"
+                className="group relative w-full aspect-[2/3] overflow-hidden rounded-none border-b sm:border-r border-neutral-900/60 bg-neutral-950 block"
               >
                 <div className="relative w-full h-full block overflow-hidden">
                   <Image
                     src={item.image}
                     alt={item.title}
                     fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33.33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33.33vw, 25vw"
                     className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out select-none"
                     quality={90}
                     loading={idx < 6 ? 'eager' : 'lazy'}

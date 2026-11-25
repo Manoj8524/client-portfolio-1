@@ -117,7 +117,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
           {loopPosters.map((poster, idx) => (
             <div
               key={`${poster.image}-${idx}`}
-              className="group/poster relative aspect-[2/3] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-neutral-900 border border-white/5 shadow-2xl flex-shrink-0"
+              className="group/poster relative aspect-[4/5] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-neutral-900 border border-white/5 shadow-2xl flex-shrink-0"
             >
               <Image
                 src={poster.image}
@@ -143,8 +143,8 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
 
   const categories = works?.categories || [
     'ALL',
-    'FILM POSTERS',
     'BRANDING',
+    'FILM POSTERS',
     'SOCIAL MEDIA CREATIVES',
     'PRINT & ADS',
   ];
@@ -362,25 +362,30 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black">
 
-          {/* ── LAYER 0: Cinematic backdrop (parallax + dissolves as zoom completes) ── */}
-          <motion.div
-            style={{
-              scale: galaxyBackdropScale,
-              opacity: galaxyBackdropOpacity,
-            }}
-            className="absolute inset-0 z-0 select-none pointer-events-none will-change-transform"
-          >
-            <Image
-              src={zoomSection?.backdropImage || '/extracted_assets/home/home_galaxy_zoom_clean.webp'}
-              alt="Cinematic Portal Backdrop"
-              fill
-              sizes="100vw"
-              className="object-cover object-center select-none"
-              quality={95}
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 z-1" />
-          </motion.div>
+          {/* ── LAYER 0: Cinematic backdrop (only renders if backdropImage is added in Admin) ── */}
+          {zoomSection?.backdropImage ? (
+            <motion.div
+              style={{
+                scale: galaxyBackdropScale,
+                opacity: galaxyBackdropOpacity,
+              }}
+              className="absolute inset-0 z-0 select-none pointer-events-none will-change-transform"
+            >
+              <Image
+                src={zoomSection.backdropImage}
+                alt="Cinematic Portal Backdrop"
+                fill
+                sizes="100vw"
+                className="object-cover object-center select-none"
+                quality={95}
+                priority
+                unoptimized={zoomSection.backdropImage.startsWith('http')}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 z-1" />
+            </motion.div>
+          ) : (
+            <div className="absolute inset-0 z-0 bg-black" />
+          )}
 
           {/* ── LAYER 1: PRE-LOADED WORKS HERO EMERGING FROM INSIDE THE ZOOM (ZOOM OUT) ── */}
           {/* As the zoom reaches its peak, the Works Hero opens with a ZOOM OUT (scale: 1.32 -> 1.0) */}
@@ -496,13 +501,13 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
           </div>
         </section>
 
-        {/* Portfolio 3-Column Grid */}
+        {/* Portfolio 4-Column Grid (Magic in White 2:3 ratio) */}
         <section id="work-grid" className="w-full p-0 m-0 bg-black">
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 p-0 m-0">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 p-0 m-0">
             {filteredProjects.map((item, idx) => (
               <div
                 key={item.id}
-                className="group relative w-full aspect-[1588/1985] overflow-hidden rounded-none border-b sm:border-r border-neutral-900/60 bg-neutral-950 block"
+                className="group relative w-full aspect-[2/3] overflow-hidden rounded-none border-b sm:border-r border-neutral-900/60 bg-neutral-950 block"
               >
                 <Link
                   href={`/works/film-poster-design/${item.id}`}
@@ -512,11 +517,12 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
                     src={item.image}
                     alt={item.title}
                     fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33.33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33.33vw, 25vw"
                     className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out select-none"
                     quality={90}
                     loading={idx < 6 ? 'eager' : 'lazy'}
                     priority={idx < 4}
+                    unoptimized={item.image?.startsWith('http')}
                   />
 
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-colors duration-300" />
