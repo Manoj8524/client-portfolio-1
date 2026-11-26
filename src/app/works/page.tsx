@@ -27,19 +27,18 @@ function WorksContent() {
   }, []);
 
   const { works } = content;
-  const categories = works?.categories || [
-    'ALL',
+  const categories = (works?.categories || [
     'BRANDING',
     'FILM POSTERS',
     'SOCIAL MEDIA CREATIVES',
     'PRINT & ADS',
-  ];
+  ]).filter((c) => c.toUpperCase() !== 'ALL');
 
   const getInitialTab = (): string => {
-    if (!rawCategory) return 'ALL';
+    if (!rawCategory) return categories[0] || 'BRANDING';
     const normalized = rawCategory.toUpperCase().replace(/\+/g, ' ');
     const found = categories.find((c) => c.toUpperCase() === normalized);
-    return found || 'ALL';
+    return found || categories[0] || 'BRANDING';
   };
 
   const [activeTab, setActiveTab] = useState<string>(getInitialTab);
@@ -49,52 +48,73 @@ function WorksContent() {
       const normalized = rawCategory.toUpperCase().replace(/\+/g, ' ');
       const found = categories.find((c) => c.toUpperCase() === normalized);
       if (found) setActiveTab(found);
+    } else if (activeTab === 'ALL' && categories.length > 0) {
+      setActiveTab(categories[0]);
     }
-  }, [rawCategory, categories]);
+  }, [rawCategory, categories, activeTab]);
 
   const allProjects = works?.projects || [];
   const defaultGridRatio = works?.gridAspectRatio || '2/3';
 
-  const filteredItems = activeTab === 'ALL'
-    ? allProjects
-    : allProjects.filter((item) => item.category?.toUpperCase() === activeTab.toUpperCase());
+  const filteredItems = allProjects.filter((item) => item.category?.toUpperCase() === activeTab.toUpperCase());
 
   return (
     <div
       className="w-full bg-black text-white font-ppmori overflow-x-hidden p-0 m-0 selection:bg-[#fec52d] selection:text-black pt-20"
     >
       {/* =========================================================================
-          HERO BANNER: EDITABLE WORKS BANNER
+          HERO BANNER: EDITABLE WORKS BANNER (Customizable Image & Height)
           ========================================================================= */}
-      <section className="relative w-full h-[60vh] sm:h-[70vh] flex items-center justify-center overflow-hidden p-0 m-0">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={works?.backgroundImage || '/extracted_assets/work/work_hero_bg_clean.webp'}
-            alt="Works Background"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center select-none"
-            quality={92}
-            unoptimized={works?.backgroundImage?.startsWith('http')}
-          />
-          {/* Subtle top vignette only for header contrast - zero bottom black overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-1" />
-        </div>
+      {(() => {
+        const heightVal = works?.heroHeight ?? 65;
+        const unit = works?.heroHeightUnit || 'vh';
+        const heightStyle = unit === 'vh' ? `${heightVal}vh` : `${heightVal}px`;
+        const hasBgImage = Boolean(works?.backgroundImage && works.backgroundImage.trim() !== '');
 
-        <div className="relative z-10 text-center px-6 max-w-4xl flex flex-col items-center">
-          <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">
-            {works?.heroTag || '// PORTFOLIO ARCHIVE'}
-          </p>
-          <h1 className="font-horas text-5xl sm:text-7xl md:text-8xl uppercase tracking-tighter text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
-            {works?.title || 'SELECTED ARCHIVE'}
-          </h1>
-          <p className="mt-4 font-ppmori text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
-            {works?.subtitle ||
-              'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
-          </p>
-        </div>
-      </section>
+        return (
+          <section
+            id="works-hero-banner"
+            style={{ minHeight: heightStyle, height: heightStyle }}
+            className="relative w-full flex items-center justify-center overflow-hidden p-0 m-0 transition-all duration-300"
+          >
+            {hasBgImage ? (
+              <div className="absolute inset-0 z-0">
+                <Image
+                  src={works!.backgroundImage!}
+                  alt="Works Background"
+                  fill
+                  priority
+                  sizes="100vw"
+                  className="object-cover object-center select-none"
+                  quality={92}
+                  unoptimized={works!.backgroundImage!.startsWith('http')}
+                />
+                {/* Subtle top vignette and custom overlay darkness */}
+                <div
+                  className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/85 z-1"
+                  style={{ opacity: works?.heroOverlayOpacity ?? 0.4 }}
+                />
+              </div>
+            ) : (
+              /* Clean Minimal Solid Black / Subtle Radial Ambient Glow when image is removed */
+              <div className="absolute inset-0 z-0 bg-black bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-900/60 via-black to-black" />
+            )}
+
+            <div className="relative z-10 text-center px-6 max-w-4xl flex flex-col items-center">
+              <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">
+                {works?.heroTag || '// PORTFOLIO ARCHIVE'}
+              </p>
+              <h1 className="font-horas text-5xl sm:text-7xl md:text-8xl uppercase tracking-tighter text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
+                {works?.title || 'SELECTED ARCHIVE'}
+              </h1>
+              <p className="mt-4 font-ppmori text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
+                {works?.subtitle ||
+                  'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
+              </p>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* =========================================================================
           CATEGORY NAVIGATION TABS

@@ -155,6 +155,9 @@ export interface SiteContent {
     title: string;
     subtitle: string;
     backgroundImage?: string;
+    heroHeight?: number;
+    heroHeightUnit?: 'vh' | 'px';
+    heroOverlayOpacity?: number;
     gridAspectRatio?: string;
     categoryRatios?: Record<string, string>;
     categories: string[];

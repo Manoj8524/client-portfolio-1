@@ -2632,49 +2632,237 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1.5">
-                      Hero Background Image URL / Direct Upload
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={content.works.backgroundImage || '/extracted_assets/work/work_hero_bg_clean.webp'}
-                        onChange={(e) =>
-                          setContent({
-                            ...content,
-                            works: { ...content.works, backgroundImage: e.target.value },
-                          })
-                        }
-                        className="w-full px-3 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs font-mono focus:border-[#fec52d] focus:outline-none truncate"
-                      />
-                      <label className="flex-shrink-0 px-4 py-2.5 rounded-xl bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-white text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer border border-neutral-700 flex items-center gap-1.5">
-                        <Upload className="w-3.5 h-3.5" />
-                        <span>Upload</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) =>
-                            handleFileUpload(
-                              e,
-                              (url) => {
-                                setContent({
-                                  ...content,
-                                  works: { ...content.works, backgroundImage: url },
+                  <div className="md:col-span-2 space-y-4">
+                    {/* Background Image Controls & Actions */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-xs font-mono uppercase tracking-wider text-neutral-400">
+                          Hero Background Image / Actions
+                        </label>
+                        <div className="flex items-center gap-2">
+                          {content.works.backgroundImage ? (
+                            <button
+                              id="btn-delete-works-hero-bg"
+                              type="button"
+                              onClick={() => {
+                                setContent((prev) => {
+                                  if (!prev) return prev;
+                                  return {
+                                    ...prev,
+                                    works: { ...prev.works, backgroundImage: '' },
+                                  };
                                 });
-                              },
-                              'works_hero_bg'
-                            )
-                          }
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-red-950/80 hover:bg-red-900 border border-red-800 text-red-200 text-[11px] font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+                              title="Delete background image"
+                            >
+                              <Trash2 className="w-3 h-3 text-red-400" />
+                              <span>Delete Image</span>
+                            </button>
+                          ) : (
+                            <button
+                              id="btn-restore-works-hero-bg"
+                              type="button"
+                              onClick={() => {
+                                setContent((prev) => {
+                                  if (!prev) return prev;
+                                  return {
+                                    ...prev,
+                                    works: {
+                                      ...prev.works,
+                                      backgroundImage: '/extracted_assets/work/work_hero_bg_clean.webp',
+                                    },
+                                  };
+                                });
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-[#fec52d] text-[11px] font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+                            >
+                              <RefreshCw className="w-3 h-3" />
+                              <span>Restore Default</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <input
+                          id="works-hero-bg-input"
+                          type="text"
+                          placeholder="No background image (solid black ambient theme)"
+                          value={content.works.backgroundImage || ''}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setContent((prev) => {
+                              if (!prev) return prev;
+                              return {
+                                ...prev,
+                                works: { ...prev.works, backgroundImage: val },
+                              };
+                            });
+                          }}
+                          className="w-full px-3 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-white text-xs font-mono focus:border-[#fec52d] focus:outline-none truncate"
                         />
-                      </label>
+                        <label className="flex-shrink-0 px-4 py-2.5 rounded-xl bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-white text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer border border-neutral-700 flex items-center gap-1.5">
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Change Image</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) =>
+                              handleFileUpload(
+                                e,
+                                (url) => {
+                                  setContent((prev) => {
+                                    if (!prev) return prev;
+                                    return {
+                                      ...prev,
+                                      works: { ...prev.works, backgroundImage: url },
+                                    };
+                                  });
+                                },
+                                'works_hero_bg'
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+                      {uploadingField === 'works_hero_bg' && (
+                        <span className="text-[10px] font-mono text-[#fec52d] animate-pulse mt-1 block">
+                          Uploading banner to Supabase...
+                        </span>
+                      )}
                     </div>
-                    {uploadingField === 'works_hero_bg' && (
-                      <span className="text-[10px] font-mono text-[#fec52d] animate-pulse mt-1 block">
-                        Uploading banner to Supabase...
-                      </span>
-                    )}
+
+                    {/* ── Works Hero Banner Size & Height Customization Card ── */}
+                    <div className="p-4 rounded-xl bg-neutral-900/60 border border-neutral-800/80 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#fec52d]">
+                          // HERO BANNER SIZE & HEIGHT CONTROLS
+                        </span>
+                        <span className="text-xs font-mono px-3 py-0.5 rounded bg-[#fec52d]/10 text-[#fec52d] border border-[#fec52d]/25 font-bold">
+                          Height: {content.works.heroHeight ?? 65}vh | Overlay: {Math.round((content.works.heroOverlayOpacity ?? 0.4) * 100)}%
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                        {/* Height Slider & Input */}
+                        <div className="space-y-1.5">
+                          <div className="flex justify-between items-center">
+                            <label className="text-xs font-mono uppercase tracking-wider text-neutral-300">
+                              Banner Height (vh)
+                            </label>
+                            <div className="flex items-center gap-1.5">
+                              <input
+                                id="works-hero-height-input"
+                                type="number"
+                                min="35"
+                                max="100"
+                                step="5"
+                                value={content.works.heroHeight ?? 65}
+                                onChange={(e) => {
+                                  const val = Math.max(30, Math.min(100, parseInt(e.target.value) || 65));
+                                  setContent((prev) => {
+                                    if (!prev) return prev;
+                                    return {
+                                      ...prev,
+                                      works: { ...prev.works, heroHeight: val },
+                                    };
+                                  });
+                                }}
+                                className="w-16 px-2 py-0.5 rounded bg-neutral-950 border border-neutral-700 text-[#fec52d] font-mono font-bold text-xs text-right outline-none"
+                              />
+                              <span className="text-xs text-neutral-500 font-mono">vh</span>
+                            </div>
+                          </div>
+
+                          <input
+                            id="works-hero-height-slider"
+                            type="range"
+                            min="35"
+                            max="100"
+                            step="5"
+                            value={content.works.heroHeight ?? 65}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value) || 65;
+                              setContent((prev) => {
+                                if (!prev) return prev;
+                                return {
+                                  ...prev,
+                                  works: { ...prev.works, heroHeight: val },
+                                };
+                              });
+                            }}
+                            className="w-full accent-[#fec52d] cursor-pointer"
+                          />
+
+                          {/* Height Presets */}
+                          <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                            <span className="text-[10px] font-mono text-neutral-500 mr-1">Presets:</span>
+                            {[
+                              { label: 'Compact', h: 45 },
+                              { label: 'Medium', h: 65 },
+                              { label: 'Cinematic', h: 80 },
+                              { label: 'Full Screen', h: 100 },
+                            ].map((preset) => (
+                              <button
+                                key={preset.label}
+                                id={`preset-hero-height-${preset.h}`}
+                                type="button"
+                                onClick={() => {
+                                  setContent((prev) => {
+                                    if (!prev) return prev;
+                                    return {
+                                      ...prev,
+                                      works: { ...prev.works, heroHeight: preset.h },
+                                    };
+                                  });
+                                }}
+                                className={`px-2 py-0.5 rounded text-[10px] font-mono transition-all ${
+                                  (content.works.heroHeight ?? 65) === preset.h
+                                    ? 'bg-[#fec52d] text-black font-bold'
+                                    : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
+                                }`}
+                              >
+                                {preset.label} ({preset.h}vh)
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Overlay Darkness Slider */}
+                        <div className="space-y-1.5">
+                          <div className="flex justify-between items-center">
+                            <label className="text-xs font-mono uppercase tracking-wider text-neutral-300">
+                              Overlay Darkness: {Math.round((content.works.heroOverlayOpacity ?? 0.4) * 100)}%
+                            </label>
+                            <span className="text-[10px] font-mono text-neutral-500">Contrast Control</span>
+                          </div>
+                          <input
+                            id="works-hero-overlay-slider"
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.05"
+                            value={content.works.heroOverlayOpacity ?? 0.4}
+                            onChange={(e) => {
+                              const val = parseFloat(e.target.value);
+                              setContent((prev) => {
+                                if (!prev) return prev;
+                                return {
+                                  ...prev,
+                                  works: { ...prev.works, heroOverlayOpacity: val },
+                                };
+                              });
+                            }}
+                            className="w-full accent-[#fec52d] cursor-pointer mt-2"
+                          />
+                          <p className="text-[10px] font-ppmori text-neutral-500">
+                            Adjusts the dark vignette over the image to guarantee high title readability.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Full Hero Backdrop Image Live Preview */}
                     <div className="mt-3 relative w-full h-64 sm:h-80 md:h-96 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 shadow-2xl group">
@@ -2688,7 +2876,11 @@ export default function AdminPage() {
                             unoptimized={content.works.backgroundImage.startsWith('http')}
                           />
                           {/* Live Overlay Simulator showing Tag, Title, Subtitle as they appear on the live site */}
-                          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 flex flex-col items-center justify-center p-6 text-center pointer-events-none">
+                          <div
+                            className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/85 flex flex-col items-center justify-center p-6 text-center pointer-events-none"
+                            style={{ opacity: content.works.heroOverlayOpacity ?? 0.4 }}
+                          />
+                          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center pointer-events-none z-10">
                             <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-2 drop-shadow-md">
                               {content.works.heroTag || '// PORTFOLIO ARCHIVE'}
                             </span>
@@ -2699,14 +2891,25 @@ export default function AdminPage() {
                               {content.works.subtitle || 'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
                             </span>
                           </div>
-                          <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[10px] font-mono uppercase tracking-wider text-[#fec52d] flex items-center gap-1.5 shadow-lg">
+                          <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[10px] font-mono uppercase tracking-wider text-[#fec52d] flex items-center gap-1.5 shadow-lg z-20">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#fec52d] animate-pulse" />
-                            <span>Live Banner Preview</span>
+                            <span>Live Banner Preview ({content.works.heroHeight ?? 65}vh)</span>
                           </div>
                         </>
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-xs text-neutral-500 font-mono">
-                          No Backdrop Image Selected
+                        <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-900/60 via-black to-black">
+                          <span className="px-3 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-[10px] font-mono text-neutral-400 uppercase tracking-widest mb-3">
+                            Backdrop Image Deleted — Solid Black Ambient Theme Active
+                          </span>
+                          <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-2">
+                            {content.works.heroTag || '// PORTFOLIO ARCHIVE'}
+                          </span>
+                          <span className="font-horas text-3xl sm:text-5xl uppercase tracking-tight text-white drop-shadow-md">
+                            {content.works.title || 'SELECTED ARCHIVE'}
+                          </span>
+                          <span className="mt-2 text-xs font-ppmori text-neutral-400 max-w-md">
+                            {content.works.subtitle || 'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
+                          </span>
                         </div>
                       )}
                     </div>

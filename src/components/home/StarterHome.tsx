@@ -16,7 +16,7 @@ interface StarterHomeProps {
 export default function StarterHome({ initialData }: StarterHomeProps) {
   const router = useRouter();
   const [content, setContent] = useState<SiteContent>(initialData || (defaultContent as SiteContent));
-  const [activeCategory, setActiveCategory] = useState<string>('ALL');
+  const [activeCategory, setActiveCategory] = useState<string>('BRANDING');
   const watchRef = useRef<HTMLDivElement>(null);
   const galaxyContainerRef = useRef<HTMLDivElement>(null);
 
@@ -144,17 +144,14 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
     );
   };
 
-  const categories = works?.categories || [
-    'ALL',
+  const categories = (works?.categories || [
     'BRANDING',
     'FILM POSTERS',
     'SOCIAL MEDIA CREATIVES',
     'PRINT & ADS',
-  ];
+  ]).filter((c) => c.toUpperCase() !== 'ALL');
   const allProjects = works?.projects || [];
-  const filteredProjects = activeCategory === 'ALL'
-    ? allProjects
-    : allProjects.filter((item) => item.category?.toUpperCase() === activeCategory.toUpperCase());
+  const filteredProjects = allProjects.filter((item) => item.category?.toUpperCase() === activeCategory.toUpperCase());
 
   return (
     <div className="w-full bg-black text-white font-ppmori overflow-x-clip p-0 m-0 selection:bg-[#fec52d] selection:text-black">
