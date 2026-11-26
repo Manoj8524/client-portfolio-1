@@ -75,7 +75,7 @@ function WorksContent() {
           <section
             id="works-hero-banner"
             style={{ minHeight: heightStyle, height: heightStyle }}
-            className="relative w-full flex items-center justify-center overflow-hidden p-0 m-0 transition-all duration-300"
+            className="relative w-full flex flex-col justify-between overflow-hidden p-0 m-0 transition-all duration-300"
           >
             {hasBgImage ? (
               <div className="absolute inset-0 z-0">
@@ -89,9 +89,11 @@ function WorksContent() {
                   quality={92}
                   unoptimized={works!.backgroundImage!.startsWith('http')}
                 />
-                {/* Subtle top vignette and custom overlay darkness */}
+                {/* Left-to-right dark gradient for text legibility */}
+                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-black/10 z-1" />
+                {/* Bottom vignette */}
                 <div
-                  className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/85 z-1"
+                  className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30 z-1"
                   style={{ opacity: works?.heroOverlayOpacity ?? 0.4 }}
                 />
               </div>
@@ -100,16 +102,23 @@ function WorksContent() {
               <div className="absolute inset-0 z-0 bg-black bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-900/60 via-black to-black" />
             )}
 
-            <div className="relative z-10 text-center px-6 max-w-4xl flex flex-col items-center">
-              <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">
+            {/* Top-left Hero Tag */}
+            <div className="relative z-10 px-8 pt-8 sm:px-14 sm:pt-12">
+              <p className="text-[11px] font-mono uppercase tracking-[0.3em] text-[#fec52d]">
                 {works?.heroTag || '// PORTFOLIO ARCHIVE'}
               </p>
-              <h1 className="font-horas text-5xl sm:text-7xl md:text-8xl uppercase tracking-tighter text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
-                {works?.title || 'SELECTED ARCHIVE'}
+            </div>
+
+            {/* Large left-aligned stacked title + subtitle at bottom */}
+            <div className="relative z-10 px-8 pb-10 sm:px-14 sm:pb-14 max-w-5xl">
+              <h1 className="font-horas text-[13vw] sm:text-[11vw] md:text-[10vw] lg:text-[9vw] uppercase font-bold tracking-tight text-white leading-[0.88] drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
+                {(works?.title || 'SELECTED ARCHIVE').split(' ').map((word, i) => (
+                  <span key={i} className="block">{word}</span>
+                ))}
+                <span className="text-white">.</span>
               </h1>
-              <p className="mt-4 font-ppmori text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
-                {works?.subtitle ||
-                  'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
+              <p className="mt-5 font-ppmori text-xs sm:text-sm text-neutral-300 max-w-sm leading-relaxed uppercase tracking-wider">
+                {works?.subtitle || 'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
               </p>
             </div>
           </section>

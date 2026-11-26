@@ -6,7 +6,7 @@
     "mapsUrl": "https://maps.app.goo.gl/MdPt4Z7JEARE5a34A",
     "studioEmail": "info@muthu.design",
     "studioPhone": "+91 9048 326 777",
-    "copyright": "© 2026 MUTHU KEY ART & DESIGN ARCHITECTURE. ALL RIGHTS RESERVED.",
+    "copyright": "Â© 2026 MUTHU KEY ART & DESIGN ARCHITECTURE. ALL RIGHTS RESERVED.",
     "socials": {
       "instagram": "https://instagram.com/muthu.design",
       "behance": "https://behance.net/muthudesign",
@@ -46,7 +46,7 @@
   "home": {
     "hero": {
       "avatar": "/starter_assets/ZaApBaIfuKVadeqET6B3KEc3ZGI.png",
-      "bioHeading": "HI, I'M MUTHU — A GRAPHIC & FILM POSTER DESIGNER BASED IN INDIA, SPECIALIZING IN KEY ART & CINEMATIC VISUALS.",
+      "bioHeading": "HI, I'M MUTHU â€” A GRAPHIC & FILM POSTER DESIGNER BASED IN INDIA, SPECIALIZING IN KEY ART & CINEMATIC VISUALS.",
       "badges": [
         "FILM POSTER & VISUAL DESIGNER",
         "180+ OFFICIAL KEY VISUALS",
@@ -262,7 +262,7 @@
       }
     ],
     "brandsTicker": {
-      "title": "BRANDS I’VE WORKED WITH",
+      "title": "BRANDS Iâ€™VE WORKED WITH",
       "tag": "// Trusted By Premier Studios & Visionary Brands",
       "image": "/extracted_assets/home/home_brands_ticker.webp",
       "imageHeight": 200,
@@ -288,7 +288,7 @@
     "headline": "CRAFTING VISUAL LEGACIES FOR CINEMA & CULTURE.",
     "profileImage": "/starter_assets/ZaApBaIfuKVadeqET6B3KEc3ZGI.png",
     "storyParagraphs": [
-      "I am Muthu — a specialized Film Poster Designer and Key Art Specialist based in India. For over 8 years, I have collaborated with premier film production houses, visionary directors, and major entertainment brands to conceive, design, and execute unforgettable visual identities for cinema.",
+      "I am Muthu â€” a specialized Film Poster Designer and Key Art Specialist based in India. For over 8 years, I have collaborated with premier film production houses, visionary directors, and major entertainment brands to conceive, design, and execute unforgettable visual identities for cinema.",
       "My creative philosophy fuses classical typographical discipline with contemporary cinematic lighting, deep atmospheric textures, and emotional character narratives. Every key visual is crafted to command attention on massive theatrical hoardings, international film festival circuits, and high-density digital streams.",
       "From gritty indie triumphs to massive commercial blockbusters, I treat every poster as an enduring piece of art that crystallizes the film's soul before the projector ever turns on."
     ],
@@ -348,19 +348,19 @@
     },
     "journeyMilestones": [
       {
-        "year": "2024 – PRESENT",
+        "year": "2024 â€“ PRESENT",
         "title": "Lead Key Art Director",
         "role": "Muthu Key Art Studio",
         "desc": "Directing master publicity campaigns, international festival posters, and theatrical key art for tier-one South Indian and national cinema."
       },
       {
-        "year": "2021 – 2024",
+        "year": "2021 â€“ 2024",
         "title": "Senior Film Publicity Designer",
         "role": "Premier Entertainment Studios",
         "desc": "Authored iconic first-look posters, character series, and teaser banners for critically acclaimed Malayalam & Tamil feature films."
       },
       {
-        "year": "2018 – 2021",
+        "year": "2018 â€“ 2021",
         "title": "Visual Concept Artist & Typographer",
         "role": "Independent Creative Consultant",
         "desc": "Specialized in customized title typography, film identity systems, and key art storyboards for upcoming directors."
@@ -368,11 +368,11 @@
     ]
   },
   "works": {
-    "heroTag": "// PORTFOLIO ARCHIVE",
-    "title": "SELECTED ARCHIVE",
-    "subtitle": "Bespoke film poster key art, character visuals, and cinematic advertising campaigns.",
+    "heroTag": "// EXPLORE A SELECTION OF MY WORK",
+    "title": "FROM VISION TO VISUAL",
+    "subtitle": "BRANDING, GRAPHIC DESIGN AND VISUAL STORYTELLING",
     "backgroundImage": "/extracted_assets/work/work_hero_bg_clean.webp",
-    "heroHeight": 65,
+    "heroHeight": 100,
     "heroHeightUnit": "vh",
     "heroOverlayOpacity": 0.4,
     "gridAspectRatio": "2/3",
@@ -528,7 +528,7 @@
     "headline": "LET'S CREATE SOMETHING EXTRAORDINARY.",
     "subtitle": "Available for feature film key art commissions, international festival campaigns, visual identity consulting, and executive brand design.",
     "coordinatesTitle": "Studio Coordinates",
-    "officeHours": "Monday – Saturday // 09:30 AM – 07:00 PM IST",
+    "officeHours": "Monday â€“ Saturday // 09:30 AM â€“ 07:00 PM IST",
     "formTitle": "Initiate Project Enquiry",
     "formSubtitle": "Fill out the brief coordinates below. Submissions land directly with our senior key art team.",
     "formButtonText": "Submit Project Brief",
