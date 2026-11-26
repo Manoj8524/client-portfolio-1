@@ -1794,19 +1794,20 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Brands Worked With Marquee */}
-              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-4">
+              {/* Brands Worked With Marquee with Custom Sizing Controls */}
+              <div className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col gap-6">
                 <div>
                   <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#fec52d]">
-                    // BRANDS LOGO TICKER
+                    // BRANDS LOGO TICKER & SIZING
                   </span>
                   <h3 className="font-horas text-2xl uppercase tracking-wider text-white mt-1">
                     Brands I’ve Worked With Marquee Ticker
                   </h3>
                   <p className="text-xs font-ppmori text-neutral-400 mt-1">
-                    Edit heading text and upload/replace the seamless client brands banner strip.
+                    Customize the heading, brand image size/height, scaling, opacity, and upload seamless brand strips or individual logos.
                   </p>
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
@@ -1852,65 +1853,350 @@ export default function AdminPage() {
                       className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
                     />
                   </div>
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1">
-                      Brands Ticker Image Strip URL
-                    </label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={content.home.brandsTicker?.image || '/extracted_assets/home/home_brands_ticker.webp'}
-                        onChange={(e) =>
-                          setContent({
-                            ...content,
-                            home: {
-                              ...content.home,
-                              brandsTicker: {
-                                ...content.home.brandsTicker,
-                                image: e.target.value,
-                              },
-                            },
-                          })
-                        }
-                        className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
-                      />
-                      <label className="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-white text-xs font-mono flex items-center gap-1.5 cursor-pointer">
-                        <Upload className="w-3.5 h-3.5" />
-                        <span>Upload</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) =>
-                            handleFileUpload(
-                              e,
-                              (url) =>
-                                setContent({
-                                  ...content,
+                </div>
+
+                {/* ── Brand Images Size & Display Customization Card ── */}
+                <div className="p-5 rounded-xl bg-neutral-900/60 border border-neutral-800/80 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#fec52d]">
+                        // BRAND IMAGES SIZE CONTROLS
+                      </span>
+                      <h4 className="text-sm font-semibold text-white tracking-wide mt-0.5">
+                        Brand Logo Height & Appearance
+                      </h4>
+                    </div>
+                    <span className="text-xs font-mono px-3 py-1 rounded bg-[#fec52d]/10 text-[#fec52d] border border-[#fec52d]/25 font-bold">
+                      Height: {content.home.brandsTicker?.imageHeight || 160}px | Mobile: {content.home.brandsTicker?.mobileHeight || 100}px
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
+                    {/* Desktop Height Control */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <label className="text-xs font-mono uppercase tracking-wider text-neutral-300">
+                          Desktop Height (px)
+                        </label>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            id="brand-image-height-number"
+                            type="number"
+                            min="60"
+                            max="400"
+                            value={content.home.brandsTicker?.imageHeight || 160}
+                            onChange={(e) => {
+                              const val = Math.max(40, parseInt(e.target.value) || 160);
+                              setContent((prev) => {
+                                if (!prev) return prev;
+                                return {
+                                  ...prev,
                                   home: {
-                                    ...content.home,
+                                    ...prev.home,
                                     brandsTicker: {
-                                      ...content.home.brandsTicker,
-                                      image: url,
+                                      ...prev.home.brandsTicker,
+                                      imageHeight: val,
                                     },
                                   },
-                                }),
-                              'brandsTicker'
-                            )
-                          }
-                        />
-                      </label>
+                                };
+                              });
+                            }}
+                            className="w-20 px-2 py-1 rounded bg-neutral-950 border border-neutral-700 text-[#fec52d] font-mono font-bold text-xs text-right outline-none"
+                          />
+                          <span className="text-xs text-neutral-500 font-mono">px</span>
+                        </div>
+                      </div>
+
+                      <input
+                        id="brand-image-height-slider"
+                        type="range"
+                        min="60"
+                        max="400"
+                        step="5"
+                        value={content.home.brandsTicker?.imageHeight || 160}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value) || 160;
+                          setContent((prev) => {
+                            if (!prev) return prev;
+                            return {
+                              ...prev,
+                              home: {
+                                ...prev.home,
+                                brandsTicker: {
+                                  ...prev.home.brandsTicker,
+                                  imageHeight: val,
+                                },
+                              },
+                            };
+                          });
+                        }}
+                        className="w-full accent-[#fec52d] cursor-pointer"
+                      />
+
+                      {/* Quick Presets */}
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                        <span className="text-[10px] font-mono text-neutral-500 mr-1">Presets:</span>
+                        {[
+                          { label: 'Compact', h: 100 },
+                          { label: 'Default', h: 160 },
+                          { label: 'Large', h: 200 },
+                          { label: 'Cinema', h: 260 },
+                          { label: 'Giant', h: 320 },
+                        ].map((preset) => (
+                          <button
+                            key={preset.label}
+                            id={`preset-brand-height-${preset.h}`}
+                            type="button"
+                            onClick={() => {
+                              setContent((prev) => {
+                                if (!prev) return prev;
+                                return {
+                                  ...prev,
+                                  home: {
+                                    ...prev.home,
+                                    brandsTicker: {
+                                      ...prev.home.brandsTicker,
+                                      imageHeight: preset.h,
+                                      mobileHeight: Math.round(preset.h * 0.65),
+                                    },
+                                  },
+                                };
+                              });
+                            }}
+                            className={`px-2 py-0.5 rounded text-[10px] font-mono transition-all ${
+                              (content.home.brandsTicker?.imageHeight || 160) === preset.h
+                                ? 'bg-[#fec52d] text-black font-bold'
+                                : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
+                            }`}
+                          >
+                            {preset.label} ({preset.h}px)
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
-                    {/* Live Brands Banner Preview */}
-                    <div className="mt-3 relative w-full h-44 rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800">
+                    {/* Mobile Height Control & Fit */}
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="text-xs font-mono uppercase tracking-wider text-neutral-300">
+                            Mobile Height (px)
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setContent((prev) => {
+                                  if (!prev) return prev;
+                                  const currentDesk = prev.home.brandsTicker?.imageHeight || 160;
+                                  return {
+                                    ...prev,
+                                    home: {
+                                      ...prev.home,
+                                      brandsTicker: {
+                                        ...prev.home.brandsTicker,
+                                        mobileHeight: Math.round(currentDesk * 0.65),
+                                      },
+                                    },
+                                  };
+                                });
+                              }}
+                              className="text-[10px] font-mono text-[#fec52d] hover:underline"
+                            >
+                              Auto (65%)
+                            </button>
+                            <input
+                              type="number"
+                              min="40"
+                              max="240"
+                              value={content.home.brandsTicker?.mobileHeight || 100}
+                              onChange={(e) => {
+                                const val = Math.max(30, parseInt(e.target.value) || 100);
+                                setContent((prev) => {
+                                  if (!prev) return prev;
+                                  return {
+                                    ...prev,
+                                    home: {
+                                      ...prev.home,
+                                      brandsTicker: {
+                                        ...prev.home.brandsTicker,
+                                        mobileHeight: val,
+                                      },
+                                    },
+                                  };
+                                });
+                              }}
+                              className="w-16 px-2 py-1 rounded bg-neutral-950 border border-neutral-700 text-[#fec52d] font-mono font-bold text-xs text-right outline-none"
+                            />
+                            <span className="text-xs text-neutral-500 font-mono">px</span>
+                          </div>
+                        </div>
+
+                        <input
+                          type="range"
+                          min="40"
+                          max="240"
+                          step="5"
+                          value={content.home.brandsTicker?.mobileHeight || 100}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value);
+                            setContent((prev) => {
+                              if (!prev) return prev;
+                              return {
+                                ...prev,
+                                home: {
+                                  ...prev.home,
+                                  brandsTicker: {
+                                    ...prev.home.brandsTicker,
+                                    mobileHeight: val,
+                                  },
+                                },
+                              };
+                            });
+                          }}
+                          className="w-full accent-[#fec52d] cursor-pointer"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3 pt-1">
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-neutral-400 mb-1">
+                            Image Fit
+                          </label>
+                          <select
+                            id="brand-image-fit-select"
+                            value={content.home.brandsTicker?.imageFit || 'contain'}
+                            onChange={(e) => {
+                              const fitVal = e.target.value as 'contain' | 'cover';
+                              setContent((prev) => {
+                                if (!prev) return prev;
+                                return {
+                                  ...prev,
+                                  home: {
+                                    ...prev.home,
+                                    brandsTicker: {
+                                      ...prev.home.brandsTicker,
+                                      imageFit: fitVal,
+                                    },
+                                  },
+                                };
+                              });
+                            }}
+                            className="w-full px-2.5 py-1.5 rounded-lg bg-neutral-950 border border-neutral-700 text-xs font-mono text-white outline-none cursor-pointer"
+                          >
+                            <option value="contain">Contain (No Crop / Best)</option>
+                            <option value="cover">Cover (Fill Frame)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-neutral-400 mb-1">
+                            Opacity: {Math.round((content.home.brandsTicker?.opacity ?? 0.85) * 100)}%
+                          </label>
+                          <input
+                            type="range"
+                            min="0.4"
+                            max="1"
+                            step="0.05"
+                            value={content.home.brandsTicker?.opacity ?? 0.85}
+                            onChange={(e) => {
+                              const opVal = parseFloat(e.target.value);
+                              setContent((prev) => {
+                                if (!prev) return prev;
+                                return {
+                                  ...prev,
+                                  home: {
+                                    ...prev.home,
+                                    brandsTicker: {
+                                      ...prev.home.brandsTicker,
+                                      opacity: opVal,
+                                    },
+                                  },
+                                };
+                              });
+                            }}
+                            className="w-full accent-[#fec52d] cursor-pointer mt-1"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Banner Strip Upload & Real-Time Preview */}
+                <div className="space-y-3">
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400">
+                    Brands Ticker Image Strip URL
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={content.home.brandsTicker?.image || '/extracted_assets/home/home_brands_ticker.webp'}
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          home: {
+                            ...content.home,
+                            brandsTicker: {
+                              ...content.home.brandsTicker,
+                              image: e.target.value,
+                            },
+                          },
+                        })
+                      }
+                      className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                    />
+                    <label className="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-white text-xs font-mono flex items-center gap-1.5 cursor-pointer">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Upload</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) =>
+                          handleFileUpload(
+                            e,
+                            (url) =>
+                              setContent({
+                                ...content,
+                                home: {
+                                  ...content.home,
+                                  brandsTicker: {
+                                    ...content.home.brandsTicker,
+                                    image: url,
+                                  },
+                                },
+                              }),
+                            'brandsTicker'
+                          )
+                        }
+                      />
+                    </label>
+                  </div>
+
+                  {/* Real-time Dynamic Live Preview at Selected Height */}
+                  <div className="mt-2 space-y-1">
+                    <div className="flex justify-between items-center text-[10px] font-mono text-neutral-500">
+                      <span>Live Admin Preview (Current Height: {content.home.brandsTicker?.imageHeight || 160}px)</span>
+                      <span>Object Fit: {content.home.brandsTicker?.imageFit || 'contain'}</span>
+                    </div>
+                    <div
+                      style={{
+                        height: `${Math.min(260, content.home.brandsTicker?.imageHeight || 160)}px`,
+                      }}
+                      className="relative w-full rounded-xl overflow-hidden bg-neutral-950 border border-neutral-800 flex items-center justify-center transition-all duration-300"
+                    >
                       {content.home.brandsTicker?.image ? (
-                        <Image
+                        <img
                           src={content.home.brandsTicker.image}
                           alt="Brands Banner Preview"
-                          fill
-                          className="object-cover object-center"
-                          unoptimized={content.home.brandsTicker.image.startsWith('http')}
+                          style={{
+                            height: '100%',
+                            width: 'auto',
+                            objectFit: content.home.brandsTicker?.imageFit || 'contain',
+                            opacity: content.home.brandsTicker?.opacity ?? 0.85,
+                          }}
+                          className="max-w-none transition-all"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-xs text-neutral-600 font-mono">
@@ -1919,6 +2205,167 @@ export default function AdminPage() {
                       )}
                     </div>
                   </div>
+                </div>
+
+                {/* ── Optional: Individual Brand Logos List ── */}
+                <div className="pt-2 border-t border-neutral-900 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#fec52d]">
+                        // OPTIONAL INDIVIDUAL CLIENT LOGOS
+                      </span>
+                      <h4 className="text-sm font-semibold text-white tracking-wide mt-0.5">
+                        Add & Manage Distinct Brand Logos
+                      </h4>
+                      <p className="text-[11px] font-ppmori text-neutral-400">
+                        If logos are added below, the ticker will animate these individual logos. If empty, the seamless banner strip above is used.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const existing = content.home.brandsTicker?.logos || [];
+                        const newLogo = {
+                          id: `logo_${Date.now()}`,
+                          name: `Brand ${existing.length + 1}`,
+                          image: '/extracted_assets/home/home_brands_ticker.webp',
+                          height: content.home.brandsTicker?.imageHeight || 160,
+                        };
+                        setContent({
+                          ...content,
+                          home: {
+                            ...content.home,
+                            brandsTicker: {
+                              ...content.home.brandsTicker,
+                              logos: [...existing, newLogo],
+                            },
+                          },
+                        });
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-[#fec52d] hover:text-black border border-neutral-800 text-xs font-mono font-medium flex items-center gap-1.5 transition-colors"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Brand Logo</span>
+                    </button>
+                  </div>
+
+                  {content.home.brandsTicker?.logos && content.home.brandsTicker.logos.length > 0 && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {content.home.brandsTicker.logos.map((logo, lIdx) => (
+                        <div
+                          key={logo.id || lIdx}
+                          className="p-3.5 rounded-xl bg-neutral-900/80 border border-neutral-800 flex flex-col gap-2.5 relative group"
+                        >
+                          <div className="flex items-center justify-between">
+                            <input
+                              type="text"
+                              value={logo.name}
+                              placeholder="Brand Name"
+                              onChange={(e) => {
+                                const updated = [...(content.home.brandsTicker?.logos || [])];
+                                updated[lIdx].name = e.target.value;
+                                setContent({
+                                  ...content,
+                                  home: {
+                                    ...content.home,
+                                    brandsTicker: {
+                                      ...content.home.brandsTicker,
+                                      logos: updated,
+                                    },
+                                  },
+                                });
+                              }}
+                              className="bg-transparent text-xs font-mono font-bold text-white border-b border-transparent focus:border-[#fec52d] outline-none"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = (content.home.brandsTicker?.logos || []).filter((_, idx) => idx !== lIdx);
+                                setContent({
+                                  ...content,
+                                  home: {
+                                    ...content.home,
+                                    brandsTicker: {
+                                      ...content.home.brandsTicker,
+                                      logos: updated,
+                                    },
+                                  },
+                                });
+                              }}
+                              className="text-neutral-500 hover:text-red-400 p-1"
+                              title="Delete logo"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={logo.image}
+                              placeholder="Image URL"
+                              onChange={(e) => {
+                                const updated = [...(content.home.brandsTicker?.logos || [])];
+                                updated[lIdx].image = e.target.value;
+                                setContent({
+                                  ...content,
+                                  home: {
+                                    ...content.home,
+                                    brandsTicker: {
+                                      ...content.home.brandsTicker,
+                                      logos: updated,
+                                    },
+                                  },
+                                });
+                              }}
+                              className="flex-1 px-2.5 py-1 rounded bg-neutral-950 border border-neutral-800 text-[11px] font-mono text-white outline-none"
+                            />
+                            <label className="p-1.5 rounded bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-white text-xs cursor-pointer">
+                              <Upload className="w-3 h-3" />
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) =>
+                                  handleFileUpload(
+                                    e,
+                                    (url) => {
+                                      const updated = [...(content.home.brandsTicker?.logos || [])];
+                                      updated[lIdx].image = url;
+                                      setContent({
+                                        ...content,
+                                        home: {
+                                          ...content.home,
+                                          brandsTicker: {
+                                            ...content.home.brandsTicker,
+                                            logos: updated,
+                                          },
+                                        },
+                                      });
+                                    },
+                                    `brandLogo_${lIdx}`
+                                  )
+                                }
+                              />
+                            </label>
+                          </div>
+
+                          {/* Thumbnail preview */}
+                          <div className="relative w-full h-16 rounded-lg bg-neutral-950 border border-neutral-800/80 flex items-center justify-center p-2">
+                            {logo.image ? (
+                              <img
+                                src={logo.image}
+                                alt={logo.name}
+                                className="max-h-full max-w-full object-contain"
+                              />
+                            ) : (
+                              <span className="text-[10px] font-mono text-neutral-600">No Image</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 

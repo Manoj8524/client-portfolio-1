@@ -101,6 +101,16 @@ export interface SiteContent {
       title?: string;
       tag: string;
       image: string;
+      imageHeight?: number;
+      mobileHeight?: number;
+      imageFit?: 'contain' | 'cover';
+      opacity?: number;
+      logos?: Array<{
+        id: string;
+        name: string;
+        image: string;
+        height?: number;
+      }>;
     };
     zoomSection: {
       word1: string;

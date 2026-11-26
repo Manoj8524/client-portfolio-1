@@ -264,7 +264,12 @@
     "brandsTicker": {
       "title": "BRANDS I’VE WORKED WITH",
       "tag": "// Trusted By Premier Studios & Visionary Brands",
-      "image": "/extracted_assets/home/home_brands_ticker.webp"
+      "image": "/extracted_assets/home/home_brands_ticker.webp",
+      "imageHeight": 200,
+      "mobileHeight": 130,
+      "imageFit": "contain",
+      "opacity": 0.85,
+      "logos": []
     },
     "zoomSection": {
       "word1": "ZOOM",

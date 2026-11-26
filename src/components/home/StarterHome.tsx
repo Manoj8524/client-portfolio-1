@@ -328,29 +328,127 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
           </motion.h2>
         </div>
 
-        {/* Seamless Double-Strip Infinite Marquee */}
-        <div className="relative w-full overflow-hidden select-none py-2">
-          <div className="animate-marquee flex items-center">
-            {/* Strip 1 */}
-            <div className="flex-shrink-0 h-28 sm:h-36 md:h-44 w-auto flex items-center">
-              <img
-                src={brandsTicker?.image || '/extracted_assets/home/home_brands_ticker.webp'}
-                alt="Client Brands"
-                className="h-full w-auto object-contain max-w-none opacity-85 hover:opacity-100 transition-opacity"
-                draggable={false}
-              />
+        {/* Seamless Double-Strip Infinite Marquee with Dynamic Size */}
+        {(() => {
+          const desktopHeight = brandsTicker?.imageHeight || 160;
+          const mobileHeight = brandsTicker?.mobileHeight || Math.round(desktopHeight * 0.65);
+          const imageFit = brandsTicker?.imageFit || 'contain';
+          const opacity = brandsTicker?.opacity ?? 0.85;
+          const hasIndividualLogos = brandsTicker?.logos && brandsTicker.logos.length > 0;
+
+          return (
+            <div
+              className="relative w-full overflow-hidden select-none py-4"
+              style={{
+                ['--brand-desk-height' as string]: `${desktopHeight}px`,
+                ['--brand-mob-height' as string]: `${mobileHeight}px`,
+              }}
+            >
+              <div className="animate-marquee flex items-center">
+                {hasIndividualLogos ? (
+                  <>
+                    {/* Strip 1 - Individual Brand Logos */}
+                    <div
+                      className="flex-shrink-0 flex items-center gap-12 sm:gap-16 md:gap-20 pr-12 sm:pr-16 md:pr-20 h-[var(--brand-mob-height)] sm:h-[var(--brand-desk-height)]"
+                    >
+                      {brandsTicker.logos!.map((logo, idx) => (
+                        <div
+                          key={`strip1-${logo.id || idx}`}
+                          className="flex-shrink-0 flex items-center justify-center h-full"
+                          style={{
+                            height: logo.height ? `${logo.height}px` : undefined,
+                          }}
+                        >
+                          <img
+                            src={logo.image}
+                            alt={logo.name || 'Brand Logo'}
+                            style={{
+                              height: '100%',
+                              width: 'auto',
+                              objectFit: imageFit,
+                              opacity,
+                            }}
+                            className="max-w-none hover:opacity-100 transition-opacity"
+                            draggable={false}
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Strip 2 - Repeat for Seamless Infinite Loop */}
+                    <div
+                      className="flex-shrink-0 flex items-center gap-12 sm:gap-16 md:gap-20 pr-12 sm:pr-16 md:pr-20 h-[var(--brand-mob-height)] sm:h-[var(--brand-desk-height)]"
+                      aria-hidden="true"
+                    >
+                      {brandsTicker.logos!.map((logo, idx) => (
+                        <div
+                          key={`strip2-${logo.id || idx}`}
+                          className="flex-shrink-0 flex items-center justify-center h-full"
+                          style={{
+                            height: logo.height ? `${logo.height}px` : undefined,
+                          }}
+                        >
+                          <img
+                            src={logo.image}
+                            alt={logo.name || 'Brand Logo'}
+                            style={{
+                              height: '100%',
+                              width: 'auto',
+                              objectFit: imageFit,
+                              opacity,
+                            }}
+                            className="max-w-none hover:opacity-100 transition-opacity"
+                            draggable={false}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Strip 1 - Seamless Banner Strip */}
+                    <div
+                      id="brands-ticker-strip-1"
+                      className="flex-shrink-0 flex items-center w-auto h-[var(--brand-mob-height)] sm:h-[var(--brand-desk-height)]"
+                    >
+                      <img
+                        src={brandsTicker?.image || '/extracted_assets/home/home_brands_ticker.webp'}
+                        alt="Client Brands"
+                        style={{
+                          height: '100%',
+                          width: 'auto',
+                          objectFit: imageFit,
+                          opacity,
+                        }}
+                        className="max-w-none hover:opacity-100 transition-opacity"
+                        draggable={false}
+                      />
+                    </div>
+                    {/* Strip 2 - Repeat for Seamless Infinite Loop */}
+                    <div
+                      id="brands-ticker-strip-2"
+                      className="flex-shrink-0 flex items-center w-auto h-[var(--brand-mob-height)] sm:h-[var(--brand-desk-height)]"
+                      aria-hidden="true"
+                    >
+                      <img
+                        src={brandsTicker?.image || '/extracted_assets/home/home_brands_ticker.webp'}
+                        alt="Client Brands"
+                        style={{
+                          height: '100%',
+                          width: 'auto',
+                          objectFit: imageFit,
+                          opacity,
+                        }}
+                        className="max-w-none hover:opacity-100 transition-opacity"
+                        draggable={false}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-            {/* Strip 2 */}
-            <div className="flex-shrink-0 h-28 sm:h-36 md:h-44 w-auto flex items-center" aria-hidden="true">
-              <img
-                src={brandsTicker?.image || '/extracted_assets/home/home_brands_ticker.webp'}
-                alt="Client Brands"
-                className="h-full w-auto object-contain max-w-none opacity-85 hover:opacity-100 transition-opacity"
-                draggable={false}
-              />
-            </div>
-          </div>
-        </div>
+          );
+        })()}
       </section>
 
       {/* =========================================================================
