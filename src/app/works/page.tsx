@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -91,7 +91,19 @@ function WorksContent() {
   const allProjects = works?.projects || [];
   const defaultGridRatio = works?.gridAspectRatio || '2/3';
 
-  const filteredItems = allProjects.filter((item) => item.category?.toUpperCase() === activeTab.toUpperCase());
+  // Pre-index projects by category in O(N) once for O(1) tab switching
+  const projectsByCategory = useMemo(() => {
+    const map = new Map<string, WorkProjectItem[]>();
+    for (const item of allProjects) {
+      const key = (item.category || '').toUpperCase();
+      const list = map.get(key);
+      if (list) list.push(item);
+      else map.set(key, [item]);
+    }
+    return map;
+  }, [allProjects]);
+
+  const filteredItems = projectsByCategory.get(activeTab.toUpperCase()) || [];
 
   return (
     <div
