@@ -229,7 +229,7 @@ export async function getSiteContentAsync(): Promise<SiteContent> {
   try {
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Supabase request timeout')), 800)
+        setTimeout(() => reject(new Error('Supabase request timeout')), 8000)
       );
       const fetchPromise = supabaseAdmin
         .from('site_content')
@@ -288,7 +288,7 @@ export async function updateSiteContent(newContent: Partial<SiteContent>): Promi
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
       try {
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Supabase upsert timeout')), 2000)
+          setTimeout(() => reject(new Error('Supabase upsert timeout')), 15000)
         );
         const upsertPromise = supabaseAdmin
           .from('site_content')
@@ -333,7 +333,7 @@ export async function getContactMessagesAsync(): Promise<ContactMessage[]> {
   try {
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Supabase request timeout')), 800)
+        setTimeout(() => reject(new Error('Supabase request timeout')), 8000)
       );
       const fetchPromise = supabaseAdmin
         .from('contact_messages')

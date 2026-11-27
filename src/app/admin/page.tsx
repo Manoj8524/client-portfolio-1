@@ -45,6 +45,7 @@ export default function AdminPage() {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [uploadingField, setUploadingField] = useState<string | null>(null);
+  const [adminWorksCategory, setAdminWorksCategory] = useState<string>('ALL');
 
   // Check auth & fetch initial data
   useEffect(() => {
@@ -3064,9 +3065,36 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* Category Filter Buttons */}
+              <div className="flex flex-wrap items-center justify-center gap-2 py-2">
+                {['ALL', ...(content.works.categories || ['BRANDING', 'FILM POSTERS', 'SOCIAL MEDIA CREATIVES', 'PRINT & ADS']).filter((c) => c !== 'ALL')].map((cat) => {
+                  const isActive = adminWorksCategory === cat;
+                  const count = cat === 'ALL'
+                    ? content.works.projects.length
+                    : content.works.projects.filter((p) => p.category === cat).length;
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setAdminWorksCategory(cat)}
+                      className={`px-4 py-2 rounded-full text-xs font-mono uppercase tracking-wider transition-all cursor-pointer border ${
+                        isActive
+                          ? 'bg-[#fec52d] text-black border-[#fec52d] font-bold shadow-md'
+                          : 'bg-neutral-900 text-neutral-300 border-neutral-800 hover:border-neutral-600 hover:text-white'
+                      }`}
+                    >
+                      {cat} <span className="opacity-70">({count})</span>
+                    </button>
+                  );
+                })}
+              </div>
+
               {/* Projects List */}
               <div className="grid grid-cols-1 gap-6">
-                {content.works.projects.map((proj, idx) => (
+                {content.works.projects
+                  .map((proj, idx) => ({ proj, idx }))
+                  .filter(({ proj }) => adminWorksCategory === 'ALL' || proj.category === adminWorksCategory)
+                  .map(({ proj, idx }) => (
                   <div
                     key={proj.id || idx}
                     className="p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col md:flex-row gap-6 items-start"
