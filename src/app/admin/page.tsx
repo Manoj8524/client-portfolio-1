@@ -1092,27 +1092,29 @@ export default function AdminPage() {
                           </div>
 
                           <button
+                            id={`btn-add-poster-${laneKey}`}
                             type="button"
                             onClick={() => {
-                              const newPosters = [
-                                ...posters,
-                                {
+                              setContent((prev) => {
+                                if (!prev) return prev;
+                                const currentPosters = prev.home?.hero?.posterColumns?.[laneKey] || [];
+                                const newPoster = {
                                   title: 'New Film Poster',
                                   image: '/film_posters_cache/poster_187.webp',
-                                },
-                              ];
-                              setContent({
-                                ...content,
-                                home: {
-                                  ...content.home,
-                                  hero: {
-                                    ...content.home.hero,
-                                    posterColumns: {
-                                      ...content.home.hero.posterColumns,
-                                      [laneKey]: newPosters,
+                                };
+                                return {
+                                  ...prev,
+                                  home: {
+                                    ...prev.home,
+                                    hero: {
+                                      ...prev.home.hero,
+                                      posterColumns: {
+                                        ...prev.home.hero.posterColumns,
+                                        [laneKey]: [newPoster, ...currentPosters],
+                                      },
                                     },
                                   },
-                                },
+                                };
                               });
                             }}
                             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-[#fec52d] hover:text-black text-white text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer"
@@ -1150,19 +1152,22 @@ export default function AdminPage() {
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      const updated = posters.filter((_, idx) => idx !== pIdx);
-                                      setContent({
-                                        ...content,
-                                        home: {
-                                          ...content.home,
-                                          hero: {
-                                            ...content.home.hero,
-                                            posterColumns: {
-                                              ...content.home.hero.posterColumns,
-                                              [laneKey]: updated,
+                                      setContent((prev) => {
+                                        if (!prev) return prev;
+                                        const currentPosters = prev.home?.hero?.posterColumns?.[laneKey] || [];
+                                        return {
+                                          ...prev,
+                                          home: {
+                                            ...prev.home,
+                                            hero: {
+                                              ...prev.home.hero,
+                                              posterColumns: {
+                                                ...prev.home.hero.posterColumns,
+                                                [laneKey]: currentPosters.filter((_, idx) => idx !== pIdx),
+                                              },
                                             },
                                           },
-                                        },
+                                        };
                                       });
                                     }}
                                     className="absolute top-2 right-2 p-1.5 rounded-md bg-red-600/90 text-white hover:bg-red-500 shadow-md transition-colors cursor-pointer"
@@ -1181,20 +1186,26 @@ export default function AdminPage() {
                                       type="text"
                                       value={poster.title}
                                       onChange={(e) => {
-                                        const updated = [...posters];
-                                        updated[pIdx] = { ...updated[pIdx], title: e.target.value };
-                                        setContent({
-                                          ...content,
-                                          home: {
-                                            ...content.home,
-                                            hero: {
-                                              ...content.home.hero,
-                                              posterColumns: {
-                                                ...content.home.hero.posterColumns,
-                                                [laneKey]: updated,
+                                        const val = e.target.value;
+                                        setContent((prev) => {
+                                          if (!prev) return prev;
+                                          const currentPosters = [...(prev.home?.hero?.posterColumns?.[laneKey] || [])];
+                                          if (currentPosters[pIdx]) {
+                                            currentPosters[pIdx] = { ...currentPosters[pIdx], title: val };
+                                          }
+                                          return {
+                                            ...prev,
+                                            home: {
+                                              ...prev.home,
+                                              hero: {
+                                                ...prev.home.hero,
+                                                posterColumns: {
+                                                  ...prev.home.hero.posterColumns,
+                                                  [laneKey]: currentPosters,
+                                                },
                                               },
                                             },
-                                          },
+                                          };
                                         });
                                       }}
                                       className="w-full px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono focus:border-[#fec52d] focus:outline-none"
@@ -1211,20 +1222,26 @@ export default function AdminPage() {
                                         type="text"
                                         value={poster.image}
                                         onChange={(e) => {
-                                          const updated = [...posters];
-                                          updated[pIdx] = { ...updated[pIdx], image: e.target.value };
-                                          setContent({
-                                            ...content,
-                                            home: {
-                                              ...content.home,
-                                              hero: {
-                                                ...content.home.hero,
-                                                posterColumns: {
-                                                  ...content.home.hero.posterColumns,
-                                                  [laneKey]: updated,
+                                          const val = e.target.value;
+                                          setContent((prev) => {
+                                            if (!prev) return prev;
+                                            const currentPosters = [...(prev.home?.hero?.posterColumns?.[laneKey] || [])];
+                                            if (currentPosters[pIdx]) {
+                                              currentPosters[pIdx] = { ...currentPosters[pIdx], image: val };
+                                            }
+                                            return {
+                                              ...prev,
+                                              home: {
+                                                ...prev.home,
+                                                hero: {
+                                                  ...prev.home.hero,
+                                                  posterColumns: {
+                                                    ...prev.home.hero.posterColumns,
+                                                    [laneKey]: currentPosters,
+                                                  },
                                                 },
                                               },
-                                            },
+                                            };
                                           });
                                         }}
                                         className="w-full px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-[11px] font-mono focus:border-[#fec52d] focus:outline-none truncate"
@@ -1240,20 +1257,25 @@ export default function AdminPage() {
                                             handleFileUpload(
                                               e,
                                               (url) => {
-                                                const updated = [...posters];
-                                                updated[pIdx] = { ...updated[pIdx], image: url };
-                                                setContent({
-                                                  ...content,
-                                                  home: {
-                                                    ...content.home,
-                                                    hero: {
-                                                      ...content.home.hero,
-                                                      posterColumns: {
-                                                        ...content.home.hero.posterColumns,
-                                                        [laneKey]: updated,
+                                                setContent((prev) => {
+                                                  if (!prev) return prev;
+                                                  const currentPosters = [...(prev.home?.hero?.posterColumns?.[laneKey] || [])];
+                                                  if (currentPosters[pIdx]) {
+                                                    currentPosters[pIdx] = { ...currentPosters[pIdx], image: url };
+                                                  }
+                                                  return {
+                                                    ...prev,
+                                                    home: {
+                                                      ...prev.home,
+                                                      hero: {
+                                                        ...prev.home.hero,
+                                                        posterColumns: {
+                                                          ...prev.home.hero.posterColumns,
+                                                          [laneKey]: currentPosters,
+                                                        },
                                                       },
                                                     },
-                                                  },
+                                                  };
                                                 });
                                               },
                                               fieldKey
@@ -2539,38 +2561,75 @@ export default function AdminPage() {
                     Film Posters &amp; Works Manager
                   </h2>
                 </div>
-                <button
-                  id="btn-add-work-project"
-                  onClick={() => {
-                    const newProj: WorkProjectItem = {
-                      id: `proj_${Date.now()}`,
-                      title: 'New Key Visual Project',
-                      category: 'FILM POSTERS',
-                      year: '2026',
-                      image: '/extracted_assets/work/work_card_1.webp',
-                      director: 'Visionary Director',
-                      client: 'Premier Studio',
-                      awards: 'Official Selection',
-                      featured: false,
-                      aspectRatio: 'default',
-                      objectPosition: 'center',
-                    };
-                    setContent((prev) => {
-                      if (!prev) return prev;
-                      return {
-                        ...prev,
-                        works: {
-                          ...prev.works,
-                          projects: [newProj, ...prev.works.projects],
-                        },
+                <div className="flex items-center gap-2.5">
+                  <button
+                    id="btn-add-work-poster"
+                    type="button"
+                    onClick={() => {
+                      const newProj: WorkProjectItem = {
+                        id: `proj_${Date.now()}`,
+                        title: 'New Film Poster Project',
+                        category: 'FILM POSTERS',
+                        year: '2026',
+                        image: '/film_posters_cache/poster_187.webp',
+                        director: 'Visionary Director',
+                        client: 'Premier Studio',
+                        awards: 'Official Selection',
+                        featured: false,
+                        aspectRatio: '2/3',
+                        objectPosition: 'center',
                       };
-                    });
-                  }}
-                  className="px-4 py-2.5 rounded-xl bg-[#fec52d] text-black font-semibold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-[#ffe066] transition-colors cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add Project</span>
-                </button>
+                      setContent((prev) => {
+                        if (!prev) return prev;
+                        return {
+                          ...prev,
+                          works: {
+                            ...prev.works,
+                            projects: [newProj, ...prev.works.projects],
+                          },
+                        };
+                      });
+                    }}
+                    className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-neutral-900 hover:bg-[#fec52d] hover:text-black text-white text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer border border-neutral-700 hover:border-[#fec52d]"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Poster</span>
+                  </button>
+
+                  <button
+                    id="btn-add-work-project"
+                    type="button"
+                    onClick={() => {
+                      const newProj: WorkProjectItem = {
+                        id: `proj_${Date.now()}`,
+                        title: 'New Key Visual Project',
+                        category: 'FILM POSTERS',
+                        year: '2026',
+                        image: '/extracted_assets/work/work_card_1.webp',
+                        director: 'Visionary Director',
+                        client: 'Premier Studio',
+                        awards: 'Official Selection',
+                        featured: false,
+                        aspectRatio: 'default',
+                        objectPosition: 'center',
+                      };
+                      setContent((prev) => {
+                        if (!prev) return prev;
+                        return {
+                          ...prev,
+                          works: {
+                            ...prev.works,
+                            projects: [newProj, ...prev.works.projects],
+                          },
+                        };
+                      });
+                    }}
+                    className="px-4 py-2.5 rounded-xl bg-[#fec52d] text-black font-semibold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-[#ffe066] transition-colors cursor-pointer shadow-lg"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Project</span>
+                  </button>
+                </div>
               </div>
 
               {/* Works Page Hero Banner Customization */}
