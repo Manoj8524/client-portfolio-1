@@ -230,7 +230,7 @@ export async function getSiteContentAsync(): Promise<SiteContent> {
   try {
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Supabase request timeout')), 8000)
+        setTimeout(() => reject(new Error('Supabase request timeout')), 2500)
       );
       const fetchPromise = supabaseAdmin
         .from('site_content')
@@ -252,7 +252,13 @@ export async function getSiteContentAsync(): Promise<SiteContent> {
   // 2. Try Netlify Blobs (works automatically in Netlify production without extra env vars)
   try {
     const store = getStore('site-content');
-    const blobData = await store.get('current', { type: 'json' });
+    const blobTimeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Netlify Blobs timeout')), 2500)
+    );
+    const blobData = await Promise.race([
+      store.get('current', { type: 'json' }),
+      blobTimeout,
+    ]);
     if (blobData) {
       cachedContent = blobData as SiteContent;
       return cachedContent;
@@ -354,7 +360,7 @@ export async function getContactMessagesAsync(): Promise<ContactMessage[]> {
   try {
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Supabase request timeout')), 8000)
+        setTimeout(() => reject(new Error('Supabase request timeout')), 2500)
       );
       const fetchPromise = supabaseAdmin
         .from('contact_messages')

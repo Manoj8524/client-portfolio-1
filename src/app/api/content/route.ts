@@ -8,14 +8,19 @@ const SESSION_TOKEN = 'muthu_secure_admin_token_2026';
 export async function GET(req: NextRequest) {
   // Reading headers makes this route dynamically evaluated on every request
   const _userAgent = req.headers.get('user-agent');
-  const content = await getSiteContentAsync();
-  return NextResponse.json(content, {
-    headers: {
-      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-    },
-  });
+  try {
+    const content = await getSiteContentAsync();
+    return NextResponse.json(content, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    });
+  } catch (err) {
+    console.error('GET /api/content error:', err);
+    return NextResponse.json({ error: 'Failed to load content' }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
