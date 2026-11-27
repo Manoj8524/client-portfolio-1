@@ -135,7 +135,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
                 priority={idx < 4}
                 loading={idx < 4 ? undefined : 'lazy'}
                 quality={85}
-                unoptimized={poster.image?.startsWith('http')}
+                unoptimized={Boolean(poster.image?.startsWith('http') || poster.image?.startsWith('data:'))}
               />
               <div className="absolute inset-0 bg-black/0 group-hover/poster:bg-black/20 transition-colors duration-300" />
             </div>
@@ -228,7 +228,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
                 sizes="(max-width: 768px) 100vw, 33.33vw"
                 className="object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
                 quality={90}
-                unoptimized={(card.image || '').startsWith('http')}
+                unoptimized={Boolean((card.image || '').startsWith('http') || (card.image || '').startsWith('data:'))}
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
               <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -261,7 +261,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
               sizes="100vw"
               className="object-cover object-center select-none group-hover:scale-105 transition-transform duration-1000 ease-out"
               quality={92}
-              unoptimized={(home.featuredWatch?.image || '').startsWith('http')}
+              unoptimized={Boolean((home.featuredWatch?.image || '').startsWith('http') || (home.featuredWatch?.image || '').startsWith('data:'))}
             />
           </motion.div>
         </Link>
@@ -285,7 +285,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
               sizes="(max-width: 1024px) 100vw, 58.33vw"
               className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
               quality={90}
-              unoptimized={(home.splitShowcase?.leftImage || '').startsWith('http')}
+              unoptimized={Boolean((home.splitShowcase?.leftImage || '').startsWith('http') || (home.splitShowcase?.leftImage || '').startsWith('data:'))}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
           </Link>
@@ -302,7 +302,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
               sizes="(max-width: 1024px) 100vw, 41.67vw"
               className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
               quality={90}
-              unoptimized={(home.splitShowcase?.rightImage || '').startsWith('http')}
+              unoptimized={Boolean((home.splitShowcase?.rightImage || '').startsWith('http') || (home.splitShowcase?.rightImage || '').startsWith('data:'))}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
           </Link>
@@ -478,7 +478,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
                 className="object-cover object-center select-none"
                 quality={95}
                 priority
-                unoptimized={zoomSection.backdropImage.startsWith('http')}
+                unoptimized={Boolean(zoomSection.backdropImage?.startsWith('http') || zoomSection.backdropImage?.startsWith('data:'))}
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 z-1" />
             </motion.div>
@@ -632,7 +632,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
                       quality={90}
                       loading={idx < 6 ? 'eager' : 'lazy'}
                       priority={idx < 4}
-                      unoptimized={item.image?.startsWith('http')}
+                      unoptimized={Boolean(item.image?.startsWith('http') || item.image?.startsWith('data:'))}
                     />
 
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-colors duration-300" />

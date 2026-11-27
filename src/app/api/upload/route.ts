@@ -89,20 +89,34 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 3. Local fallback storage in public/uploads/
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
+    // 3. Local filesystem storage with serverless Base64 fallback (Netlify / Vercel)
+    try {
+      const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      const filePath = path.join(uploadsDir, filename);
+      fs.writeFileSync(filePath, buffer);
+
+      return NextResponse.json({
+        ok: true,
+        url: `/uploads/${filename}`,
+        cdn: 'local',
+      });
+    } catch (fsErr: any) {
+      console.warn('Local filesystem write unavailable (running on serverless like Netlify):', fsErr.message);
+
+      // Serverless Data URL Fallback: guarantees 100% upload success in read-only environments
+      const mimeType = file.type || 'image/jpeg';
+      const base64Data = `data:${mimeType};base64,${buffer.toString('base64')}`;
+
+      return NextResponse.json({
+        ok: true,
+        url: base64Data,
+        cdn: 'serverless-base64',
+      });
     }
-
-    const filePath = path.join(uploadsDir, filename);
-    fs.writeFileSync(filePath, buffer);
-
-    return NextResponse.json({
-      ok: true,
-      url: `/uploads/${filename}`,
-      cdn: 'local',
-    });
   } catch (err: any) {
     console.error('Upload handler error:', err);
     return NextResponse.json({ ok: false, error: err.message || 'Upload failed' }, { status: 500 });

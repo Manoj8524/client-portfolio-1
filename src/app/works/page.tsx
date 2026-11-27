@@ -88,7 +88,7 @@ function WorksContent() {
                   sizes="100vw"
                   className="object-cover object-center select-none"
                   quality={92}
-                  unoptimized={works!.backgroundImage!.startsWith('http')}
+                  unoptimized={Boolean(works?.backgroundImage?.startsWith('http') || works?.backgroundImage?.startsWith('data:'))}
                 />
                 {/* Left-to-right dark gradient for text legibility */}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-black/10 z-1" />
@@ -193,7 +193,7 @@ function WorksContent() {
                       quality={90}
                       loading={idx < 6 ? 'eager' : 'lazy'}
                       priority={idx < 4}
-                      unoptimized={item.image?.startsWith('http')}
+                      unoptimized={Boolean(item.image?.startsWith('http') || item.image?.startsWith('data:'))}
                     />
 
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-colors duration-300" />

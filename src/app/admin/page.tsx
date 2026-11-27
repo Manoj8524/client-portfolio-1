@@ -1138,7 +1138,7 @@ export default function AdminPage() {
                                       alt={poster.title || 'Poster'}
                                       fill
                                       className="object-cover object-center select-none"
-                                      unoptimized={poster.image.startsWith('http')}
+                                      unoptimized={Boolean(poster.image?.startsWith('http') || poster.image?.startsWith('data:'))}
                                     />
                                   ) : (
                                     <div className="w-full h-full flex items-center justify-center text-xs text-neutral-600 font-mono">
@@ -1532,7 +1532,7 @@ export default function AdminPage() {
                           alt="Featured Watch Preview"
                           fill
                           className="object-cover object-center"
-                          unoptimized={content.home.featuredWatch.image.startsWith('http')}
+                          unoptimized={Boolean(content.home.featuredWatch.image?.startsWith('http') || content.home.featuredWatch.image?.startsWith('data:'))}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-xs text-neutral-600 font-mono">
@@ -2491,7 +2491,7 @@ export default function AdminPage() {
                           alt="Zoom Backdrop Preview"
                           fill
                           className="object-cover object-center"
-                          unoptimized={content.home.zoomSection.backdropImage.startsWith('http')}
+                          unoptimized={Boolean(content.home.zoomSection.backdropImage?.startsWith('http') || content.home.zoomSection.backdropImage?.startsWith('data:'))}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-xs text-neutral-600 font-mono">
@@ -2874,7 +2874,7 @@ export default function AdminPage() {
                             alt="Works Hero Banner Preview"
                             fill
                             className="object-cover object-center select-none"
-                            unoptimized={content.works.backgroundImage.startsWith('http')}
+                            unoptimized={Boolean(content.works.backgroundImage?.startsWith('http') || content.works.backgroundImage?.startsWith('data:'))}
                           />
                           {/* Live Overlay Simulator showing Tag, Title, Subtitle as they appear on the live site */}
                           <div
@@ -3049,7 +3049,7 @@ export default function AdminPage() {
                         fill
                         style={{ objectPosition: proj.objectPosition || 'center' }}
                         className="object-cover"
-                        unoptimized={proj.image?.startsWith('http')}
+                        unoptimized={Boolean(proj.image?.startsWith('http') || proj.image?.startsWith('data:'))}
                       />
                     </div>
 
