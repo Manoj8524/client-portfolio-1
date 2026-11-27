@@ -119,7 +119,10 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
     const loopPosters = [...posters, ...posters];
     return (
       <div className="relative flex-1 h-full overflow-hidden select-none">
-        <div className={`flex flex-col gap-3 sm:gap-4 md:gap-5 ${animationClass}`}>
+        <div
+          className={`flex flex-col gap-3 sm:gap-4 md:gap-5 ${animationClass}`}
+          style={{ animationDuration: `${Math.max(1, posters.length) * 4.5}s` }}
+        >
           {loopPosters.map((poster, idx) => (
             <div
               key={`${poster.image}-${idx}`}
