@@ -64,6 +64,10 @@
       "posterColumns": {
         "lane1": [
           {
+            "title": "New Film Poster",
+            "image": "/uploads/1795770064362_emerald_sm_post_26.jpg_1_.jpeg"
+          },
+          {
             "image": "https://ik.imagekit.io/7yturtsdn0/jn_77c7c8b4fe_Ay--j7Fe4.webp?tr=w-2560%2Cq-80%2Cf-auto%2Cfo-center",
             "title": "Jana Nayagan"
           },
@@ -401,6 +405,71 @@
       "PRINT & ADS"
     ],
     "projects": [
+      {
+        "id": "proj_1795770120206",
+        "title": "New Film Poster Project",
+        "category": "BRANDING",
+        "year": "2026",
+        "image": "/uploads/1795770156531_emerald_sm_post_26.jpg_1_.jpeg",
+        "director": "Visionary Director",
+        "client": "Premier Studio",
+        "awards": "Official Selection",
+        "featured": false,
+        "aspectRatio": "2/3",
+        "objectPosition": "center"
+      },
+      {
+        "id": "proj_1795770118305",
+        "title": "New Key Visual Project",
+        "category": "FILM POSTERS",
+        "year": "2026",
+        "image": "/extracted_assets/work/work_card_1.webp",
+        "director": "Visionary Director",
+        "client": "Premier Studio",
+        "awards": "Official Selection",
+        "featured": false,
+        "aspectRatio": "default",
+        "objectPosition": "center"
+      },
+      {
+        "id": "proj_1795770116516",
+        "title": "New Film Poster Project",
+        "category": "FILM POSTERS",
+        "year": "2026",
+        "image": "/film_posters_cache/poster_187.webp",
+        "director": "Visionary Director",
+        "client": "Premier Studio",
+        "awards": "Official Selection",
+        "featured": false,
+        "aspectRatio": "2/3",
+        "objectPosition": "center"
+      },
+      {
+        "id": "proj_1795770114830",
+        "title": "New Film Poster Project",
+        "category": "FILM POSTERS",
+        "year": "2026",
+        "image": "/film_posters_cache/poster_187.webp",
+        "director": "Visionary Director",
+        "client": "Premier Studio",
+        "awards": "Official Selection",
+        "featured": false,
+        "aspectRatio": "2/3",
+        "objectPosition": "center"
+      },
+      {
+        "id": "proj_1795770111713",
+        "title": "New Film Poster Project",
+        "category": "FILM POSTERS",
+        "year": "2026",
+        "image": "/film_posters_cache/poster_187.webp",
+        "director": "Visionary Director",
+        "client": "Premier Studio",
+        "awards": "Official Selection",
+        "featured": false,
+        "aspectRatio": "2/3",
+        "objectPosition": "center"
+      },
       {
         "id": "proj_1795769039941",
         "title": "New Key Visual Project",
