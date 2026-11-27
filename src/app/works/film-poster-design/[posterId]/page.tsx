@@ -63,7 +63,7 @@ export default function FilmPosterDetailPage() {
   const additionalImages = poster.images || [];
 
   return (
-    <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-black text-white padding-primary pt-8 pb-24">
+    <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-black text-white padding-primary pt-28 pb-24">
       <div className="container mx-auto max-w-7xl">
         {/* Navigation Bar */}
         <div className="mb-8">

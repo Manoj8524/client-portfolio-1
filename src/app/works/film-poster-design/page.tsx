@@ -48,7 +48,7 @@ export default function FilmPosterDesignPage() {
   });
 
   return (
-    <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-black text-white padding-primary pt-12 pb-24">
+    <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-black text-white padding-primary pt-28 pb-24">
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
         <section className="mb-12">
