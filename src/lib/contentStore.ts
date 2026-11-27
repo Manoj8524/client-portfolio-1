@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { getStore } from '@netlify/blobs';
 import defaultSiteContent from '@/data/siteContent.json';
 import { supabaseAdmin, supabase } from './supabase';
 import { resolveCardRatio } from './ratioUtils';
@@ -245,7 +246,19 @@ export async function getSiteContentAsync(): Promise<SiteContent> {
       }
     }
   } catch (err) {
-    console.warn('Supabase getSiteContentAsync warning, falling back to local file:', err);
+    console.warn('Supabase getSiteContentAsync warning, trying Netlify Blobs / local file:', err);
+  }
+
+  // 2. Try Netlify Blobs (works automatically in Netlify production without extra env vars)
+  try {
+    const store = getStore('site-content');
+    const blobData = await store.get('current', { type: 'json' });
+    if (blobData) {
+      cachedContent = blobData as SiteContent;
+      return cachedContent;
+    }
+  } catch {
+    // Not running on Netlify or Blobs not configured locally
   }
 
   return readFallbackContent();
@@ -308,7 +321,15 @@ export async function updateSiteContent(newContent: Partial<SiteContent>): Promi
       }
     }
 
-    // 2. Also persist locally to keep local JSON in sync
+    // 2. Save to Netlify Blobs (works automatically in Netlify production)
+    try {
+      const store = getStore('site-content');
+      await store.setJSON('current', merged);
+    } catch {
+      // Not running on Netlify or Blobs not configured locally
+    }
+
+    // 3. Also persist locally to keep local JSON in sync
     try {
       const tempPath = `${CONTENT_FILE_PATH}.tmp`;
       fs.writeFileSync(tempPath, JSON.stringify(merged, null, 2), 'utf-8');
