@@ -2562,41 +2562,6 @@ export default function AdminPage() {
                     Film Posters &amp; Works Manager
                   </h2>
                 </div>
-                <div className="flex items-center gap-2.5">
-                  <button
-                    id="btn-add-work-project"
-                    type="button"
-                    onClick={() => {
-                      const newProj: WorkProjectItem = {
-                        id: `proj_${Date.now()}`,
-                        title: 'New Key Visual Project',
-                        category: 'FILM POSTERS',
-                        year: '2026',
-                        image: '/extracted_assets/work/work_card_1.webp',
-                        director: 'Visionary Director',
-                        client: 'Premier Studio',
-                        awards: 'Official Selection',
-                        featured: false,
-                        aspectRatio: 'default',
-                        objectPosition: 'center',
-                      };
-                      setContent((prev) => {
-                        if (!prev) return prev;
-                        return {
-                          ...prev,
-                          works: {
-                            ...prev.works,
-                            projects: [newProj, ...prev.works.projects],
-                          },
-                        };
-                      });
-                    }}
-                    className="px-4 py-2.5 rounded-xl bg-[#fec52d] text-black font-semibold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-[#ffe066] transition-colors cursor-pointer shadow-lg"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Add Project</span>
-                  </button>
-                </div>
               </div>
 
               {/* Works Page Hero Banner Customization */}
@@ -3065,28 +3030,65 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Category Filter Buttons */}
-              <div className="flex flex-wrap items-center justify-center gap-2 py-2">
-                {['ALL', ...(content.works.categories || ['BRANDING', 'FILM POSTERS', 'SOCIAL MEDIA CREATIVES', 'PRINT & ADS']).filter((c) => c !== 'ALL')].map((cat) => {
-                  const isActive = adminWorksCategory === cat;
-                  const count = cat === 'ALL'
-                    ? content.works.projects.length
-                    : content.works.projects.filter((p) => p.category === cat).length;
-                  return (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setAdminWorksCategory(cat)}
-                      className={`px-4 py-2 rounded-full text-xs font-mono uppercase tracking-wider transition-all cursor-pointer border ${
-                        isActive
-                          ? 'bg-[#fec52d] text-black border-[#fec52d] font-bold shadow-md'
-                          : 'bg-neutral-900 text-neutral-300 border-neutral-800 hover:border-neutral-600 hover:text-white'
-                      }`}
-                    >
-                      {cat} <span className="opacity-70">({count})</span>
-                    </button>
-                  );
-                })}
+              {/* Category Filter Buttons + Add Project */}
+              <div className="flex flex-wrap items-center justify-between gap-3 py-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  {['ALL', ...(content.works.categories || ['BRANDING', 'FILM POSTERS', 'SOCIAL MEDIA CREATIVES', 'PRINT & ADS']).filter((c) => c !== 'ALL')].map((cat) => {
+                    const isActive = adminWorksCategory === cat;
+                    const count = cat === 'ALL'
+                      ? content.works.projects.length
+                      : content.works.projects.filter((p) => p.category === cat).length;
+                    return (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setAdminWorksCategory(cat)}
+                        className={`px-4 py-2 rounded-full text-xs font-mono uppercase tracking-wider transition-all cursor-pointer border ${
+                          isActive
+                            ? 'bg-[#fec52d] text-black border-[#fec52d] font-bold shadow-md'
+                            : 'bg-neutral-900 text-neutral-300 border-neutral-800 hover:border-neutral-600 hover:text-white'
+                        }`}
+                      >
+                        {cat} <span className="opacity-70">({count})</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  id="btn-add-work-project"
+                  type="button"
+                  onClick={() => {
+                    const targetCategory = adminWorksCategory !== 'ALL' ? adminWorksCategory : 'FILM POSTERS';
+                    const newProj: WorkProjectItem = {
+                      id: `proj_${Date.now()}`,
+                      title: 'New Key Visual Project',
+                      category: targetCategory,
+                      year: '2026',
+                      image: '/extracted_assets/work/work_card_1.webp',
+                      director: 'Visionary Director',
+                      client: 'Premier Studio',
+                      awards: 'Official Selection',
+                      featured: false,
+                      aspectRatio: 'default',
+                      objectPosition: 'center',
+                    };
+                    setContent((prev) => {
+                      if (!prev) return prev;
+                      return {
+                        ...prev,
+                        works: {
+                          ...prev.works,
+                          projects: [newProj, ...prev.works.projects],
+                        },
+                      };
+                    });
+                  }}
+                  className="px-4 py-2 rounded-xl bg-[#fec52d] text-black font-semibold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-[#ffe066] transition-colors cursor-pointer shadow-lg shrink-0"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Project</span>
+                </button>
               </div>
 
               {/* Projects List */}
@@ -3336,29 +3338,44 @@ export default function AdminPage() {
 
                       <div>
                         <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
-                          Display Order
+                          Display Order ({proj.category})
                         </label>
-                        <select
-                          value={idx}
-                          onChange={(e) => {
-                            const targetIdx = Number(e.target.value);
-                            if (targetIdx === idx) return;
-                            setContent((prev) => {
-                              if (!prev) return prev;
-                              const projects = [...prev.works.projects];
-                              const [moved] = projects.splice(idx, 1);
-                              projects.splice(targetIdx, 0, moved);
-                              return { ...prev, works: { ...prev.works, projects } };
-                            });
-                          }}
-                          className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
-                        >
-                          {content.works.projects.map((_, posIdx) => (
-                            <option key={posIdx} value={posIdx}>
-                              #{posIdx + 1} {posIdx === 0 ? '(First)' : posIdx === content.works.projects.length - 1 ? '(Last)' : ''}
-                            </option>
-                          ))}
-                        </select>
+                        {(() => {
+                          const sameCatIndices = content.works.projects
+                            .map((p, i) => (p.category === proj.category ? i : -1))
+                            .filter((i) => i !== -1);
+                          const catPos = sameCatIndices.indexOf(idx);
+                          return (
+                            <select
+                              value={catPos}
+                              onChange={(e) => {
+                                const targetCatPos = Number(e.target.value);
+                                if (targetCatPos === catPos) return;
+                                setContent((prev) => {
+                                  if (!prev) return prev;
+                                  const projects = [...prev.works.projects];
+                                  const catIndices = projects
+                                    .map((p, i) => (p.category === proj.category ? i : -1))
+                                    .filter((i) => i !== -1);
+                                  const catItems = catIndices.map((i) => projects[i]);
+                                  const [moved] = catItems.splice(catPos, 1);
+                                  catItems.splice(targetCatPos, 0, moved);
+                                  catIndices.forEach((origIdx, k) => {
+                                    projects[origIdx] = catItems[k];
+                                  });
+                                  return { ...prev, works: { ...prev.works, projects } };
+                                });
+                              }}
+                              className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                            >
+                              {sameCatIndices.map((_, posIdx) => (
+                                <option key={posIdx} value={posIdx}>
+                                  #{posIdx + 1} {posIdx === 0 ? '(First)' : posIdx === sameCatIndices.length - 1 ? '(Last)' : ''}
+                                </option>
+                              ))}
+                            </select>
+                          );
+                        })()}
                       </div>
 
                       <div className="flex items-center justify-between pt-6">
