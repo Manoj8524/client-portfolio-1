@@ -2563,40 +2563,6 @@ export default function AdminPage() {
                 </div>
                 <div className="flex items-center gap-2.5">
                   <button
-                    id="btn-add-work-poster"
-                    type="button"
-                    onClick={() => {
-                      const newProj: WorkProjectItem = {
-                        id: `proj_${Date.now()}`,
-                        title: 'New Film Poster Project',
-                        category: 'FILM POSTERS',
-                        year: '2026',
-                        image: '/film_posters_cache/poster_187.webp',
-                        director: 'Visionary Director',
-                        client: 'Premier Studio',
-                        awards: 'Official Selection',
-                        featured: false,
-                        aspectRatio: '2/3',
-                        objectPosition: 'center',
-                      };
-                      setContent((prev) => {
-                        if (!prev) return prev;
-                        return {
-                          ...prev,
-                          works: {
-                            ...prev.works,
-                            projects: [newProj, ...prev.works.projects],
-                          },
-                        };
-                      });
-                    }}
-                    className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-neutral-900 hover:bg-[#fec52d] hover:text-black text-white text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer border border-neutral-700 hover:border-[#fec52d]"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Poster</span>
-                  </button>
-
-                  <button
                     id="btn-add-work-project"
                     type="button"
                     onClick={() => {
@@ -3337,6 +3303,33 @@ export default function AdminPage() {
                           <option value="center">Center Focused</option>
                           <option value="top">Top (Headshot / Title)</option>
                           <option value="bottom">Bottom (Credits / Base)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+                          Display Order
+                        </label>
+                        <select
+                          value={idx}
+                          onChange={(e) => {
+                            const targetIdx = Number(e.target.value);
+                            if (targetIdx === idx) return;
+                            setContent((prev) => {
+                              if (!prev) return prev;
+                              const projects = [...prev.works.projects];
+                              const [moved] = projects.splice(idx, 1);
+                              projects.splice(targetIdx, 0, moved);
+                              return { ...prev, works: { ...prev.works, projects } };
+                            });
+                          }}
+                          className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
+                        >
+                          {content.works.projects.map((_, posIdx) => (
+                            <option key={posIdx} value={posIdx}>
+                              #{posIdx + 1} {posIdx === 0 ? '(First)' : posIdx === content.works.projects.length - 1 ? '(Last)' : ''}
+                            </option>
+                          ))}
                         </select>
                       </div>
 
