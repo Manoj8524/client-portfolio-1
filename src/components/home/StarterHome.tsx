@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
-import { SiteContent, HeroPosterItem } from '@/lib/contentStore';
+import type { SiteContent, HeroPosterItem } from '@/lib/contentStore';
+import { resolveCardRatio } from '@/lib/ratioUtils';
 import defaultContent from '@/data/siteContent.json';
 
 interface StarterHomeProps {
@@ -22,7 +23,7 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
 
   // Sync latest updates from content store on mount
   useEffect(() => {
-    fetch('/api/content')
+    fetch('/api/content', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data && data.home) {
@@ -603,11 +604,13 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
         <section id="work-grid" className="w-full p-0 m-0 bg-black">
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 p-0 m-0">
             {filteredProjects.map((item, idx) => {
-              const categoryRatio = (item.category && works?.categoryRatios?.[item.category]) ||
-                (activeCategory !== 'ALL' && works?.categoryRatios?.[activeCategory]);
-              const itemRatio = item.aspectRatio && item.aspectRatio !== 'default'
-                ? item.aspectRatio
-                : (categoryRatio || defaultGridRatio);
+              const itemRatio = resolveCardRatio(
+                item.aspectRatio,
+                item.category,
+                activeCategory,
+                works?.categoryRatios,
+                works?.gridAspectRatio || defaultGridRatio
+              );
               const itemPosition = item.objectPosition || 'center';
               return (
                 <div

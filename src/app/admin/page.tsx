@@ -27,7 +27,8 @@ import {
   Layers,
   ArrowUpRight,
 } from 'lucide-react';
-import { SiteContent, ContactMessage, WorkProjectItem } from '@/lib/contentStore';
+import type { SiteContent, ContactMessage, WorkProjectItem } from '@/lib/contentStore';
+import { resolveCardRatio } from '@/lib/ratioUtils';
 
 type AdminTab = 'overview' | 'global' | 'home' | 'works' | 'about' | 'contact' | 'messages';
 
@@ -2936,9 +2937,13 @@ export default function AdminPage() {
                     id="global-grid-aspect-ratio-select"
                     value={content.works.gridAspectRatio || '2/3'}
                     onChange={(e) => {
-                      setContent({
-                        ...content,
-                        works: { ...content.works, gridAspectRatio: e.target.value },
+                      const val = e.target.value;
+                      setContent((prev) => {
+                        if (!prev) return prev;
+                        return {
+                          ...prev,
+                          works: { ...prev.works, gridAspectRatio: val },
+                        };
                       });
                     }}
                     className="px-4 py-2 rounded-xl bg-neutral-900 border border-neutral-700 text-[#fec52d] text-xs font-mono font-bold focus:border-[#fec52d] outline-none cursor-pointer"
@@ -2988,16 +2993,19 @@ export default function AdminPage() {
                             id={`category-ratio-select-${cat.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
                             value={currentVal}
                             onChange={(e) => {
-                              const newRatios = {
-                                ...(content.works.categoryRatios || {}),
-                                [cat]: e.target.value,
-                              };
-                              setContent({
-                                ...content,
-                                works: {
-                                  ...content.works,
-                                  categoryRatios: newRatios,
-                                },
+                              const val = e.target.value;
+                              setContent((prev) => {
+                                if (!prev) return prev;
+                                return {
+                                  ...prev,
+                                  works: {
+                                    ...prev.works,
+                                    categoryRatios: {
+                                      ...(prev.works?.categoryRatios || {}),
+                                      [cat]: val,
+                                    },
+                                  },
+                                };
                               });
                             }}
                             className="w-full px-3 py-2 rounded-lg bg-neutral-950 border border-neutral-700 text-xs font-mono font-medium text-white focus:border-[#fec52d] outline-none cursor-pointer"
@@ -3025,9 +3033,13 @@ export default function AdminPage() {
                     {/* Thumbnail Preview with Dynamic Ratio & Alignment */}
                     <div
                       style={{
-                        aspectRatio: proj.aspectRatio && proj.aspectRatio !== 'default'
-                          ? proj.aspectRatio
-                          : (content.works.categoryRatios?.[proj.category] || content.works.gridAspectRatio || '2/3'),
+                        aspectRatio: resolveCardRatio(
+                          proj.aspectRatio,
+                          proj.category,
+                          undefined,
+                          content.works.categoryRatios,
+                          content.works.gridAspectRatio
+                        ),
                       }}
                       className="relative w-32 rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 flex-shrink-0"
                     >

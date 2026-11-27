@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import type { SiteContent, WorkProjectItem } from '@/lib/contentStore';
+import { resolveCardRatio } from '@/lib/ratioUtils';
 import initialContent from '@/data/siteContent.json';
 
 function WorksContent() {
@@ -16,7 +17,7 @@ function WorksContent() {
 
   // Sync latest updates from content store on mount
   useEffect(() => {
-    fetch('/api/content')
+    fetch('/api/content', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data && data.works) {
@@ -162,11 +163,13 @@ function WorksContent() {
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item, idx) => {
               // 1. Individual project override -> 2. Category ratio -> 3. Active tab ratio -> 4. Global grid ratio
-              const categoryRatio = (item.category && works?.categoryRatios?.[item.category]) ||
-                (activeTab !== 'ALL' && works?.categoryRatios?.[activeTab]);
-              const itemRatio = item.aspectRatio && item.aspectRatio !== 'default'
-                ? item.aspectRatio
-                : (categoryRatio || defaultGridRatio);
+              const itemRatio = resolveCardRatio(
+                item.aspectRatio,
+                item.category,
+                activeTab,
+                works?.categoryRatios,
+                works?.gridAspectRatio || defaultGridRatio
+              );
               const itemPosition = item.objectPosition || 'center';
               return (
                 <motion.div

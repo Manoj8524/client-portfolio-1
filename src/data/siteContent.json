@@ -375,10 +375,10 @@
     "heroHeight": 100,
     "heroHeightUnit": "vh",
     "heroOverlayOpacity": 0.4,
-    "gridAspectRatio": "2/3",
+    "gridAspectRatio": "4/5",
     "categoryRatios": {
+      "BRANDING": "4/5",
       "FILM POSTERS": "2/3",
-      "BRANDING": "16/9",
       "SOCIAL MEDIA CREATIVES": "4/5",
       "PRINT & ADS": "4/5"
     },

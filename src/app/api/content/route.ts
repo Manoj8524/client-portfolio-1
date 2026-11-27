@@ -5,11 +5,15 @@ import { getSiteContentAsync, updateSiteContent } from '@/lib/contentStore';
 const AUTH_COOKIE_NAME = 'muthu_admin_session';
 const SESSION_TOKEN = 'muthu_secure_admin_token_2026';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // Reading headers makes this route dynamically evaluated on every request
+  const _userAgent = req.headers.get('user-agent');
   const content = await getSiteContentAsync();
   return NextResponse.json(content, {
     headers: {
-      'Cache-Control': 'no-store, max-age=0',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0',
     },
   });
 }
@@ -28,10 +32,10 @@ export async function POST(req: NextRequest) {
     if (result.ok) {
       // Revalidate all pages so the public site reflects edits instantly
       try {
-        revalidatePath('/');
-        revalidatePath('/works');
-        revalidatePath('/about');
-        revalidatePath('/contact');
+        revalidatePath('/', 'layout');
+        revalidatePath('/works', 'page');
+        revalidatePath('/about', 'page');
+        revalidatePath('/contact', 'page');
       } catch (revErr) {
         console.warn('Revalidation warning:', revErr);
       }

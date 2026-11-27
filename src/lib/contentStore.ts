@@ -2,6 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import defaultSiteContent from '@/data/siteContent.json';
 import { supabaseAdmin, supabase } from './supabase';
+import { resolveCardRatio } from './ratioUtils';
+
+export { resolveCardRatio };
 
 export interface SiteSettings {
   brandName: string;
@@ -226,7 +229,7 @@ export async function getSiteContentAsync(): Promise<SiteContent> {
   try {
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Supabase request timeout')), 1500)
+        setTimeout(() => reject(new Error('Supabase request timeout')), 800)
       );
       const fetchPromise = supabaseAdmin
         .from('site_content')
@@ -269,15 +272,25 @@ export async function updateSiteContent(newContent: Partial<SiteContent>): Promi
       navigation: { ...current.navigation, ...(newContent.navigation || {}) },
       home: { ...current.home, ...(newContent.home || {}) },
       about: { ...current.about, ...(newContent.about || {}) },
-      works: { ...current.works, ...(newContent.works || {}) },
+      works: {
+        ...current.works,
+        ...(newContent.works || {}),
+        categoryRatios: {
+          ...(current.works?.categoryRatios || {}),
+          ...(newContent.works?.categoryRatios || {}),
+        },
+      },
       contact: { ...current.contact, ...(newContent.contact || {}) },
       footer: { ...current.footer, ...(newContent.footer || {}) },
     };
 
-    // 1. Save to Supabase DB (upsert into site_content)
+    // 1. Save to Supabase DB (upsert into site_content) with timeout
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
       try {
-        const { error: dbError } = await supabaseAdmin
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Supabase upsert timeout')), 2000)
+        );
+        const upsertPromise = supabaseAdmin
           .from('site_content')
           .upsert({
             id: 'current',
@@ -285,11 +298,13 @@ export async function updateSiteContent(newContent: Partial<SiteContent>): Promi
             updated_at: new Date().toISOString(),
           }, { onConflict: 'id' });
 
+        const { error: dbError }: any = await Promise.race([upsertPromise, timeoutPromise]);
+
         if (dbError) {
           console.warn('Supabase update warning (check if table exists):', dbError.message);
         }
       } catch (sbErr) {
-        console.warn('Supabase upsert failed:', sbErr);
+        console.warn('Supabase upsert failed/timed out:', sbErr);
       }
     }
 
@@ -318,7 +333,7 @@ export async function getContactMessagesAsync(): Promise<ContactMessage[]> {
   try {
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Supabase request timeout')), 1500)
+        setTimeout(() => reject(new Error('Supabase request timeout')), 800)
       );
       const fetchPromise = supabaseAdmin
         .from('contact_messages')
