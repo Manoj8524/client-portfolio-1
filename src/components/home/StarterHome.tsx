@@ -505,20 +505,30 @@ export default function StarterHome({ initialData }: StarterHomeProps) {
                 quality={92}
                 priority
               />
-              {/* Subtle top vignette ONLY - clean bottom */}
-              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-1" />
+              {/* Left-to-right dark gradient for text legibility, preserving right-side artwork */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent z-1" />
+              {/* Bottom vignette */}
+              <div
+                className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-1"
+                style={{ opacity: works?.heroOverlayOpacity ?? 0.4 }}
+              />
             </div>
 
-            <div className="relative z-10 text-center px-6 max-w-4xl flex flex-col items-center">
-              <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-4">
-                {works?.heroTag || '// PORTFOLIO ARCHIVE'}
+            {/* Left-aligned content block exactly matching reference layout */}
+            <div className="relative z-10 w-full h-full flex flex-col justify-center items-start px-8 sm:px-16 md:px-20 lg:px-28 max-w-5xl">
+              <p className="text-xs sm:text-sm font-mono uppercase tracking-[0.25em] sm:tracking-[0.3em] text-[#fec52d] mb-4 sm:mb-5 drop-shadow-md">
+                {works?.heroTag || '// EXPLORE A SELECTION OF MY WORK'}
               </p>
-              <h1 className="font-horas text-5xl sm:text-7xl md:text-8xl uppercase tracking-tighter text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
-                {works?.title || 'SELECTED ARCHIVE'}
+              <h1 className="font-horas text-6xl sm:text-8xl md:text-9xl lg:text-[115px] uppercase font-bold tracking-tight text-white leading-[0.88] drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
+                {(works?.title || 'FROM VISION TO VISUAL').split(' ').map((word, i, arr) => (
+                  <span key={i} className="block">
+                    {word}
+                    {i === arr.length - 1 && !word.endsWith('.') ? '.' : ''}
+                  </span>
+                ))}
               </h1>
-              <p className="mt-4 font-ppmori text-sm sm:text-base text-neutral-300 max-w-xl leading-relaxed">
-                {works?.subtitle ||
-                  'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
+              <p className="mt-6 font-ppmori text-xs sm:text-sm text-neutral-300 max-w-md leading-relaxed uppercase tracking-widest drop-shadow-md">
+                {works?.subtitle || 'BRANDING, GRAPHIC DESIGN AND VISUAL STORYTELLING'}
               </p>
             </div>
           </motion.div>

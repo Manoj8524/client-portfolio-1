@@ -2540,6 +2540,7 @@ export default function AdminPage() {
                   </h2>
                 </div>
                 <button
+                  id="btn-add-work-project"
                   onClick={() => {
                     const newProj: WorkProjectItem = {
                       id: `proj_${Date.now()}`,
@@ -2551,13 +2552,18 @@ export default function AdminPage() {
                       client: 'Premier Studio',
                       awards: 'Official Selection',
                       featured: false,
+                      aspectRatio: 'default',
+                      objectPosition: 'center',
                     };
-                    setContent({
-                      ...content,
-                      works: {
-                        ...content.works,
-                        projects: [newProj, ...content.works.projects],
-                      },
+                    setContent((prev) => {
+                      if (!prev) return prev;
+                      return {
+                        ...prev,
+                        works: {
+                          ...prev.works,
+                          projects: [newProj, ...prev.works.projects],
+                        },
+                      };
                     });
                   }}
                   className="px-4 py-2.5 rounded-xl bg-[#fec52d] text-black font-semibold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-[#ffe066] transition-colors cursor-pointer"
@@ -2878,38 +2884,48 @@ export default function AdminPage() {
                           />
                           {/* Live Overlay Simulator showing Tag, Title, Subtitle as they appear on the live site */}
                           <div
-                            className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/85 flex flex-col items-center justify-center p-6 text-center pointer-events-none"
+                            className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent pointer-events-none"
                             style={{ opacity: content.works.heroOverlayOpacity ?? 0.4 }}
                           />
-                          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center pointer-events-none z-10">
-                            <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-2 drop-shadow-md">
-                              {content.works.heroTag || '// PORTFOLIO ARCHIVE'}
+                          <div className="absolute inset-0 flex flex-col justify-center items-start p-6 sm:p-10 text-left pointer-events-none z-10 max-w-lg">
+                            <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d] mb-2 drop-shadow-md">
+                              {content.works.heroTag || '// EXPLORE A SELECTION OF MY WORK'}
                             </span>
-                            <span className="font-horas text-3xl sm:text-5xl md:text-6xl uppercase tracking-tight text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]">
-                              {content.works.title || 'SELECTED ARCHIVE'}
+                            <span className="font-horas text-2xl sm:text-4xl md:text-5xl uppercase font-bold tracking-tight text-white leading-[0.88] drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]">
+                              {(content.works.title || 'FROM VISION TO VISUAL').split(' ').map((word, i, arr) => (
+                                <span key={i} className="block">
+                                  {word}
+                                  {i === arr.length - 1 && !word.endsWith('.') ? '.' : ''}
+                                </span>
+                              ))}
                             </span>
-                            <span className="mt-3 text-xs sm:text-sm font-ppmori text-neutral-300 max-w-xl line-clamp-2 drop-shadow-md">
-                              {content.works.subtitle || 'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
+                            <span className="mt-3 text-[10px] sm:text-xs font-ppmori uppercase tracking-wider text-neutral-300 drop-shadow-md line-clamp-2">
+                              {content.works.subtitle || 'BRANDING, GRAPHIC DESIGN AND VISUAL STORYTELLING'}
                             </span>
                           </div>
                           <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[10px] font-mono uppercase tracking-wider text-[#fec52d] flex items-center gap-1.5 shadow-lg z-20">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#fec52d] animate-pulse" />
-                            <span>Live Banner Preview ({content.works.heroHeight ?? 65}vh)</span>
+                            <span>Live Banner Preview ({content.works.heroHeight ?? 100}vh)</span>
                           </div>
                         </>
                       ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-900/60 via-black to-black">
+                        <div className="w-full h-full flex flex-col justify-center items-start p-6 sm:p-10 text-left bg-black bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-900/60 via-black to-black max-w-lg">
                           <span className="px-3 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-[10px] font-mono text-neutral-400 uppercase tracking-widest mb-3">
                             Backdrop Image Deleted — Solid Black Ambient Theme Active
                           </span>
-                          <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.3em] text-[#fec52d] mb-2">
-                            {content.works.heroTag || '// PORTFOLIO ARCHIVE'}
+                          <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.25em] text-[#fec52d] mb-2">
+                            {content.works.heroTag || '// EXPLORE A SELECTION OF MY WORK'}
                           </span>
-                          <span className="font-horas text-3xl sm:text-5xl uppercase tracking-tight text-white drop-shadow-md">
-                            {content.works.title || 'SELECTED ARCHIVE'}
+                          <span className="font-horas text-2xl sm:text-4xl uppercase font-bold tracking-tight text-white leading-[0.88] drop-shadow-md">
+                            {(content.works.title || 'FROM VISION TO VISUAL').split(' ').map((word, i, arr) => (
+                              <span key={i} className="block">
+                                {word}
+                                {i === arr.length - 1 && !word.endsWith('.') ? '.' : ''}
+                              </span>
+                            ))}
                           </span>
-                          <span className="mt-2 text-xs font-ppmori text-neutral-400 max-w-md">
-                            {content.works.subtitle || 'Bespoke film poster key art, character visuals, and cinematic advertising campaigns.'}
+                          <span className="mt-2 text-[10px] sm:text-xs font-ppmori text-neutral-400">
+                            {content.works.subtitle || 'BRANDING, GRAPHIC DESIGN AND VISUAL STORYTELLING'}
                           </span>
                         </div>
                       )}
@@ -3063,11 +3079,13 @@ export default function AdminPage() {
                           type="text"
                           value={proj.title}
                           onChange={(e) => {
-                            const updated = [...content.works.projects];
-                            updated[idx].title = e.target.value;
-                            setContent({
-                              ...content,
-                              works: { ...content.works, projects: updated },
+                            const val = e.target.value;
+                            setContent((prev) => {
+                              if (!prev) return prev;
+                              const projects = prev.works.projects.map((p, i) =>
+                                i === idx ? { ...p, title: val } : p
+                              );
+                              return { ...prev, works: { ...prev.works, projects } };
                             });
                           }}
                           className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm font-semibold"
@@ -3081,11 +3099,13 @@ export default function AdminPage() {
                         <select
                           value={proj.category}
                           onChange={(e) => {
-                            const updated = [...content.works.projects];
-                            updated[idx].category = e.target.value;
-                            setContent({
-                              ...content,
-                              works: { ...content.works, projects: updated },
+                            const val = e.target.value;
+                            setContent((prev) => {
+                              if (!prev) return prev;
+                              const projects = prev.works.projects.map((p, i) =>
+                                i === idx ? { ...p, category: val } : p
+                              );
+                              return { ...prev, works: { ...prev.works, projects } };
                             });
                           }}
                           className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono uppercase"
@@ -3108,11 +3128,13 @@ export default function AdminPage() {
                           type="text"
                           value={proj.year}
                           onChange={(e) => {
-                            const updated = [...content.works.projects];
-                            updated[idx].year = e.target.value;
-                            setContent({
-                              ...content,
-                              works: { ...content.works, projects: updated },
+                            const val = e.target.value;
+                            setContent((prev) => {
+                              if (!prev) return prev;
+                              const projects = prev.works.projects.map((p, i) =>
+                                i === idx ? { ...p, year: val } : p
+                              );
+                              return { ...prev, works: { ...prev.works, projects } };
                             });
                           }}
                           className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
@@ -3128,11 +3150,13 @@ export default function AdminPage() {
                             type="text"
                             value={proj.image}
                             onChange={(e) => {
-                              const updated = [...content.works.projects];
-                              updated[idx].image = e.target.value;
-                              setContent({
-                                ...content,
-                                works: { ...content.works, projects: updated },
+                              const val = e.target.value;
+                              setContent((prev) => {
+                                if (!prev) return prev;
+                                const projects = prev.works.projects.map((p, i) =>
+                                  i === idx ? { ...p, image: val } : p
+                                );
+                                return { ...prev, works: { ...prev.works, projects } };
                               });
                             }}
                             className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
@@ -3148,11 +3172,12 @@ export default function AdminPage() {
                                 handleFileUpload(
                                   e,
                                   (url) => {
-                                    const updated = [...content.works.projects];
-                                    updated[idx].image = url;
-                                    setContent({
-                                      ...content,
-                                      works: { ...content.works, projects: updated },
+                                    setContent((prev) => {
+                                      if (!prev) return prev;
+                                      const projects = prev.works.projects.map((p, i) =>
+                                        i === idx ? { ...p, image: url } : p
+                                      );
+                                      return { ...prev, works: { ...prev.works, projects } };
                                     });
                                   },
                                   `work_${idx}`
@@ -3171,11 +3196,13 @@ export default function AdminPage() {
                           type="text"
                           value={proj.director || ''}
                           onChange={(e) => {
-                            const updated = [...content.works.projects];
-                            updated[idx].director = e.target.value;
-                            setContent({
-                              ...content,
-                              works: { ...content.works, projects: updated },
+                            const val = e.target.value;
+                            setContent((prev) => {
+                              if (!prev) return prev;
+                              const projects = prev.works.projects.map((p, i) =>
+                                i === idx ? { ...p, director: val } : p
+                              );
+                              return { ...prev, works: { ...prev.works, projects } };
                             });
                           }}
                           className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs"
@@ -3190,11 +3217,13 @@ export default function AdminPage() {
                           type="text"
                           value={proj.client || ''}
                           onChange={(e) => {
-                            const updated = [...content.works.projects];
-                            updated[idx].client = e.target.value;
-                            setContent({
-                              ...content,
-                              works: { ...content.works, projects: updated },
+                            const val = e.target.value;
+                            setContent((prev) => {
+                              if (!prev) return prev;
+                              const projects = prev.works.projects.map((p, i) =>
+                                i === idx ? { ...p, client: val } : p
+                              );
+                              return { ...prev, works: { ...prev.works, projects } };
                             });
                           }}
                           className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs"
@@ -3208,11 +3237,13 @@ export default function AdminPage() {
                         <select
                           value={proj.aspectRatio || 'default'}
                           onChange={(e) => {
-                            const updated = [...content.works.projects];
-                            updated[idx].aspectRatio = e.target.value;
-                            setContent({
-                              ...content,
-                              works: { ...content.works, projects: updated },
+                            const val = e.target.value;
+                            setContent((prev) => {
+                              if (!prev) return prev;
+                              const projects = prev.works.projects.map((p, i) =>
+                                i === idx ? { ...p, aspectRatio: val } : p
+                              );
+                              return { ...prev, works: { ...prev.works, projects } };
                             });
                           }}
                           className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
@@ -3233,11 +3264,13 @@ export default function AdminPage() {
                         <select
                           value={proj.objectPosition || 'center'}
                           onChange={(e) => {
-                            const updated = [...content.works.projects];
-                            updated[idx].objectPosition = e.target.value;
-                            setContent({
-                              ...content,
-                              works: { ...content.works, projects: updated },
+                            const val = e.target.value;
+                            setContent((prev) => {
+                              if (!prev) return prev;
+                              const projects = prev.works.projects.map((p, i) =>
+                                i === idx ? { ...p, objectPosition: val } : p
+                              );
+                              return { ...prev, works: { ...prev.works, projects } };
                             });
                           }}
                           className="w-full px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-xs font-mono"
@@ -3254,11 +3287,13 @@ export default function AdminPage() {
                             type="checkbox"
                             checked={!!proj.featured}
                             onChange={(e) => {
-                              const updated = [...content.works.projects];
-                              updated[idx].featured = e.target.checked;
-                              setContent({
-                                ...content,
-                                works: { ...content.works, projects: updated },
+                              const val = e.target.checked;
+                              setContent((prev) => {
+                                if (!prev) return prev;
+                                const projects = prev.works.projects.map((p, i) =>
+                                  i === idx ? { ...p, featured: val } : p
+                                );
+                                return { ...prev, works: { ...prev.works, projects } };
                               });
                             }}
                             className="rounded bg-neutral-900 border-neutral-700 text-[#fec52d] focus:ring-0"
@@ -3269,10 +3304,10 @@ export default function AdminPage() {
                         <button
                           onClick={() => {
                             if (confirm(`Delete project "${proj.title}"?`)) {
-                              const updated = content.works.projects.filter((_, i) => i !== idx);
-                              setContent({
-                                ...content,
-                                works: { ...content.works, projects: updated },
+                              setContent((prev) => {
+                                if (!prev) return prev;
+                                const projects = prev.works.projects.filter((_, i) => i !== idx);
+                                return { ...prev, works: { ...prev.works, projects } };
                               });
                             }
                           }}

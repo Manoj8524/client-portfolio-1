@@ -50,9 +50,9 @@ export default function Navbar() {
   return (
     <header
       className={`padding-primary fixed top-0 left-0 w-full z-50 flex h-20 shrink-0 items-center justify-between will-change-transform transition-all duration-300 ${
-        pathname !== '/' || isScrolled
+        (pathname !== '/' && pathname !== '/works') || isScrolled
           ? 'bg-black border-b border-neutral-900/80 shadow-[0_10px_30px_rgba(0,0,0,0.8)]'
-          : 'bg-transparent'
+          : 'bg-black/25 backdrop-blur-md md:bg-transparent'
       }`}
     >
       {/* Brand / Project Name */}
