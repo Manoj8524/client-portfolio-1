@@ -37,22 +37,56 @@ function WorksContent() {
 
   const getInitialTab = (): string => {
     if (!rawCategory) return categories[0] || 'BRANDING';
-    const normalized = rawCategory.toUpperCase().replace(/\+/g, ' ');
+    const normalized = decodeURIComponent(rawCategory).toUpperCase().replace(/\+/g, ' ').trim();
     const found = categories.find((c) => c.toUpperCase() === normalized);
     return found || categories[0] || 'BRANDING';
   };
 
   const [activeTab, setActiveTab] = useState<string>(getInitialTab);
 
+  const scrollToCategoryTabs = (behavior: ScrollBehavior = 'smooth') => {
+    const el = document.getElementById('works-category-tabs');
+    if (el) {
+      const yOffset = -76;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: Math.max(0, y), behavior });
+    }
+  };
+
   useEffect(() => {
     if (rawCategory) {
-      const normalized = rawCategory.toUpperCase().replace(/\+/g, ' ');
+      const normalized = decodeURIComponent(rawCategory).toUpperCase().replace(/\+/g, ' ').trim();
       const found = categories.find((c) => c.toUpperCase() === normalized);
-      if (found) setActiveTab(found);
+      if (found) {
+        setActiveTab(found);
+      }
+      const timer = setTimeout(() => {
+        scrollToCategoryTabs('smooth');
+      }, 150);
+      return () => clearTimeout(timer);
     } else if (activeTab === 'ALL' && categories.length > 0) {
       setActiveTab(categories[0]);
     }
-  }, [rawCategory, categories, activeTab]);
+  }, [rawCategory, categories]);
+
+  // Handle in-page navigation from Services dropdown
+  useEffect(() => {
+    const handleCategoryChange = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      if (customEvent.detail) {
+        const found = categories.find((c) => c.toUpperCase() === customEvent.detail.toUpperCase());
+        if (found) {
+          setActiveTab(found);
+        }
+      }
+      setTimeout(() => {
+        scrollToCategoryTabs('smooth');
+      }, 50);
+    };
+
+    window.addEventListener('works-category-change', handleCategoryChange);
+    return () => window.removeEventListener('works-category-change', handleCategoryChange);
+  }, [categories]);
 
   const allProjects = works?.projects || [];
   const defaultGridRatio = works?.gridAspectRatio || '2/3';
@@ -127,7 +161,10 @@ function WorksContent() {
       {/* =========================================================================
           CATEGORY NAVIGATION TABS
           ========================================================================= */}
-      <section className="sticky top-20 z-30 w-full bg-black border-y border-neutral-900/80 py-3 sm:py-4 px-3 sm:px-6 shadow-[0_8px_20px_rgba(0,0,0,0.7)]">
+      <section
+        id="works-category-tabs"
+        className="sticky top-20 z-30 w-full bg-black border-y border-neutral-900/80 py-3 sm:py-4 px-3 sm:px-6 shadow-[0_8px_20px_rgba(0,0,0,0.7)] scroll-mt-20"
+      >
         <div className="max-w-7xl mx-auto flex items-center justify-start sm:justify-center w-full overflow-hidden">
           <nav className="flex items-center gap-2 sm:gap-6 md:gap-8 overflow-x-auto no-scrollbar py-1 px-1 sm:px-0 select-none scroll-smooth w-full sm:w-auto">
             {categories.map((cat) => {
@@ -135,7 +172,14 @@ function WorksContent() {
               return (
                 <button
                   key={cat}
-                  onClick={() => setActiveTab(cat)}
+                  onClick={() => {
+                    setActiveTab(cat);
+                    if (typeof window !== 'undefined') {
+                      const url = new URL(window.location.href);
+                      url.searchParams.set('category', cat.replace(/ /g, '+'));
+                      window.history.replaceState(null, '', url.toString());
+                    }
+                  }}
                   className={`relative text-xs sm:text-sm font-medium uppercase tracking-[0.14em] sm:tracking-[0.18em] transition-all duration-300 cursor-pointer py-1.5 px-3.5 sm:px-4 rounded-full whitespace-nowrap flex-shrink-0 ${
                     isActive
                       ? 'text-[#fec52d] font-semibold bg-neutral-900 border border-[#fec52d]/40 shadow-[0_0_12px_rgba(254,197,45,0.12)]'

@@ -47,6 +47,33 @@ export default function Navbar() {
   const { siteSettings, navigation, home } = content;
   const disciplines = home?.disciplines || [];
 
+  const navigateToCategory = (path: string) => {
+    setServicesDropdownOpen(false);
+    setMobileMenuOpen(false);
+
+    const targetCategory = path.includes('category=') ? path.split('category=')[1] : null;
+
+    if (typeof window !== 'undefined') {
+      if (window.location.pathname === '/works') {
+        if (targetCategory) {
+          const normalized = decodeURIComponent(targetCategory).toUpperCase().replace(/\+/g, ' ').trim();
+          window.dispatchEvent(new CustomEvent('works-category-change', { detail: normalized }));
+          const url = new URL(window.location.href);
+          url.searchParams.set('category', targetCategory);
+          window.history.pushState(null, '', url.toString());
+        }
+        setTimeout(() => {
+          const el = document.getElementById('works-category-tabs');
+          if (el) {
+            const yOffset = -76;
+            const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+          }
+        }, 50);
+      }
+    }
+  };
+
   return (
     <header
       className={`padding-primary fixed top-0 left-0 w-full z-50 flex h-20 shrink-0 items-center justify-between will-change-transform transition-all duration-300 ${
@@ -104,6 +131,7 @@ export default function Navbar() {
                           <Link
                             key={svc.slug || svc.name}
                             href={svc.path}
+                            onClick={() => navigateToCategory(svc.path)}
                             className="block rounded-xl px-4 py-2.5 text-xs font-mono uppercase tracking-wider text-neutral-300 hover:bg-neutral-900 hover:text-[#fec52d] transition-colors"
                           >
                             {svc.name}
@@ -152,18 +180,44 @@ export default function Navbar() {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="absolute top-20 left-0 w-full bg-neutral-950/98 border-b border-neutral-800 px-6 py-6 md:hidden flex flex-col gap-4 shadow-2xl backdrop-blur-2xl">
-          {navigation?.links?.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className={`text-base font-medium transition-colors ${
-                pathname === link.href ? 'text-[#fec52d] font-bold' : 'text-neutral-300'
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navigation?.links?.map((link) => {
+            if (link.label.toLowerCase() === 'services') {
+              return (
+                <div key={link.label} className="flex flex-col gap-2 py-1">
+                  <div className="flex items-center justify-between text-base font-medium text-neutral-300">
+                    <span>{link.label}</span>
+                    <span className="text-[10px] font-mono text-[#fec52d]">Disciplines</span>
+                  </div>
+                  <div className="pl-3 flex flex-col gap-2 border-l border-neutral-800">
+                    {disciplines.map((svc) => (
+                      <Link
+                        key={svc.slug || svc.name}
+                        href={svc.path}
+                        onClick={() => navigateToCategory(svc.path)}
+                        className="text-xs font-mono uppercase tracking-wider text-neutral-400 hover:text-[#fec52d] transition-colors py-1"
+                      >
+                        {svc.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`text-base font-medium transition-colors ${
+                  isActive ? 'text-[#fec52d] font-bold' : 'text-neutral-300'
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           <div className="pt-4 border-t border-neutral-900 flex flex-col gap-3">
             {siteSettings?.statusPill ? (
               <span className="text-xs font-mono text-neutral-500">
